@@ -5,7 +5,7 @@
 #define REED_PIN_R_S 25
 
 
-const unsigned long interval = 100;
+const unsigned long interval = 200;
 const unsigned long debounceDelay = 200;  
 
 // left
