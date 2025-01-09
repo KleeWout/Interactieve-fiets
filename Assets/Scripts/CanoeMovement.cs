@@ -20,6 +20,7 @@ public class CanoeMovement : MonoBehaviour
 
     // controller
     public bool controllerActivated = true;
+    public bool keyboardControl = true;
 
     void Start()
     {
@@ -39,6 +40,11 @@ public class CanoeMovement : MonoBehaviour
                 userThrust = (Gamepad.all[0].leftStick.ReadValue().y + Gamepad.all[0].rightStick.ReadValue().y)/2;
             }
 
+        }
+        if(keyboardControl)
+        {
+            userInput = Input.GetAxis("Horizontal");
+            userThrust = Input.GetAxis("Vertical");
         }
         else
         {
