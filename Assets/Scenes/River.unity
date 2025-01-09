@@ -293,6 +293,9 @@ MonoBehaviour:
   EspListener: {fileID: 0}
   value1: 0
   value2: 0
+  controllerActivated: 1
+  leftStickY: 0
+  rightStickY: 0
   rb: {fileID: 235133406}
 --- !u!114 &235133416
 MonoBehaviour:
@@ -367,6 +370,10 @@ PrefabInstance:
     - target: {fileID: 11442534, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
       propertyPath: portName
       value: COM4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11442534, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11442534, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
       propertyPath: messageListener
