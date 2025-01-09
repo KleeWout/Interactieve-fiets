@@ -1,46 +1,12 @@
-﻿/**
- * Ardity (Serial Communication for Arduino + Unity)
- * Author: Daniel Wilches <dwilches@gmail.com>
- *
- * This work is released under the Creative Commons Attributions license.
- * https://creativecommons.org/licenses/by/2.0/
- */
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Threading;
 
-/**
- * This class allows a Unity program to continually check for messages from a
- * serial device.
- *
- * It creates a Thread that communicates with the serial port and continually
- * polls the messages on the wire.
- * That Thread puts all the messages inside a Queue, and this SerialController
- * class polls that queue by means of invoking SerialThread.GetSerialMessage().
- *
- * The serial device must send its messages separated by a newline character.
- * Neither the SerialController nor the SerialThread perform any validation
- * on the integrity of the message. It's up to the one that makes sense of the
- * data.
- */
 public class SerialController : MonoBehaviour
 {
-    [Tooltip("Port name with which the SerialPort object will be created.")]
     public string portName = "COM8";
-
-    [Tooltip("Baud rate that the serial device is using to transmit data.")]
     public int baudRate = 115200;
-
-    [Tooltip("Reference to an scene object that will receive the events of connection, " +
-             "disconnection and the messages from the serial device.")]
     public GameObject messageListener;
-
-    [Tooltip("After an error in the serial communication, or an unsuccessful " +
-             "connect, how many milliseconds we should wait.")]
     public int reconnectionDelay = 1000;
-
-    [Tooltip("Maximum number of unread data messages in the queue. " +
-             "New messages will be discarded.")]
     public int maxUnreadMessages = 1;
 
     // Constants used to mark the start and end of a connection. There is no
