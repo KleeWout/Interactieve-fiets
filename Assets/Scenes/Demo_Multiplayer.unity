@@ -290,7 +290,13 @@ MonoBehaviour:
   tiltSmoothing: 8
   steeringSpeed: 20
   thrustSpeed: 10
-  controllerActivated: 0
+  EspListener: {fileID: 0}
+  value1: 0
+  value2: 0
+  controllerActivated: 1
+  leftStickY: 0
+  rightStickY: 0
+  rb: {fileID: 235133406}
 --- !u!114 &235133416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -303,8 +309,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 825cf7329c4e3574190a572a7f7c09f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  valueLeft: 0
-  valueRight: 0
+  value1: 0
+  value2: 0
 --- !u!1001 &1130940103
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -363,11 +369,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11442534, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
       propertyPath: portName
-      value: /dev/tty.usbserial-0001
+      value: COM4
       objectReference: {fileID: 0}
     - target: {fileID: 11442534, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11442534, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
       propertyPath: messageListener
