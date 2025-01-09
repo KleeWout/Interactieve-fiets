@@ -27,7 +27,7 @@ public class EspListener : MonoBehaviour
         string[] msgSplit = msg.Split(',');
         value1 = float.Parse(msgSplit[0]);
         value2 = float.Parse(msgSplit[1]);
-        // Debug.Log("Value 1: " + value1 + " Value 2: " + value2); 
+        Debug.Log("Value 1: " + value1 + " Value 2: " + value2);
     }
 
     // Invoked when a connect/disconnect event occurs. The parameter 'success'

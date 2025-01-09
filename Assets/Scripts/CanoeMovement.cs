@@ -28,8 +28,8 @@ public class CanoeMovement : MonoBehaviour
         //getal tssn -1 en 1
         value1 = espListener.value1;
         value2 = espListener.value2;
-        float normalizedValue1 = (value1 / 4045f);
-        float normalizedValue2 = (value2 / 4045f);
+        float normalizedValue1 = (value1 / 150f);
+        float normalizedValue2 = (value2 / 150f);
 
         float horizontalInput = (normalizedValue1 - normalizedValue2);
 
@@ -45,14 +45,22 @@ public class CanoeMovement : MonoBehaviour
 
 
         transform.rotation = Quaternion.Euler(0, newY, wobbles);
+        // Check if value1 and value2 are approximately equal
+        if (Mathf.Abs(value1 - value2) < 1f) // Or some small threshold to consider them equal
+        {
+            // Move forward if values are equal
+            Vector3 forwardDirection = transform.forward * thrustSpeed;
+            rb.AddForce(forwardDirection, ForceMode.Force);
+        }
 
+        // Apply rotational forces
         Vector3 forceDirection = transform.forward * Mathf.Abs(horizontalInput * thrustSpeed);
         Vector3 forcePosition = transform.TransformPoint(new Vector3(0, 0, 1f));
         rb.AddForceAtPosition(forceDirection, forcePosition);
 
         // Debug.Log("Value 1: " + espListener.value1 + " Value 2: " + espListener.value2);
-
-
     }
+
+
 
 }
