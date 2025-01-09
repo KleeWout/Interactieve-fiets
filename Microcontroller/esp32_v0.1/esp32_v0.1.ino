@@ -60,10 +60,10 @@ void setup() {
 
 void loop() {
 
-  if(millis() > lastRevolutionLeft + (lastRevolutionLeft - previousRevolutionLeft)){
+  if(millis() > lastRevolutionLeft + (lastRevolutionLeft - previousRevolutionLeft) && lastRevolutionLeft != 0){
     revolutionsPerSecondLeft = 1000.0 / (millis() - lastRevolutionLeft);
   }
-  if(millis() > lastRevolutionRight + (lastRevolutionRight - previousRevolutionRight)){
+  if(millis() > lastRevolutionRight + (lastRevolutionRight - previousRevolutionRight) && lastRevolutionRight != 0){
     revolutionsPerSecondRight = 1000.0 / (millis() - lastRevolutionRight);
   }
 
