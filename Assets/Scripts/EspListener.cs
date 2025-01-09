@@ -17,17 +17,17 @@ using System.Collections;
 public class EspListener : MonoBehaviour
 {
 
-    public float value1;
-    public float value2;
+    public float valueLeft;
+    public float valueRight;
 
     // Invoked when a line of data is received from the serial device.
     void OnMessageArrived(string msg)
     {
-        // Debug.Log("Message arrived: " + msg);
+        Debug.Log("Message arrived: " + msg);
         string[] msgSplit = msg.Split(',');
-        value1 = float.Parse(msgSplit[0]);
-        value2 = float.Parse(msgSplit[1]);
-        Debug.Log("Value 1: " + value1 + " Value 2: " + value2);
+        valueLeft = float.Parse(msgSplit[0]);
+        valueRight = float.Parse(msgSplit[1]);
+        Debug.Log("Value 1: " + valueLeft + " Value 2: " + valueRight);
     }
 
     // Invoked when a connect/disconnect event occurs. The parameter 'success'
