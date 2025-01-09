@@ -16,7 +16,7 @@ public class ObstacleFloat : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        offset = 1 - (Random.value * 2);
+        offset = Random.Range(0.2f, 2f);
 
         initialPosition = transform.position;
         amplitude = (maxPosition - minPosition) / 2;
@@ -28,7 +28,7 @@ public class ObstacleFloat : MonoBehaviour
     {
         Vector3 currentPosition = transform.position;
         currentPosition.x = amplitude * Mathf.Sin(Time.time * offset) + shift;
-        currentPosition.y = initialPosition.y - Mathf.Sin(Time.time * 3.129f + offset) * 0.06f;
+        currentPosition.y = initialPosition.y - Mathf.Sin(Time.time * 3.129f + offset) * 0.1f;
         transform.position = currentPosition;
     }
 }
