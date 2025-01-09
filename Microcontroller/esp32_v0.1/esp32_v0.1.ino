@@ -69,6 +69,6 @@ void loop() {
 
   delay(interval);
 
-  Serial.println(String(revolutionsPerSecondLeft) + String(revolutionsPerSecondRight));
+  Serial.println(String(revolutionsPerSecondLeft) +","+ String(revolutionsPerSecondRight));
 
 }
