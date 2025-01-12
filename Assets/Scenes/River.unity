@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 235133414}
   - component: {fileID: 235133415}
   - component: {fileID: 235133416}
+  - component: {fileID: 235133417}
   m_Layer: 0
   m_Name: Canoe
   m_TagString: Untagged
@@ -284,6 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 683d0760a6db34a8b9ad32ae95fdb2be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSinglePlayer: 0
   wobbleMaxAngle: 30
   wobbleSmoothing: 2
   maxTiltAngle: 20
@@ -291,6 +293,7 @@ MonoBehaviour:
   steeringSpeed: 20
   thrustSpeed: 10
   controllerActivated: 0
+  keyboardControl: 1
 --- !u!114 &235133416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -305,6 +308,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   valueLeft: 0
   valueRight: 0
+--- !u!114 &235133417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 235133405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cca713dbf7fdfbc4ea24411839e6d5bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 235133410}
+  score: 0
+  scoreText: {fileID: 0}
 --- !u!1001 &1130940103
 PrefabInstance:
   m_ObjectHideFlags: 0
