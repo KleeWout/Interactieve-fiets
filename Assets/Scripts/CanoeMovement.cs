@@ -21,9 +21,18 @@ public class CanoeMovement : MonoBehaviour
     public float steeringSpeed;
     public float thrustSpeed;
 
-    // controller
-    public bool controllerActivated = true;
-    public bool keyboardControl = true;
+    // input
+    public enum InputType
+    {
+        Keyboard,
+        Controller,
+        ESP
+    }
+    public InputType inputType;
+
+    // peddle animation values
+    internal float leftAnimation;
+    internal float rightAnimation;
 
     void Start()
     {
@@ -35,22 +44,26 @@ public class CanoeMovement : MonoBehaviour
     void FixedUpdate()
     {
 
-        if (controllerActivated)
+        if (inputType == InputType.Controller)
         {
             if (Gamepad.all.Count > 0)
             {
+                leftAnimation = Gamepad.all[0].leftStick.ReadValue().y;
+                rightAnimation = Gamepad.all[0].rightStick.ReadValue().y;
                 userInput = Gamepad.all[0].leftStick.ReadValue().y - Gamepad.all[0].rightStick.ReadValue().y;
-                userThrust = (Gamepad.all[0].leftStick.ReadValue().y + Gamepad.all[0].rightStick.ReadValue().y)/2;
+                userThrust = (Gamepad.all[0].leftStick.ReadValue().y + Gamepad.all[0].rightStick.ReadValue().y)/2;  
             }
 
         }
-        if(keyboardControl)
+        else if(inputType == InputType.Keyboard)
         {
             userInput = Input.GetAxis("Horizontal");
             userThrust = Input.GetAxis("Vertical");
         }
         else if(!isSinglePlayer)
         {
+            leftAnimation = espListener.valueLeft;
+            rightAnimation = espListener.valueRight;
             userInput = (espListener.valueLeft / 1.5f) - (espListener.valueRight / 1.5f);
             userThrust = ((espListener.valueLeft / 3) + (espListener.valueRight / 3)) / 2;
 
