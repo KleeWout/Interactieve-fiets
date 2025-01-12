@@ -534,13 +534,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 683d0760a6db34a8b9ad32ae95fdb2be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSinglePlayer: 1
   wobbleMaxAngle: 30
   wobbleSmoothing: 2
   maxTiltAngle: 20
   tiltSmoothing: 8
   steeringSpeed: 20
   thrustSpeed: 10
-  controllerActivated: 1
+  controllerActivated: 0
+  keyboardControl: 0
 --- !u!114 &235133416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1113,11 +1115,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11442534, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
       propertyPath: portName
-      value: COM4
+      value: /dev/tty.usbserial-0001
       objectReference: {fileID: 0}
     - target: {fileID: 11442534, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11442534, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
       propertyPath: messageListener
@@ -1554,8 +1556,8 @@ SceneRoots:
   m_Roots:
   - {fileID: 1609786790}
   - {fileID: 1450871438}
-  - {fileID: 235133410}
   - {fileID: 2110234694}
   - {fileID: 1130940103}
   - {fileID: 1296527650}
   - {fileID: 2129784330}
+  - {fileID: 235133410}

@@ -6,7 +6,7 @@
 
 
 const unsigned long interval = 200;
-const unsigned long debounceDelay = 200;  
+const unsigned long debounceDelay = 600;  
 
 // left
 unsigned long lastDebounceTimeLeft = 0;
@@ -69,6 +69,7 @@ void loop() {
 
   delay(interval);
 
-  Serial.println(String(revolutionsPerSecondLeft) +","+ String(revolutionsPerSecondRight));
+  Serial.println(revolutionsPerSecondLeft + String(",") + revolutionsPerSecondRight);
+  // Serial.println(String(revolutionsPerSecondLeft) +","+ String(revolutionsPerSecondRight));
 
 }

@@ -1,3 +1,4 @@
+using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public class CanoeMovement : MonoBehaviour
@@ -6,6 +7,8 @@ public class CanoeMovement : MonoBehaviour
     private EspListener espListener;
     private float userInput;
     private float userThrust;
+
+    public bool isSinglePlayer = false;
 
 
     //boat animations
@@ -46,10 +49,16 @@ public class CanoeMovement : MonoBehaviour
             userInput = Input.GetAxis("Horizontal");
             userThrust = Input.GetAxis("Vertical");
         }
+        else if(!isSinglePlayer)
+        {
+            userInput = (espListener.valueLeft / 1.5f) - (espListener.valueRight / 1.5f);
+            userThrust = ((espListener.valueLeft / 3) + (espListener.valueRight / 3)) / 2;
+
+        }
         else
         {
-            userInput = (espListener.valueLeft / 3) - (espListener.valueRight / 3);
-            userThrust = ((espListener.valueLeft / 3) + (espListener.valueRight / 3)) / 2;
+            userInput = 0;
+            userThrust = (espListener.valueLeft / 3) + (espListener.valueRight / 3);
         }
 
         // boat animations (rotations left/right and wobble)
@@ -62,7 +71,7 @@ public class CanoeMovement : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, newY, wobbles);
 
         // boat thurst (forward)
-        Vector3 forceDirection = transform.forward * Mathf.Abs(userThrust * thrustSpeed);
+        Vector3 forceDirection = transform.forward * (userThrust * thrustSpeed);
         Vector3 forcePosition = transform.TransformPoint(new Vector3(0, 0, 1f));
         rb.AddForceAtPosition(forceDirection, forcePosition);
 

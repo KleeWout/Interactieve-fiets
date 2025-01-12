@@ -78,8 +78,8 @@ Material:
     - _DepthMaxDistance: 20
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _FoamMaxDistance: 4
-    - _FoamMinDistance: 1
+    - _FoamMaxDistance: 2
+    - _FoamMinDistance: 0.1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
