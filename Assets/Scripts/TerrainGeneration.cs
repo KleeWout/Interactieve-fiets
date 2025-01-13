@@ -33,18 +33,26 @@ public class TerrainGeneration : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                heights[x, y] = worldHeight / terrainData.size.y;
+                float heightValue = worldHeight / terrainData.size.y;
                 foreach (var point in bezierPoints)
                 {
                     float Newx = point.x + 512;
                     float Newz = point.z + 512;
-                    if (Vector2.Distance(new Vector2(Newz, Newx), new Vector2(x, y)) < 10)
+                    var distance = Vector2.Distance(new Vector2(Newz, Newx), new Vector2(x, y));
+                    if (distance < 8)
                     {
-                        heights[x, y] = (worldHeight-8f) / terrainData.size.y;
+                        heightValue = 1 / terrainData.size.y;
+                        break;
+                    }
+                    else if (distance < 12)
+                    {
+                        heightValue = 6 / terrainData.size.y;
                     }
                 }
+                heights[x, y] = heightValue;
             }
         }
+
         heights = SmoothHeights(heights);
         terrainData.SetHeights(0, 0, heights);
     }
@@ -110,9 +118,9 @@ public class TerrainGeneration : MonoBehaviour
         int kernelSize = 1;
         float threshold = 0.01f; // Adjust this value to control sensitivity to height changes
         float noiseScale1 = 0.1f; // Adjust this value to control the scale of the first noise map
-        float noiseIntensity1 = 0.02f; // Adjust this value to control the intensity of the first noise map
+        float noiseIntensity1 = 0.01f; // Adjust this value to control the intensity of the first noise map
         float noiseScale2 = 0.02f; // Adjust this value to control the scale of the second noise map
-        float noiseIntensity2 = 0.008f; // Adjust this value to control the intensity of the second noise map
+        float noiseIntensity2 = 0.01f; // Adjust this value to control the intensity of the second noise map
         float[,] smoothedHeights = new float[width, height];
 
         for (int x = 0; x < width; x++)
