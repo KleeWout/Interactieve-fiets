@@ -13,7 +13,7 @@ public class TerrainGeneration : MonoBehaviour
     private List<Vector3> bezierPoints = new List<Vector3>();
 
 
-    public int worldHeight = 10;
+    public int worldHeight;
 
     void Start()
     {
@@ -21,7 +21,6 @@ public class TerrainGeneration : MonoBehaviour
         terrainData = terrain.terrainData;
         width = terrainData.heightmapResolution;
         height = terrainData.heightmapResolution;
-        worldHeight += 10;
 
 
         GenerateRandomBezierCurve();
@@ -39,13 +38,14 @@ public class TerrainGeneration : MonoBehaviour
                 {
                     float Newx = point.x + 512;
                     float Newz = point.z + 512;
-                    if (Vector2.Distance(new Vector2(Newz, Newx), new Vector2(x, y)) < 5)
+                    if (Vector2.Distance(new Vector2(Newz, Newx), new Vector2(x, y)) < 10)
                     {
-                        heights[x, y] = -15f;
+                        heights[x, y] = (worldHeight-8f) / terrainData.size.y;
                     }
                 }
             }
         }
+        heights = SmoothHeights(heights);
         terrainData.SetHeights(0, 0, heights);
     }
 
@@ -104,5 +104,55 @@ public class TerrainGeneration : MonoBehaviour
         p += ttt * p3; // t^3 * p3
 
         return p;
+    }
+    float[,] SmoothHeights(float[,] heights)
+    {
+        int kernelSize = 1;
+        float threshold = 0.01f; // Adjust this value to control sensitivity to height changes
+        float noiseScale1 = 0.1f; // Adjust this value to control the scale of the first noise map
+        float noiseIntensity1 = 0.02f; // Adjust this value to control the intensity of the first noise map
+        float noiseScale2 = 0.02f; // Adjust this value to control the scale of the second noise map
+        float noiseIntensity2 = 0.008f; // Adjust this value to control the intensity of the second noise map
+        float[,] smoothedHeights = new float[width, height];
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                float currentHeight = heights[x, y];
+                float sum = currentHeight;
+                int count = 1;
+
+                for (int i = -kernelSize; i <= kernelSize; i++)
+                {
+                    for (int j = -kernelSize; j <= kernelSize; j++)
+                    {
+                        int nx = x + i;
+                        int ny = y + j;
+
+                        if (nx >= 0 && nx < width && ny >= 0 && ny < height)
+                        {
+                            float neighborHeight = heights[nx, ny];
+                            if (Mathf.Abs(neighborHeight - currentHeight) > threshold)
+                            {
+                                sum += neighborHeight;
+                                count++;
+                            }
+                        }
+                    }
+                }
+
+                float averageHeight = sum / count;
+
+                // Generate Perlin noise values
+                float noiseValue1 = Mathf.PerlinNoise(x * noiseScale1, y * noiseScale1) * noiseIntensity1;
+                float noiseValue2 = Mathf.PerlinNoise(x * noiseScale2, y * noiseScale2) * noiseIntensity2;
+
+                // Add noise to the average height
+                smoothedHeights[x, y] = averageHeight + noiseValue1 + noiseValue2;
+            }
+        }
+
+        return smoothedHeights;
     }
 }

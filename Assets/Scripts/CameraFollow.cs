@@ -17,17 +17,18 @@ public class CameraFollow : MonoBehaviour
 
     void LateUpdate()
     {
-        // Calculate the desired position based on the target's position and the offset
-        Vector3 desiredPosition = new Vector3(target.position.x - offset.x, offset.y, target.position.z - offset.z);
-        // Vector3 desiredPosition = target.position + offset;
+    // // Calculate the desired position based on the target's position and the offset
+    // Vector3 desiredPosition = new Vector3(target.position.x - offset.x, offset.y, target.position.z - offset.z);
+    // // Vector3 desiredPosition = target.position + offset;
 
-        // Smoothly interpolate between the camera's current position and the desired position
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
+    // // Smoothly interpolate between the camera's current position and the desired position
+    // Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
 
-        // Apply the smoothed position to the camera
-        transform.position = smoothedPosition;
+    // // Apply the smoothed position to the camera
+    // transform.position = smoothedPosition;
 
-        // Optionally, make the camera always look at the target
-        // transform.LookAt(target);
+    // Copy the rotation of the target
+    // transform.rotation = target.rotation;
     }
+
 }
