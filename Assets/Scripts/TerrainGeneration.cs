@@ -12,8 +12,10 @@ public class TerrainGeneration : MonoBehaviour
     private Vector3[] controlPoints = new Vector3[11];
     private List<Vector3> bezierPoints = new List<Vector3>();
 
+    public GameObject player;
+    public float chunkSize = 128f;
+    private float lastChunkZ = 0f;
 
-    public int worldHeight;
 
     void Start()
     {
@@ -26,6 +28,28 @@ public class TerrainGeneration : MonoBehaviour
         GenerateRandomBezierCurve();
         CarveTerrain();
     }
+
+    void Update(){
+        if (player.transform.position.z > lastChunkZ + chunkSize)
+        {
+            lastChunkZ += chunkSize;
+            GenerateNextChunk();
+        }
+    }
+
+    void GenerateNextChunk()
+    {
+        // Shift control points for the new chunk
+        for (int i = 0; i < controlPoints.Length; i++)
+        {
+            controlPoints[i].z += chunkSize;
+        }
+
+        GenerateRandomBezierCurve();
+        CarveTerrain();
+    }
+
+
     void CarveTerrain()
     {
         float[,] heights = new float[width, height];
@@ -33,7 +57,7 @@ public class TerrainGeneration : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                float heightValue = worldHeight / terrainData.size.y;
+                float heightValue = 10 / terrainData.size.y;
                 foreach (var point in bezierPoints)
                 {
                     float Newx = point.x + 256;
