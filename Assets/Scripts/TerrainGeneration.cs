@@ -36,8 +36,8 @@ public class TerrainGeneration : MonoBehaviour
                 float heightValue = worldHeight / terrainData.size.y;
                 foreach (var point in bezierPoints)
                 {
-                    float Newx = point.x + 512;
-                    float Newz = point.z + 512;
+                    float Newx = point.x + 256;
+                    float Newz = point.z + 256;
                     var distance = Vector2.Distance(new Vector2(Newz, Newx), new Vector2(x, y));
                     if (distance < 8)
                     {
