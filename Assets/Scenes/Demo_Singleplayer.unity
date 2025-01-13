@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 14940891}
   - component: {fileID: 14940890}
   - component: {fileID: 14940889}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cylinder (1)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -257,7 +257,7 @@ GameObject:
   - component: {fileID: 64690755}
   - component: {fileID: 64690754}
   - component: {fileID: 64690753}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cylinder (4)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -386,7 +386,9 @@ GameObject:
   - component: {fileID: 235133415}
   - component: {fileID: 235133416}
   - component: {fileID: 235133417}
-  m_Layer: 0
+  - component: {fileID: 235133419}
+  - component: {fileID: 235133418}
+  m_Layer: 9
   m_Name: Canoe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -570,6 +572,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4793940dc20ccbc40b7aa9c1e9b94a7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &235133418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 235133405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cca713dbf7fdfbc4ea24411839e6d5bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 235133410}
+  score: 0
+  scoreText: {fileID: 251487778}
+--- !u!114 &235133419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 235133405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073ce2d545af95d46b8749538ce54876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hearts:
+  - {fileID: 490086330}
+  - {fileID: 1043084619}
+  - {fileID: 239653729}
+  - {fileID: 1858513305}
+  - {fileID: 1134298290}
+  fullHeart: {fileID: 4504655, guid: 8282428c6aa64ee44a9b06d6530da55c, type: 3}
+  emptyHeart: {fileID: 1938222970, guid: 8282428c6aa64ee44a9b06d6530da55c, type: 3}
 --- !u!1 &239653727
 GameObject:
   m_ObjectHideFlags: 0
@@ -794,7 +831,7 @@ GameObject:
   - component: {fileID: 365965549}
   - component: {fileID: 365965548}
   - component: {fileID: 365965547}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cylinder (5)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -919,7 +956,7 @@ GameObject:
   - component: {fileID: 488632173}
   - component: {fileID: 488632172}
   - component: {fileID: 488632171}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cylinder (2)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -1119,7 +1156,7 @@ GameObject:
   - component: {fileID: 588119327}
   - component: {fileID: 588119326}
   - component: {fileID: 588119325}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cylinder (3)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -1244,7 +1281,7 @@ GameObject:
   - component: {fileID: 898007130}
   - component: {fileID: 898007129}
   - component: {fileID: 898007128}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cylinder
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -2306,7 +2343,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2129784330}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Obstacles
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
