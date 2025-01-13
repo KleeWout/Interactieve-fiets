@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class TerrainGen : MonoBehaviour
 {
+    public GameObject player;
     public Terrain terrain1;
     public Terrain terrain2;
     private TerrainData terrainData1;
@@ -16,48 +18,63 @@ public class TerrainGen : MonoBehaviour
     private Vector3[] controlPoints = new Vector3[14];
     private List<Vector3> bezierPoints = new List<Vector3>();
 
-
     private int chunkCount = 0;
 
-
-
-    void Start()
+    async void Start()
     {
+        Task<float[,]> heights;
         terrainData1 = terrain1.terrainData;
         terrainData2 = terrain2.terrainData;
 
         GenerateRandomBezierCurve(true, new Vector2(0, 0));
-        CarveTerrain();
+        heights = CarveTerrainAsync();
+        await heights;
+        terrainData1.SetHeights(0, 0, heights.Result);
 
         chunkCount += 1;
         GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z));
-        CarveTerrain();
-
-
-        chunkCount += 1;
-        Vector3 newPosition = terrain1.transform.position;
-        newPosition.z += 2 * 513;
-        terrain1.transform.position = newPosition;
-        GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z));
-        CarveTerrain();
-
-        chunkCount += 1;
-        newPosition = terrain2.transform.position;
-        newPosition.z += 2 * 513;
-        terrain2.transform.position = newPosition;
-        GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z));
-        CarveTerrain();
-        
-
+        heights = CarveTerrainAsync();
+        await heights;
+        terrainData2.SetHeights(0, 0, heights.Result);
     }
 
-    void Update()
+    async void Update()
     {
-        // dit is voor de volgende 
-        // GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z));
+        if(player.transform.position.z > (chunkCount*513))
+        {
+            if(chunkCount % 2 == 0)
+            {
+                chunkCount += 1;
+                Vector3 newPosition = terrain2.transform.position;
+                newPosition.z += 1026f;
+                terrain2.transform.position = newPosition;
+                GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z));
+                var heights = CarveTerrainAsync();
+                await heights;
+                terrainData2.SetHeights(0, 0, heights.Result);
+            }
+            else{
+                chunkCount += 1;
+                Vector3 newPosition = terrain1.transform.position;
+                newPosition.z += 1026f;
+                terrain1.transform.position = newPosition;
+                GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z));
+                var heights = CarveTerrainAsync();
+                await heights;
+                terrainData1.SetHeights(0, 0, heights.Result);
+            }
+
+        }
+
     }
 
-    void CarveTerrain()
+    async Task<float[,]> CarveTerrainAsync()
+    {
+        float[,] heights = await Task.Run(() => CarveTerrain());
+        return heights;
+    }
+
+    float[,] CarveTerrain()
     {
         float[,] heights = new float[width, height];
         for (int x = 0; x < width; x++)
@@ -69,19 +86,6 @@ public class TerrainGen : MonoBehaviour
                 {
                     float newx = point.x + 256f;
                     float newz = point.z - ((chunkCount*512)-256f);
-
-
-                    // float newz;
-                    // if(currentChunk == 0)
-                    // {
-                    //     newz = point.z + 256f;
-                    // }
-                    // else{
-                    //     newz = point.z - 256f;
-                    // }
-
-                    // Debug.Log(newz);
-                    // Debug.Log(point.z - (currentChunk-256));
                     var distance = Vector2.Distance(new Vector2(newz, newx), new Vector2(x, y));
                     if (distance < 8)
                     {
@@ -98,17 +102,8 @@ public class TerrainGen : MonoBehaviour
         }
 
         heights = SmoothHeights(heights);
-        if(chunkCount % 2 == 0)
-        {
-            terrainData1.SetHeights(0, 0, heights);
-        }
-        else{
-            terrainData2.SetHeights(0, 0, heights);
-        }
+        return heights;
     }
-
-
-
 
 
     void GenerateRandomBezierCurve(bool isFirstGen, Vector2 firstPoint)
@@ -147,7 +142,6 @@ public class TerrainGen : MonoBehaviour
             }
         }
 
-        // remove all points that are not in the current chunk
         List<Vector3> pointsToRemove = new List<Vector3>();
 
         foreach(Vector3 point in bezierPoints)
@@ -193,11 +187,11 @@ public class TerrainGen : MonoBehaviour
     float[,] SmoothHeights(float[,] heights)
     {
         int kernelSize = 1;
-        float threshold = 0.01f; // Adjust this value to control sensitivity to height changes
-        float noiseScale1 = 0.1f; // Adjust this value to control the scale of the first noise map
-        float noiseIntensity1 = 0.01f; // Adjust this value to control the intensity of the first noise map
-        float noiseScale2 = 0.02f; // Adjust this value to control the scale of the second noise map
-        float noiseIntensity2 = 0.01f; // Adjust this value to control the intensity of the second noise map
+        float threshold = 0.01f;
+        float noiseScale1 = 0.1f;
+        float noiseIntensity1 = 0.01f;
+        float noiseScale2 = 0.02f;
+        float noiseIntensity2 = 0.01f;
         float[,] smoothedHeights = new float[width, height];
 
         for (int x = 0; x < width; x++)
@@ -234,29 +228,10 @@ public class TerrainGen : MonoBehaviour
                 float noiseValue2;
                 noiseValue1 = Mathf.PerlinNoise((x + chunkCount*512) * noiseScale1, y * noiseScale1) * noiseIntensity1;
                 noiseValue2 = Mathf.PerlinNoise((x + chunkCount*512) * noiseScale2, y * noiseScale2) * noiseIntensity2;
-                // Generate Perlin noise values
-                // if(chunkCount == 0){
-                //     noiseValue1 = Mathf.PerlinNoise((x + 0.0f) * noiseScale1, y * noiseScale1) * noiseIntensity1;
-                //     noiseValue2 = Mathf.PerlinNoise((x + 0.0f) * noiseScale2, y * noiseScale2) * noiseIntensity2;
-                // }
-                // if(chunkCount == 1){
-                //     noiseValue1 = Mathf.PerlinNoise((x + 512.0f) * noiseScale1, y * noiseScale1) * noiseIntensity1;
-                //     noiseValue2 = Mathf.PerlinNoise((x + 512.0f) * noiseScale2, y * noiseScale2) * noiseIntensity2;
-                // }
-                // if(chunkCount == 2){
-                //     noiseValue1 = Mathf.PerlinNoise((x + 1024.0f) * noiseScale1, y * noiseScale1) * noiseIntensity1;
-                //     noiseValue2 = Mathf.PerlinNoise((x + 1024.0f) * noiseScale2, y * noiseScale2) * noiseIntensity2;
-                // }
-                // else{
-                //     noiseValue1 = 1;
-                //     noiseValue2 = 1;
-                // }
-
                 float finalHeight = averageHeight + noiseValue1 + noiseValue2;
                 smoothedHeights[x, y] = finalHeight;
             }
         }
-
         return smoothedHeights;
     }
 
