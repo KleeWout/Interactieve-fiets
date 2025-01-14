@@ -38,6 +38,7 @@ public class ScoreSystem : MonoBehaviour
         {
             score += scoreToAdd;
             scoreText.text = score.ToString() + "m";
+            WebSocketClient.Instance.SendMessageToSocket($"Score updated: {score}");
         }
     }
 }

@@ -86,7 +86,7 @@ public class WebSocketClient : MonoBehaviour
         }
     }
 
-    private async void SendMessageToSocket(string message)
+    public async void SendMessageToSocket(string message)
     {
         if (webSocket.State == WebSocketState.Open)
         {

@@ -1,5 +1,5 @@
 "use strict";
-let htmlSingleplayer, htmlMultiplayer, htmlMain, messagesDiv;
+let htmlSingleplayer, htmlMultiplayer, htmlMain, messagesDiv, htmlscore;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 
@@ -11,7 +11,15 @@ ws.onmessage = (event) => {
   const message = event.data;
   console.log("Message received:", message);
   console.log(messagesDiv);
-  messagesDiv.innerHTML += `<p>Received: ${message}</p>`;
+  if (message.startsWith("Recieved")) {
+    console.log("joined message received");
+    messagesDiv.innerHTML = `<p>Joined: ${message}</p>`;
+  }
+  messagesDiv.innerHTML = `<p>Received: ${message}</p>`;
+if (message.startsWith('score')) {
+    console.log("Score message received");
+    htmlscore.innerHTML = `<p>Current Score: ${message}</p>`;
+}
 };
 
 ws.onerror = (error) => {
@@ -39,6 +47,7 @@ const init = function () {
   htmlMultiplayer = document.querySelector(".js-multiplayer");
   htmlMain = document.querySelector(".js-main");
   messagesDiv = document.querySelector(".js-messages");
+  htmlscore = document.querySelector(".js-score");
   //   listenToSocket();
   listenToButtons();
 };
