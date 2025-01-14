@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Threading;
+using System;
+using System.IO.Ports;
 
 public class SerialController : MonoBehaviour
 {
-    public string portName = "COM8";
+    // public string portName = "COM8";
     public int baudRate = 115200;
     public GameObject messageListener;
     public int reconnectionDelay = 1000;
@@ -29,19 +31,60 @@ public class SerialController : MonoBehaviour
     // ------------------------------------------------------------------------
     void OnEnable()
     {
+        GetAvailablePorts();
+    }
+    void GetAvailablePorts()
+    {
+        string[] ports = SerialPort.GetPortNames();
+        foreach (string port in ports)
+        {
+        if (port.Contains("ttyUSB") || port.Contains("tty.usb") || port.Contains("cu.usb") || port.Contains("COM"))
+        {
+            Debug.Log(PerformHandshake(port) ? $"Handshake successful: {port}" : $"Handshake failed: {port}");
+        }
+        }
+    }
+
+
+
+    bool PerformHandshake(string portName)
+    {
         serialThread = new SerialThreadLines(portName,
-                                             baudRate,
-                                             reconnectionDelay,
-                                             maxUnreadMessages);
+                                        baudRate,
+                                        reconnectionDelay,
+                                        maxUnreadMessages);
         thread = new Thread(new ThreadStart(serialThread.RunForever));
         thread.Start();
+        string expectedMessage = "v0.1"; // The specific string to match
+        DateTime timeout = DateTime.Now.AddSeconds(2); // Timeout after 10 seconds
+
+        while (DateTime.Now < timeout)
+        {
+            string message = (string)serialThread.ReadMessage();
+            if (message != null)
+            {
+                if (message.Trim() == expectedMessage)
+                {
+                    return true; // Handshake successful
+                }
+            }
+            Thread.Sleep(100); // Wait for a short period before checking again
+        }
+        Disconnect();
+        return false; // Handshake timed out
     }
+
 
     // ------------------------------------------------------------------------
     // Invoked whenever the SerialController gameobject is deactivated.
     // It stops and destroys the thread that was reading from the serial device.
     // ------------------------------------------------------------------------
     void OnDisable()
+    {
+        Disconnect();
+    }
+
+    void Disconnect()
     {
         // If there is a user-defined tear-down function, execute it before
         // closing the underlying COM port.
