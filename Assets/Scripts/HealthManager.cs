@@ -11,6 +11,8 @@ public class HealthManager : MonoBehaviour
 
     public GameOverScreen GameOverScreen;
 
+    bool isAlive = true;
+
     void Awake()
     {
         health = 5;
@@ -25,8 +27,9 @@ public class HealthManager : MonoBehaviour
         {
             hearts[i].sprite = fullHeart;
         }
-        if (health <= 0)
+        if (health <= 0 && isAlive)
         {
+            isAlive = false;
             GameOverScreen.Setup();
         }
     }

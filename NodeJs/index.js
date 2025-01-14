@@ -15,27 +15,21 @@ wss.on("connection", function (ws) {
   //client connects
   console.log("A new client connected!");
   ws.on("message", function (msg) {
+    const message = msg.toString();
+    console.log("data received:", message);
     wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {//check if client is ready
+      if (client.readyState === WebSocket.OPEN) {
+        //check if client is ready
         //send message to all clients
         client.send(msg.toString());
-        
       }
     });
-  });
-
-  // ws.on("message", (data) => {
-  //   // Convert Buffer to string
-  //   const message = data.toString();
-  //   console.log("data received:", message);
-
-  //   // Broadcast to all clients
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(message);
       }
     });
-  // });
+  });
 });
 
 myServer.on("upgrade", async function upgrade(request, socket, head) {
