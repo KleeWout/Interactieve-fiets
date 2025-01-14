@@ -231,26 +231,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 83623162}
-  - component: {fileID: 83623161}
   m_Layer: 0
-  m_Name: HttpListener
+  m_Name: WebSocket
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &83623161
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 83623160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 685b9bb412b68974eabd64550f9544f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &83623162
 Transform:
   m_ObjectHideFlags: 0
@@ -439,8 +426,7 @@ MonoBehaviour:
   tiltSmoothing: 8
   steeringSpeed: 20
   thrustSpeed: 10
-  controllerActivated: 0
-  keyboardControl: 1
+  inputType: 0
 --- !u!114 &235133416
 MonoBehaviour:
   m_ObjectHideFlags: 0
