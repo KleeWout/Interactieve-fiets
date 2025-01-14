@@ -9,7 +9,7 @@ public class ScoreSystem : MonoBehaviour
     float distanceSinceLastScore;
 
     public Transform player;
-    public float score = 0f;
+    public static float score = 0f;
     public TMP_Text scoreText;
 
 

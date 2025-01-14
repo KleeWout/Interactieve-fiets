@@ -9,7 +9,9 @@ public class HealthManager : MonoBehaviour
     public Sprite fullHeart;
     public Sprite emptyHeart;
 
-void Awake()
+    public GameOverScreen GameOverScreen;
+
+    void Awake()
     {
         health = 5;
     }
@@ -22,6 +24,10 @@ void Awake()
         for (int i = 0; i < health; i++)
         {
             hearts[i].sprite = fullHeart;
+        }
+        if (health <= 0)
+        {
+            GameOverScreen.Setup();
         }
     }
 }
