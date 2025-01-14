@@ -9,7 +9,13 @@ wss.on("connection", (ws) => {
     // Convert Buffer to string
     const message = data.toString();
     console.log("data received:", message);
-    ws.send(message);
+    
+    // Broadcast to all clients
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
   });
 });
 
