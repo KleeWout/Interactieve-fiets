@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7199421085710428b890059c90b241a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 235133405}
   terrain1: {fileID: 2084078453}
   terrain2: {fileID: 1217645891}
 --- !u!4 &42054470
@@ -796,7 +797,7 @@ Terrain:
   m_HeightmapPixelError: 1
   m_SplatMapDistance: 1000
   m_HeightmapMinimumLODSimplification: 0
-  m_HeightmapMaximumLOD: 1
+  m_HeightmapMaximumLOD: 0
   m_ShadowCastingMode: 2
   m_DrawHeightmap: 1
   m_DrawInstanced: 0
@@ -845,8 +846,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6123d5f52694347e79956584ed5d1129, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 235133405}
-  chunkSize: 128
 --- !u!1 &1441963297 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 88d3b54bab1554142b998682624fcaa6,
@@ -1204,7 +1203,7 @@ Terrain:
   m_HeightmapPixelError: 1
   m_SplatMapDistance: 1000
   m_HeightmapMinimumLODSimplification: 0
-  m_HeightmapMaximumLOD: 1
+  m_HeightmapMaximumLOD: 0
   m_ShadowCastingMode: 2
   m_DrawHeightmap: 1
   m_DrawInstanced: 0

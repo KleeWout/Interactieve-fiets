@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -20,6 +21,9 @@ public class TerrainGen : MonoBehaviour
 
     private int chunkCount = 0;
 
+
+    private float[,] lastHeights;
+
     async void Start()
     {
         Task<float[,]> heights;
@@ -29,12 +33,14 @@ public class TerrainGen : MonoBehaviour
         GenerateRandomBezierCurve(true, new Vector2(0, 0));
         heights = CarveTerrainAsync();
         await heights;
+        lastHeights = heights.Result;
         terrainData1.SetHeights(0, 0, heights.Result);
 
         chunkCount += 1;
         GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z));
         heights = CarveTerrainAsync();
         await heights;
+        lastHeights = heights.Result;
         terrainData2.SetHeights(0, 0, heights.Result);
     }
 
@@ -82,27 +88,125 @@ public class TerrainGen : MonoBehaviour
             for (int y = 0; y < height; y++)
             {
                 float heightValue = 10 / sizeY;
-                foreach (var point in bezierPoints)
-                {
-                    float newx = point.x + 256f;
-                    float newz = point.z - ((chunkCount*512)-256f);
-                    var distance = Vector2.Distance(new Vector2(newz, newx), new Vector2(x, y));
-                    if (distance < 8)
-                    {
-                        heightValue = 0 / sizeY;
-                        break;
-                    }
-                    else if (distance < 12)
-                    {
-                        heightValue = 6 / sizeY;
-                    }
-                }
                 heights[x, y] = heightValue;
             }
         }
 
+        System.Random random = new System.Random();
+        
+        foreach(var point in bezierPoints)
+        {
+            float newx = point.x + 256f;
+            float newz = point.z - ((chunkCount*512)-256f);
+
+            var points3 = GetPointsInRadius(new Vector2(newz, newx), (float)random.NextDouble() * (35f - 12f) + 10f);
+            foreach(var p in points3)
+            {
+                if(p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
+                {
+                    heights[(int)p.x, (int)p.y] = ((float)random.NextDouble() * (10f - 8f) + 8f) / sizeY; //#8f
+                    continue;
+                }
+            }
+        }
+        foreach(var point in bezierPoints)
+        {
+            float newx = point.x + 256f;
+            float newz = point.z - ((chunkCount*512)-256f);
+
+            var points3 = GetPointsInRadius(new Vector2(newz, newx), (float)random.NextDouble() * (10f - 8f) + 8f);
+            foreach(var p in points3)
+            {
+                if(p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
+                {
+                    heights[(int)p.x, (int)p.y] = ((float)random.NextDouble() * (5f - 3f) + 3f) / sizeY;
+                    continue;
+                }
+            }
+        }
+        foreach(var point in bezierPoints)
+        {
+            float newx = point.x + 256f;
+            float newz = point.z - ((chunkCount*512)-256f);
+
+            var points3 = GetPointsInRadius(new Vector2(newz, newx), 5f);
+            foreach(var p in points3)
+            {
+                if(p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
+                {
+                    heights[(int)p.x, (int)p.y] = 2f / sizeY;
+                    continue;
+                }
+            }
+        }
+        foreach(var point in bezierPoints)
+        {
+            float newx = point.x + 256f;
+            float newz = point.z - ((chunkCount*512)-256f);
+
+            var points3 = GetPointsInRadius(new Vector2(newz, newx), 2f);
+            foreach(var p in points3)
+            {
+                if(p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
+                {
+                    heights[(int)p.x, (int)p.y] = ((float)random.NextDouble() * (1f - 0f) + 0f) / sizeY;
+                    // heights[(int)p.x, (int)p.y] = 0f / sizeY;
+                    continue;
+                }
+            }
+        }
+
+
         heights = SmoothHeights(heights);
+
+        if(chunkCount != 0)
+        {
+            for(int i = 0; i < 513; i++)
+            {
+                heights[0, i] = lastHeights[512, i];
+            }
+        }
+
+        foreach(var point in bezierPoints)
+        {
+            float newx = point.x + 256f;
+            float newz = point.z - ((chunkCount*512)-256f);
+
+            var points3 = GetPointsInRadius(new Vector2(newz, newx), 2f);
+            foreach(var p in points3)
+            {
+                if(p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
+                {
+                    heights[(int)p.x, (int)p.y] = ((float)random.NextDouble() * (6f - 4f) + 4f) / sizeY;
+                    continue;
+                }
+            }
+        }
+
         return heights;
+    }
+
+    List<Vector2> GetPointsInRadius(Vector2 center, float radius)
+    {
+        List<Vector2> pointsInRadius = new List<Vector2>();
+        int minX = Mathf.FloorToInt(center.x - radius);
+        int maxX = Mathf.CeilToInt(center.x + radius);
+        int minY = Mathf.FloorToInt(center.y - radius);
+        int maxY = Mathf.CeilToInt(center.y + radius);
+
+        for (int x = minX; x <= maxX; x++)
+        {
+            for (int y = minY; y <= maxY; y++)
+            {
+                Vector2 point = new Vector2(x, y);
+                if (Vector2.Distance(center, point) <= radius)
+                {
+                    pointsInRadius.Add(point);
+                }
+            }
+        }
+
+        return pointsInRadius;
     }
 
 
@@ -135,12 +239,15 @@ public class TerrainGen : MonoBehaviour
         {
             Vector3 previousPoint = controlPoints[i];
 
-            for (float t = 0; t <= 1; t += 0.01f)
+            for (float t = 0; t <= 1; t += 0.002f)
             {
                 Vector3 point = CalculateBezierPoint(t, controlPoints[i], controlPoints[i + 1], controlPoints[i + 2], controlPoints[i + 3]);
                 bezierPoints.Add(point);
             }
         }
+
+
+
 
         List<Vector3> pointsToRemove = new List<Vector3>();
 
