@@ -231,6 +231,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 83623162}
+  - component: {fileID: 83623163}
   m_Layer: 0
   m_Name: WebSocket
   m_TagString: Untagged
@@ -253,6 +254,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &83623163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83623160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373fa3917bd0f1647b72138864b4e085, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &235133405
 GameObject:
   m_ObjectHideFlags: 0

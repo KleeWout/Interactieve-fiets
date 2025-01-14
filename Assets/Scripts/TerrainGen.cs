@@ -16,8 +16,8 @@ public class TerrainGen : MonoBehaviour
     private float sizeY = 600;
 
     // Bezier
-    private Vector3[] controlPoints = new Vector3[14];
-    private List<Vector3> bezierPoints = new List<Vector3>();
+    public Vector3[] controlPoints = new Vector3[14];
+    public List<Vector3> bezierPoints = new List<Vector3>();
 
     private int chunkCount = 0;
 
@@ -46,9 +46,9 @@ public class TerrainGen : MonoBehaviour
 
     async void Update()
     {
-        if(player.transform.position.z > (chunkCount*513))
+        if (player.transform.position.z > (chunkCount * 513))
         {
-            if(chunkCount % 2 == 0)
+            if (chunkCount % 2 == 0)
             {
                 chunkCount += 1;
                 Vector3 newPosition = terrain2.transform.position;
@@ -57,9 +57,11 @@ public class TerrainGen : MonoBehaviour
                 GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z));
                 var heights = CarveTerrainAsync();
                 await heights;
+                lastHeights = heights.Result;
                 terrainData2.SetHeights(0, 0, heights.Result);
             }
-            else{
+            else
+            {
                 chunkCount += 1;
                 Vector3 newPosition = terrain1.transform.position;
                 newPosition.z += 1026f;
@@ -67,6 +69,7 @@ public class TerrainGen : MonoBehaviour
                 GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z));
                 var heights = CarveTerrainAsync();
                 await heights;
+                lastHeights = heights.Result;
                 terrainData1.SetHeights(0, 0, heights.Result);
             }
 
@@ -93,61 +96,61 @@ public class TerrainGen : MonoBehaviour
         }
 
         System.Random random = new System.Random();
-        
-        foreach(var point in bezierPoints)
+
+        foreach (var point in bezierPoints)
         {
             float newx = point.x + 256f;
-            float newz = point.z - ((chunkCount*512)-256f);
+            float newz = point.z - ((chunkCount * 512) - 256f);
 
             var points3 = GetPointsInRadius(new Vector2(newz, newx), (float)random.NextDouble() * (35f - 12f) + 10f);
-            foreach(var p in points3)
+            foreach (var p in points3)
             {
-                if(p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
+                if (p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
                 {
                     heights[(int)p.x, (int)p.y] = ((float)random.NextDouble() * (10f - 8f) + 8f) / sizeY; //#8f
                     continue;
                 }
             }
         }
-        foreach(var point in bezierPoints)
+        foreach (var point in bezierPoints)
         {
             float newx = point.x + 256f;
-            float newz = point.z - ((chunkCount*512)-256f);
+            float newz = point.z - ((chunkCount * 512) - 256f);
 
             var points3 = GetPointsInRadius(new Vector2(newz, newx), (float)random.NextDouble() * (10f - 8f) + 8f);
-            foreach(var p in points3)
+            foreach (var p in points3)
             {
-                if(p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
+                if (p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
                 {
                     heights[(int)p.x, (int)p.y] = ((float)random.NextDouble() * (5f - 3f) + 3f) / sizeY;
                     continue;
                 }
             }
         }
-        foreach(var point in bezierPoints)
+        foreach (var point in bezierPoints)
         {
             float newx = point.x + 256f;
-            float newz = point.z - ((chunkCount*512)-256f);
+            float newz = point.z - ((chunkCount * 512) - 256f);
 
             var points3 = GetPointsInRadius(new Vector2(newz, newx), 5f);
-            foreach(var p in points3)
+            foreach (var p in points3)
             {
-                if(p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
+                if (p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
                 {
                     heights[(int)p.x, (int)p.y] = 2f / sizeY;
                     continue;
                 }
             }
         }
-        foreach(var point in bezierPoints)
+        foreach (var point in bezierPoints)
         {
             float newx = point.x + 256f;
-            float newz = point.z - ((chunkCount*512)-256f);
+            float newz = point.z - ((chunkCount * 512) - 256f);
 
             var points3 = GetPointsInRadius(new Vector2(newz, newx), 2f);
-            foreach(var p in points3)
+            foreach (var p in points3)
             {
-                if(p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
+                if (p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
                 {
                     heights[(int)p.x, (int)p.y] = ((float)random.NextDouble() * (1f - 0f) + 0f) / sizeY;
                     // heights[(int)p.x, (int)p.y] = 0f / sizeY;
@@ -159,23 +162,23 @@ public class TerrainGen : MonoBehaviour
 
         heights = SmoothHeights(heights);
 
-        if(chunkCount != 0)
+        if (chunkCount != 0)
         {
-            for(int i = 0; i < 513; i++)
+            for (int i = 0; i < 513; i++)
             {
                 heights[0, i] = lastHeights[512, i];
             }
         }
 
-        foreach(var point in bezierPoints)
+        foreach (var point in bezierPoints)
         {
             float newx = point.x + 256f;
-            float newz = point.z - ((chunkCount*512)-256f);
+            float newz = point.z - ((chunkCount * 512) - 256f);
 
             var points3 = GetPointsInRadius(new Vector2(newz, newx), 2f);
-            foreach(var p in points3)
+            foreach (var p in points3)
             {
-                if(p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
+                if (p.x >= 0 && p.x < 513 && p.y >= 0 && p.y < 513)
                 {
                     heights[(int)p.x, (int)p.y] = ((float)random.NextDouble() * (6f - 4f) + 4f) / sizeY;
                     continue;
@@ -251,15 +254,15 @@ public class TerrainGen : MonoBehaviour
 
         List<Vector3> pointsToRemove = new List<Vector3>();
 
-        foreach(Vector3 point in bezierPoints)
+        foreach (Vector3 point in bezierPoints)
         {
-            if(point.z < (chunkCount*513) - 300 || point.z > (chunkCount*513) + 300)
+            if (point.z < (chunkCount * 513) - 300 || point.z > (chunkCount * 513) + 300)
             {
                 pointsToRemove.Add(point);
             }
         }
 
-        foreach(Vector3 point in pointsToRemove)
+        foreach (Vector3 point in pointsToRemove)
         {
             bezierPoints.Remove(point);
         }
@@ -333,8 +336,8 @@ public class TerrainGen : MonoBehaviour
 
                 float noiseValue1;
                 float noiseValue2;
-                noiseValue1 = Mathf.PerlinNoise((x + chunkCount*512) * noiseScale1, y * noiseScale1) * noiseIntensity1;
-                noiseValue2 = Mathf.PerlinNoise((x + chunkCount*512) * noiseScale2, y * noiseScale2) * noiseIntensity2;
+                noiseValue1 = Mathf.PerlinNoise((x + chunkCount * 512) * noiseScale1, y * noiseScale1) * noiseIntensity1;
+                noiseValue2 = Mathf.PerlinNoise((x + chunkCount * 512) * noiseScale2, y * noiseScale2) * noiseIntensity2;
                 float finalHeight = averageHeight + noiseValue1 + noiseValue2;
                 smoothedHeights[x, y] = finalHeight;
             }
