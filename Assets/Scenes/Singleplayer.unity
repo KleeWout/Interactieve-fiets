@@ -677,7 +677,7 @@ MonoBehaviour:
   maxTiltAngle: 20
   tiltSmoothing: 8
   steeringSpeed: 20
-  thrustSpeed: 15
+  thrustSpeed: 13.7
   inputType: 0
 --- !u!114 &235133416
 MonoBehaviour:
@@ -1072,6 +1072,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 073ce2d545af95d46b8749538ce54876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inspectorHealth: 1
   hearts:
   - {fileID: 490086330}
   - {fileID: 1043084619}

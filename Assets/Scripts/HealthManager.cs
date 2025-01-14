@@ -4,6 +4,14 @@ using UnityEngine.UI;
 public class HealthManager : MonoBehaviour
 {
     public static int health = 5;
+
+    [SerializeField] //change the health in the inspector
+    private int inspectorHealth = 5;
+
+    void Start()
+    {
+        health = inspectorHealth;
+    }
     public Image[] hearts;
 
     public Sprite fullHeart;
@@ -13,10 +21,7 @@ public class HealthManager : MonoBehaviour
 
     bool isAlive = true;
 
-    void Awake()
-    {
-        health = 5;
-    }
+
     void Update()
     {
         foreach (Image img in hearts)
