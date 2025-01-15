@@ -10,6 +10,7 @@ public class EspListener : MonoBehaviour
     // Invoked when a line of data is received from the serial device.
     void OnMessageArrived(string msg)
     {
+        Debug.Log("Message arrived: " + msg);
         string[] msgSplit = msg.Split(',');
         valueLeft = float.Parse(msgSplit[0]);
         valueRight = float.Parse(msgSplit[1]);
