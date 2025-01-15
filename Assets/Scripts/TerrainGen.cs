@@ -44,6 +44,8 @@ public class TerrainGen : MonoBehaviour
         terrainData2.SetHeights(0, 0, heights.Result);
     }
 
+
+
     async void Update()
     {
         if (player.transform.position.z > (chunkCount * 513))

@@ -2,7 +2,6 @@
 
 public class WaterBob : MonoBehaviour
 {
-    
     public static bool isSunk;
 
     [SerializeField]
@@ -20,6 +19,7 @@ public class WaterBob : MonoBehaviour
         initialPosition = transform.position;
         offset = 1 - (Random.value * 2);
         rb = GetComponent<Rigidbody>();
+        isSunk = false;
     }
 
     private void Update()

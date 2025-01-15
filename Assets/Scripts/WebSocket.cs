@@ -21,17 +21,8 @@ public class WebSocketClient : MonoBehaviour
 
     public GameOverScreen GameOverScreen;
 
-    //keep script active
-    // void Awake()
-    // {
-    //     if (Instance != null && Instance != this)
-    //     {
-    //         Destroy(gameObject);
-    //         return;
-    //     }
-    //     Instance = this;
-    //     DontDestroyOnLoad(gameObject);
-    // }
+    public TerrainGen TerrainGen;
+
 
     private async void Start()
     {
@@ -64,6 +55,7 @@ public class WebSocketClient : MonoBehaviour
                 string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
                 Debug.Log($"Received: {message}");
 
+
                 // Parse the JSON message
                 // var jsonObject = JsonUtility.FromJson<Dictionary<string, string>>(message);
                 JObject jsonObject = JObject.Parse(message);
@@ -76,21 +68,15 @@ public class WebSocketClient : MonoBehaviour
                     string gameMode = jsonObject["gamemode"].ToString();
                     if (gameMode == "singleplayer")
                     {
-                        Debug.Log("Queueing scene change: SinglePlayer");
-                        sceneLoadRequests.Enqueue("SinglePlayer");
-                        sceneChangeRequested = true;
+                        GameController.PlaySingleplayer();
                     }
                     else if (gameMode == "multiplayer")
                     {
-                        Debug.Log("Queueing scene change: MultiPlayer");
-                        sceneLoadRequests.Enqueue("MultiPlayer");
-                        sceneChangeRequested = true;
+                        GameController.PlayMultiplayer();
                     }
-                    else if (gameMode == "main")
+                    else if (gameMode == "menu")
                     {
-                        Debug.Log("Queueing scene change: Main");
-                        sceneLoadRequests.Enqueue("Main");
-                        sceneChangeRequested = true;
+                        GameController.PlayMenu();
                     }
                 }
 
@@ -99,7 +85,16 @@ public class WebSocketClient : MonoBehaviour
                     string gameState = jsonObject["gameState"].ToString();
                     if (gameState == "stop")
                     {
-                        GameOverScreen.Setup();
+                        try
+                        {
+                            GameController.StopGame();
+
+                        }
+                        catch (Exception ex)
+                        {
+
+                            Debug.LogError($"Error stopping game: {ex.Message}");
+                        }
 
                     }
                     if (gameState == "restart")
@@ -136,19 +131,11 @@ public class WebSocketClient : MonoBehaviour
 
     private void Update()
     {
-        //scene switching moet gebeuren op main thread
-        if (sceneChangeRequested && sceneLoadRequests.Count > 0)
-        {
-            string sceneName = sceneLoadRequests.Dequeue();
-            Debug.Log($"Loading scene: {sceneName}");
-            SceneManager.LoadScene(sceneName);
-            sceneChangeRequested = false;
-        }
-
         // Example: Send a message when the spacebar is pressed
         if (Input.GetKeyDown(KeyCode.Space))
         {
             SendMessageToSocket("Hello from Unity!");
+            GameOverScreen.Setup();
         }
     }
 

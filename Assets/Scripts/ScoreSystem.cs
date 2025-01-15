@@ -1,6 +1,6 @@
 using UnityEngine;
 using TMPro;
-// using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ScoreSystem : MonoBehaviour
 {
@@ -11,12 +11,14 @@ public class ScoreSystem : MonoBehaviour
     public Transform player;
     public static float score = 0f;
     public TMP_Text scoreText;
+    public int value;
 
 
-    void Awake()
+
+    private void Start()
     {
-        //save start pos
-        previousPlayerPosition = player.position;
+        score = 0;
+        scoreText.text = score.ToString() + "m";
     }
 
 
@@ -39,7 +41,8 @@ public class ScoreSystem : MonoBehaviour
             score += scoreToAdd;
             scoreText.text = score.ToString() + "m";
             WebSocketClient.Instance.SendMessageToSocket($"Score updated: {score}");
+            value = (int)score;
+
         }
     }
 }
-

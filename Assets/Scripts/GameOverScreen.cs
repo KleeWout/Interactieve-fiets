@@ -1,21 +1,26 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.Analytics;
 public class GameOverScreen : MonoBehaviour
 {
-    public TMP_Text score;
+    public static TMP_Text score;
+    public static GameObject gameOverObject;
+    public GameOverScreen gameOverScreen;
+
     public static bool isGameOver = false;
 
-    //keep script active
-    void Awake()
+    public void Awake()
     {
-
-        DontDestroyOnLoad(gameObject);
+        score = GameObject.Find("Score").GetComponent<TMP_Text>();
+        gameOverObject = GameObject.FindWithTag("GameOver");
+        // gameOverObject.SetActive(false);
     }
 
-    public void Setup()
+    public static void Setup()
     {
+        gameOverObject = GameObject.FindWithTag("GameOver");
         Debug.Log("Calling GameOver");
-        gameObject.SetActive(true);
+        gameOverObject.SetActive(true);
         WaterBob.isSunk = true;
         score.text = "behaalde score: " + ScoreSystem.score.ToString() + "m";
         WebSocketClient.Instance.SendMessageToSocket($"{{\"score\" : \"{ScoreSystem.score}\"}}");

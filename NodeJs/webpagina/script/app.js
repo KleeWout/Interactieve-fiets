@@ -1,5 +1,5 @@
 "use strict";
-let htmlSingleplayer, htmlMultiplayer, htmlMain, messagesDiv, htmlscore, htmlButtons, htmlStop;
+let htmlSingleplayer, htmlMultiplayer, htmlMenu, messagesDiv, htmlscore, htmlButtons, htmlStop;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 
@@ -27,7 +27,7 @@ ws.onmessage = (event) => {
     if (jsonData.gameState == "stopped") {
       htmlButtons.innerHTML = `<button class="js-singleplayer">Singleplayer</button>
         <button class="js-multiplayer">Multiplayer</button>
-        <button class="js-main">Main</button>`;
+        <button class="js-menu">Menu</button>`;
     }
   } catch (error) {
     console.error("Error parsing JSON:", error);
@@ -47,9 +47,9 @@ const listenToButtons = function () {
     console.log("multiplayer");
     ws.send('{"gamemode": "multiplayer"}');
   });
-  htmlMain.addEventListener("click", function () {
-    console.log("main");
-    ws.send('{"gamemode": "main"}');
+  htmlMenu.addEventListener("click", function () {
+    console.log("menu");
+    ws.send('{"gamemode": "menu"}');
   });
 };
 
@@ -57,7 +57,7 @@ const init = function () {
   console.log("DOM loaded");
   htmlSingleplayer = document.querySelector(".js-singleplayer");
   htmlMultiplayer = document.querySelector(".js-multiplayer");
-  htmlMain = document.querySelector(".js-main");
+  htmlMenu = document.querySelector(".js-menu");
   messagesDiv = document.querySelector(".js-messages");
   htmlscore = document.querySelector(".js-score");
   htmlButtons = document.querySelector(".js-buttons");
