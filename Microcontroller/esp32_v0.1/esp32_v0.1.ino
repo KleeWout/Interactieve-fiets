@@ -4,6 +4,8 @@
 #define REED_PIN_R_M 25
 #define REED_PIN_R_S 33
 
+bool isActive = false;
+
 // Left
 bool leftMainStatus = false;
 bool leftSecondStatus = false;
@@ -114,26 +116,40 @@ void setup() {
   // Attach interrupts for right
   attachInterrupt(digitalPinToInterrupt(REED_PIN_R_M), handleRevolutionRightMain, RISING);
   attachInterrupt(digitalPinToInterrupt(REED_PIN_R_S), handleRevolutionRightSecond, RISING);
+
+  delay(200);
+  Serial.println("v0.2");
 }
 
 void loop() {
-  // Left calculations
-  if (!leftReverse && millis() > lastRevolutionLeftMain + (lastRevolutionLeftMain - previousRevolutionLeftMain) && lastRevolutionLeftMain != 0) {
-    revolutionsPerSecondLeft = (1000.0 / (millis() - lastRevolutionLeftMain)) / 2;
-  }
-  if (leftReverse && millis() > lastRevolutionLeftMain + (lastRevolutionLeftMain - previousRevolutionLeftMain) && lastRevolutionLeftMain != 0) {
-    revolutionsPerSecondLeft = (-(1000.0 / (millis() - lastRevolutionLeftMain)) / 2) / 3;
-  }
+  if(isActive){
+    // Left calculations
+    if (!leftReverse && millis() > lastRevolutionLeftMain + (lastRevolutionLeftMain - previousRevolutionLeftMain) && lastRevolutionLeftMain != 0) {
+      revolutionsPerSecondLeft = (1000.0 / (millis() - lastRevolutionLeftMain)) / 2;
+    }
+    if (leftReverse && millis() > lastRevolutionLeftMain + (lastRevolutionLeftMain - previousRevolutionLeftMain) && lastRevolutionLeftMain != 0) {
+      revolutionsPerSecondLeft = (-(1000.0 / (millis() - lastRevolutionLeftMain)) / 2) / 3;
+    }
 
-  // Right calculations
-  if (!rightReverse && millis() > lastRevolutionRightMain + (lastRevolutionRightMain - previousRevolutionRightMain) && lastRevolutionRightMain != 0) {
-    revolutionsPerSecondRight = (1000.0 / (millis() - lastRevolutionRightMain)) / 2;
+    // Right calculations
+    if (!rightReverse && millis() > lastRevolutionRightMain + (lastRevolutionRightMain - previousRevolutionRightMain) && lastRevolutionRightMain != 0) {
+      revolutionsPerSecondRight = (1000.0 / (millis() - lastRevolutionRightMain)) / 2;
+    }
+    if (rightReverse && millis() > lastRevolutionRightMain + (lastRevolutionRightMain - previousRevolutionRightMain) && lastRevolutionRightMain != 0) {
+      revolutionsPerSecondRight = (-(1000.0 / (millis() - lastRevolutionRightMain)) / 2) / 3;
+    }
+    Serial.println(String(revolutionsPerSecondLeft) +","+ String(revolutionsPerSecondRight));
   }
-  if (rightReverse && millis() > lastRevolutionRightMain + (lastRevolutionRightMain - previousRevolutionRightMain) && lastRevolutionRightMain != 0) {
-    revolutionsPerSecondRight = (-(1000.0 / (millis() - lastRevolutionRightMain)) / 2) / 3;
-  }
+  if (Serial.available() > 0) {
+    String incomingMessage = Serial.readStringUntil('\n');
+    incomingMessage.trim();
 
-  // Print left and right RPS
+    if (incomingMessage.equals("start")) {
+      isActive = true;
+      delay(500);
+    } else if (incomingMessage.equals("stop")) {
+      isActive = false;
+    }
+  }
   delay(100);
-  Serial.println(String(revolutionsPerSecondLeft) +","+ String(revolutionsPerSecondRight));
 }

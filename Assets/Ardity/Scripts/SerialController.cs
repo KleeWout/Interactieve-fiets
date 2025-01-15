@@ -2,14 +2,17 @@
 using System.Threading;
 using System;
 using System.IO.Ports;
+using TMPro;
 
 public class SerialController : MonoBehaviour
 {
     // public string portName = "COM8";
-    public int baudRate = 115200;
+    private int baudRate = 115200;
     public GameObject messageListener;
-    public int reconnectionDelay = 1000;
-    public int maxUnreadMessages = 1;
+    private int reconnectionDelay = 1000;
+    private int maxUnreadMessages = 1;
+
+    private bool deviceFound = false;
 
     // Constants used to mark the start and end of a connection. There is no
     // way you can generate clashing messages from your serial device, as I
@@ -32,17 +35,27 @@ public class SerialController : MonoBehaviour
     void OnEnable()
     {
         GetAvailablePorts();
+        if(deviceFound){
+            serialThread.SendMessage("start");
+        }
+        else{
+            Debug.Log("No device found");
+        }
     }
     void GetAvailablePorts()
     {
         string[] ports = SerialPort.GetPortNames();
         foreach (string port in ports)
         {
-        if (port.Contains("ttyUSB") || port.Contains("tty.usb") || port.Contains("cu.usb") || port.Contains("COM"))
-        {
-            Debug.Log(PerformHandshake(port) ? $"Handshake successful: {port}" : $"Handshake failed: {port}");
-        }
-        }
+            if (port.Contains("ttyUSB") || port.Contains("tty.usb") || port.Contains("cu.usb") || port.Contains("COM"))
+            {
+                if (PerformHandshake(port)){
+                    Debug.Log($"Handshake succesfull with {port}");
+                    deviceFound = true;
+                    break;
+                }
+            }
+        }       
     }
 
 
@@ -55,7 +68,7 @@ public class SerialController : MonoBehaviour
                                         maxUnreadMessages);
         thread = new Thread(new ThreadStart(serialThread.RunForever));
         thread.Start();
-        string expectedMessage = "v0.1"; // The specific string to match
+        string expectedMessage = "v0.2"; // The specific string to match
         DateTime timeout = DateTime.Now.AddSeconds(2); // Timeout after 10 seconds
 
         while (DateTime.Now < timeout)
@@ -86,6 +99,7 @@ public class SerialController : MonoBehaviour
 
     void Disconnect()
     {
+        serialThread.SendMessage("stop");
         // If there is a user-defined tear-down function, execute it before
         // closing the underlying COM port.
         if (userDefinedTearDownFunction != null)
@@ -116,23 +130,26 @@ public class SerialController : MonoBehaviour
     // ------------------------------------------------------------------------
     void Update()
     {
-        // If the user prefers to poll the messages instead of receiving them
-        // via SendMessage, then the message listener should be null.
-        if (messageListener == null)
-            return;
+        if(deviceFound){
+            // If the user prefers to poll the messages instead of receiving them
+            // via SendMessage, then the message listener should be null.
+            if (messageListener == null)
+                return;
 
-        // Read the next message from the queue
-        string message = (string)serialThread.ReadMessage();
-        if (message == null)
-            return;
+            // Read the next message from the queue
+            string message = (string)serialThread.ReadMessage();
+            if (message == null)
+                return;
 
-        // Check if the message is plain data or a connect/disconnect event.
-        if (ReferenceEquals(message, SERIAL_DEVICE_CONNECTED))
-            messageListener.SendMessage("OnConnectionEvent", true);
-        else if (ReferenceEquals(message, SERIAL_DEVICE_DISCONNECTED))
-            messageListener.SendMessage("OnConnectionEvent", false);
-        else
-            messageListener.SendMessage("OnMessageArrived", message);
+            // Check if the message is plain data or a connect/disconnect event.
+            if (ReferenceEquals(message, SERIAL_DEVICE_CONNECTED))
+                messageListener.SendMessage("OnConnectionEvent", true);
+            else if (ReferenceEquals(message, SERIAL_DEVICE_DISCONNECTED))
+                messageListener.SendMessage("OnConnectionEvent", false);
+            else
+                messageListener.SendMessage("OnMessageArrived", message);
+        }
+
     }
 
     // ------------------------------------------------------------------------
