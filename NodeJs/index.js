@@ -24,11 +24,6 @@ wss.on("connection", function (ws) {
         client.send(msg.toString());
       }
     });
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
-      }
-    });
   });
 });
 

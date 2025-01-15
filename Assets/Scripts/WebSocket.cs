@@ -5,27 +5,33 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+using UnityEngine.Analytics;
+
 
 public class WebSocketClient : MonoBehaviour
 {
-    public static WebSocketClient Instance { get; private set; }
+    public static WebSocketClient Instance;
+
 
     private ClientWebSocket webSocket;
 
     private Queue<string> sceneLoadRequests = new Queue<string>();
     private bool sceneChangeRequested = false;
 
+    public GameOverScreen GameOverScreen;
+
     //keep script active
-    void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
+    // void Awake()
+    // {
+    //     if (Instance != null && Instance != this)
+    //     {
+    //         Destroy(gameObject);
+    //         return;
+    //     }
+    //     Instance = this;
+    //     DontDestroyOnLoad(gameObject);
+    // }
 
     private async void Start()
     {
@@ -58,25 +64,53 @@ public class WebSocketClient : MonoBehaviour
                 string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
                 Debug.Log($"Received: {message}");
 
-                //switch scenes based on message
-                if (message == "singleplayer")
+                // Parse the JSON message
+                // var jsonObject = JsonUtility.FromJson<Dictionary<string, string>>(message);
+                JObject jsonObject = JObject.Parse(message);
+
+
+                // Switch scenes based on the "gamemode" value in the JSON message
+
+                if (jsonObject.ContainsKey("gamemode"))
                 {
-                    Debug.Log("Queueing scene change: SinglePlayer");
-                    sceneLoadRequests.Enqueue("SinglePlayer");
-                    sceneChangeRequested = true;
+                    string gameMode = jsonObject["gamemode"].ToString();
+                    if (gameMode == "singleplayer")
+                    {
+                        Debug.Log("Queueing scene change: SinglePlayer");
+                        sceneLoadRequests.Enqueue("SinglePlayer");
+                        sceneChangeRequested = true;
+                    }
+                    else if (gameMode == "multiplayer")
+                    {
+                        Debug.Log("Queueing scene change: MultiPlayer");
+                        sceneLoadRequests.Enqueue("MultiPlayer");
+                        sceneChangeRequested = true;
+                    }
+                    else if (gameMode == "main")
+                    {
+                        Debug.Log("Queueing scene change: Main");
+                        sceneLoadRequests.Enqueue("Main");
+                        sceneChangeRequested = true;
+                    }
                 }
-                else if (message == "multiplayer")
+
+                if (jsonObject.ContainsKey("gameState"))
                 {
-                    Debug.Log("Queueing scene change: MultiPlayer");
-                    sceneLoadRequests.Enqueue("MultiPlayer");
-                    sceneChangeRequested = true;
+                    string gameState = jsonObject["gameState"].ToString();
+                    if (gameState == "stop")
+                    {
+                        GameOverScreen.Setup();
+
+                    }
+                    if (gameState == "restart")
+                    {
+                        GameController.RestartGame();
+                    }
+
                 }
-                else if (message == "main")
-                {
-                    Debug.Log("Queueing scene change: Main");
-                    sceneLoadRequests.Enqueue("Main");
-                    sceneChangeRequested = true;
-                }
+
+
+
 
             }
         }
