@@ -403,7 +403,7 @@ MonoBehaviour:
   tiltSmoothing: 8
   steeringSpeed: 85
   thrustSpeed: 5
-  inputType: 1
+  inputType: 2
 --- !u!114 &235133416
 MonoBehaviour:
   m_ObjectHideFlags: 0
