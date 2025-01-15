@@ -283,6 +283,7 @@ public class TerrainGen : MonoBehaviour
     {
         Gizmos.color = Color.red;
         foreach (Vector3 point in bezierCurve)
+        foreach (Vector3 point in bezierCurve)
         {
             Gizmos.DrawSphere(point, 1);
         }

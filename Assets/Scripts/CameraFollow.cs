@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
+
+    public TerrainGen terrainGen;
 
     public TerrainGen terrainGen;
     // Reference to the target (the cube in this case)
