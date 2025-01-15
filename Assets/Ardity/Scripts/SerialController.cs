@@ -39,7 +39,8 @@ public class SerialController : MonoBehaviour
             serialThread.SendMessage("start");
         }
         else{
-            Debug.Log("No device found");
+            Invoke("OnEnable", 2);
+            Debug.Log("No device found, trying again...");
         }
     }
     void GetAvailablePorts()
