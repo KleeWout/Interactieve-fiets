@@ -5,11 +5,14 @@ public class CanoeMovement : MonoBehaviour
 {
     private Rigidbody rb;
     private EspListener espListener;
+    private GameObject player;
+    private Rigidbody rbPlayer;
+
+
     private float userInput;
     private float userThrust;
 
     public bool isSinglePlayer = false;
-
 
     //boat animations
     public float wobbleMaxAngle;
@@ -38,6 +41,8 @@ public class CanoeMovement : MonoBehaviour
     {
         espListener = GetComponent<EspListener>();
         rb = GetComponent<Rigidbody>();
+        player = transform.parent.gameObject;// Get the parent transform
+        rbPlayer = player.GetComponent<Rigidbody>();
     }
 
 
@@ -65,13 +70,13 @@ public class CanoeMovement : MonoBehaviour
             leftAnimation = espListener.valueLeft;
             rightAnimation = espListener.valueRight;
             userInput = (espListener.valueLeft / 1.5f) - (espListener.valueRight / 1.5f);
-            userThrust = ((espListener.valueLeft / 3) + (espListener.valueRight / 3)) / 2;
+            userThrust = (espListener.valueLeft + espListener.valueRight) / 2;
 
         }
         else
         {
             userInput = 0;
-            userThrust = (espListener.valueLeft / 3) + (espListener.valueRight / 3);
+            userThrust = (espListener.valueLeft) + (espListener.valueRight);
         }
 
         // boat animations (rotations left/right and wobble)
@@ -81,12 +86,15 @@ public class CanoeMovement : MonoBehaviour
         float smoothedZ = Mathf.LerpAngle(currentZ, newZ, Time.deltaTime * tiltSmoothing);
         float wobbles = Mathf.LerpAngle(smoothedZ, wobble, Time.deltaTime * wobbleSmoothing);
         float newY = rb.rotation.eulerAngles.y + userInput * steeringSpeed * Time.deltaTime;
-        transform.rotation = Quaternion.Euler(0, newY, wobbles);
+        // transform.rotation = Quaternion.Euler(0, newY, wobbles);
+
+        player.transform.rotation = Quaternion.Euler(0, newY, player.transform.rotation.eulerAngles.z);
+        transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, wobbles);
 
         // boat thurst (forward)
         Vector3 forceDirection = transform.forward * (userThrust * thrustSpeed);
         Vector3 forcePosition = transform.TransformPoint(new Vector3(0, 0, 1f));
-        rb.AddForceAtPosition(forceDirection, forcePosition);
+        rbPlayer.AddForceAtPosition(forceDirection, forcePosition);
 
     }
 }
