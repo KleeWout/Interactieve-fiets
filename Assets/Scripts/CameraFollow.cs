@@ -34,16 +34,16 @@ public class CameraFollow : MonoBehaviour
         // Vector3 desiredPosition = new Vector3(target.position.x - offset.x, offset.y, target.position.z - offset.z);
         // Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
 
-        GetNearestPoint(terrainGen.bezierCurve);
-        Vector3 desiredPosition = new Vector3(terrainGen.bezierCurve[0].x, 1.25f, terrainGen.bezierCurve[0].z);
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, 1 * Time.deltaTime);
-        transform.position = smoothedPosition;
+        // GetNearestPoint(terrainGen.bezierCurve);
+        // Vector3 desiredPosition = new Vector3(terrainGen.bezierCurve[0].x, 1.25f, terrainGen.bezierCurve[0].z);
+        // Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, 1 * Time.deltaTime);
+        // transform.position = smoothedPosition;
 
-        float orientation = GetOrientation(terrainGen.bezierCurve[0], terrainGen.bezierCurve[0+1]);
-        Quaternion desiredRotation = Quaternion.Euler(0, orientation, 0);
-        Quaternion smoothedRotation = Quaternion.Slerp(transform.rotation, desiredRotation, 1 * Time.deltaTime);
+        // float orientation = GetOrientation(terrainGen.bezierCurve[0], terrainGen.bezierCurve[0+5]);
+        // Quaternion desiredRotation = Quaternion.Euler(0, orientation, 0);
+        // Quaternion smoothedRotation = Quaternion.Slerp(transform.rotation, desiredRotation, 1 * Time.deltaTime);
 
-        transform.rotation = smoothedRotation;
+        // transform.rotation = smoothedRotation;
     }
 
     List<Vector3> nearestPoints = new List<Vector3>();
