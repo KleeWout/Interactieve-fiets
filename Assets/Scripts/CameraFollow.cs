@@ -7,7 +7,6 @@ public class CameraFollow : MonoBehaviour
 
     public TerrainGen terrainGen;
 
-    public TerrainGen terrainGen;
     // Reference to the target (the cube in this case)
     public Transform target;
 
