@@ -65,13 +65,13 @@ public class CanoeMovement : MonoBehaviour
             leftAnimation = espListener.valueLeft;
             rightAnimation = espListener.valueRight;
             userInput = (espListener.valueLeft / 1.5f) - (espListener.valueRight / 1.5f);
-            userThrust = ((espListener.valueLeft / 3) + (espListener.valueRight / 3)) / 2;
+            userThrust = (espListener.valueLeft + espListener.valueRight) / 2;
 
         }
         else
         {
             userInput = 0;
-            userThrust = (espListener.valueLeft / 3) + (espListener.valueRight / 3);
+            userThrust = (espListener.valueLeft) + (espListener.valueRight);
         }
 
         // boat animations (rotations left/right and wobble)
