@@ -11,9 +11,9 @@ bool leftMainStatus = false;
 bool leftSecondStatus = false;
 bool leftReverse = false;
 
-unsigned long lastRevolutionLeftMain = 0;
-unsigned long lastRevolutionLeftSecond = 0;
-unsigned long previousRevolutionLeftMain = 0;
+unsigned long lastRevolutionLeftMain;
+unsigned long lastRevolutionLeftSecond;
+unsigned long previousRevolutionLeftMain;
 float revolutionsPerSecondLeft = 0;
 
 void IRAM_ATTR handleRevolutionLeftMain() {
@@ -57,9 +57,9 @@ bool rightMainStatus = false;
 bool rightSecondStatus = false;
 bool rightReverse = false;
 
-unsigned long lastRevolutionRightMain = 0;
-unsigned long lastRevolutionRightSecond = 0;
-unsigned long previousRevolutionRightMain = 0;
+unsigned long lastRevolutionRightMain;
+unsigned long lastRevolutionRightSecond;
+unsigned long previousRevolutionRightMain;
 float revolutionsPerSecondRight = 0;
 
 void IRAM_ATTR handleRevolutionRightMain() {
@@ -122,6 +122,23 @@ void setup() {
 }
 
 void loop() {
+  if (Serial.available() > 0) {
+    String incomingMessage = Serial.readStringUntil('\n');
+    incomingMessage.trim();
+
+    if (incomingMessage.equals("start")) {
+      lastRevolutionLeftMain = 0;
+      lastRevolutionLeftSecond = 0;
+      previousRevolutionLeftMain = 0;
+      lastRevolutionRightMain = 0;
+      lastRevolutionRightSecond = 0;
+      previousRevolutionRightMain = 0;
+      isActive = true;
+      delay(500);
+    } else if (incomingMessage.equals("stop")) {
+      isActive = false;
+    }
+  }
   if(isActive){
     // Left calculations
     if (!leftReverse && millis() > lastRevolutionLeftMain + (lastRevolutionLeftMain - previousRevolutionLeftMain) && lastRevolutionLeftMain != 0) {
@@ -139,17 +156,6 @@ void loop() {
       revolutionsPerSecondRight = (-(1000.0 / (millis() - lastRevolutionRightMain)) / 2) / 3;
     }
     Serial.println(String(revolutionsPerSecondLeft) +","+ String(revolutionsPerSecondRight));
-  }
-  if (Serial.available() > 0) {
-    String incomingMessage = Serial.readStringUntil('\n');
-    incomingMessage.trim();
-
-    if (incomingMessage.equals("start")) {
-      isActive = true;
-      delay(500);
-    } else if (incomingMessage.equals("stop")) {
-      isActive = false;
-    }
   }
   delay(100);
 }
