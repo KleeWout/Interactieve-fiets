@@ -69,7 +69,7 @@ public class CameraFollow : MonoBehaviour
             }
         }
         for(int i = 0; i < nearestPointIndex; i++){
-            Debug.Log($"Removed {terrainGen.bezierCurve[i]}");
+            // Debug.Log($"Removed {terrainGen.bezierCurve[i]}");
             terrainGen.bezierCurve.Remove(terrainGen.bezierCurve[i]);
         }
 

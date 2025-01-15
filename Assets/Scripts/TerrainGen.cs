@@ -76,14 +76,6 @@ public class TerrainGen : MonoBehaviour
             }
 
         }
-
-        foreach(var point in bezierPoints){
-            if (!bezierCurve.Contains(point))
-            {
-                bezierCurve.Add(point);
-            }
-        }
-
     }
 
     async Task<float[,]> CarveTerrainAsync()
@@ -256,10 +248,8 @@ public class TerrainGen : MonoBehaviour
                 Vector3 point = CalculateBezierPoint(t, controlPoints[i], controlPoints[i + 1], controlPoints[i + 2], controlPoints[i + 3]);
                 bezierPoints.Add(point);
             }
+
         }
-
-
-
 
         List<Vector3> pointsToRemove = new List<Vector3>();
 
@@ -268,6 +258,10 @@ public class TerrainGen : MonoBehaviour
             if (point.z < (chunkCount * 513) - 300 || point.z > (chunkCount * 513) + 300)
             {
                 pointsToRemove.Add(point);
+            }
+            if(point.z < (chunkCount * 513) || point.z > (chunkCount * 513)){
+                bezierCurve.Add(point);
+                Debug.Log(point);
             }
         }
 
