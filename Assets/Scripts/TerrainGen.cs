@@ -19,6 +19,8 @@ public class TerrainGen : MonoBehaviour
     private Vector3[] controlPoints = new Vector3[14];
     private List<Vector3> bezierPoints = new List<Vector3>();
 
+    public List<Vector3> bezierCurve = new List<Vector3>();
+
     private int chunkCount = 0;
 
 
@@ -243,6 +245,7 @@ public class TerrainGen : MonoBehaviour
             {
                 Vector3 point = CalculateBezierPoint(t, controlPoints[i], controlPoints[i + 1], controlPoints[i + 2], controlPoints[i + 3]);
                 bezierPoints.Add(point);
+                bezierCurve.Add(point);
             }
         }
 

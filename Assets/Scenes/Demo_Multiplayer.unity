@@ -151,6 +151,7 @@ MonoBehaviour:
   player: {fileID: 235133405}
   terrain1: {fileID: 2084078453}
   terrain2: {fileID: 1217645891}
+  bezierCurve: []
 --- !u!4 &42054470
 Transform:
   m_ObjectHideFlags: 0
@@ -403,7 +404,7 @@ MonoBehaviour:
   tiltSmoothing: 8
   steeringSpeed: 85
   thrustSpeed: 5
-  inputType: 1
+  inputType: 0
 --- !u!114 &235133416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -750,7 +751,6 @@ GameObject:
   - component: {fileID: 1217645892}
   - component: {fileID: 1217645891}
   - component: {fileID: 1217645890}
-  - component: {fileID: 1217645893}
   m_Layer: 0
   m_Name: Terrain2
   m_TagString: Untagged
@@ -834,18 +834,6 @@ Transform:
   - {fileID: 419231132}
   m_Father: {fileID: 42054470}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1217645893
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1217645889}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6123d5f52694347e79956584ed5d1129, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1441963297 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 88d3b54bab1554142b998682624fcaa6,
@@ -1144,6 +1132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31841fab8fab340439e1ec6714d39d85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrainGen: {fileID: 42054469}
   target: {fileID: 235133410}
   offset: {x: 0, y: 1.25, z: 4}
 --- !u!1 &2084078451
