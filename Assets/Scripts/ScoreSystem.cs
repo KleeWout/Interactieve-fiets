@@ -9,7 +9,7 @@ public class ScoreSystem : MonoBehaviour
     float distanceSinceLastScore;
 
     public Transform player;
-    public float score = 0f;
+    public static float score = 0f;
     public TMP_Text scoreText;
 
 
@@ -38,6 +38,7 @@ public class ScoreSystem : MonoBehaviour
         {
             score += scoreToAdd;
             scoreText.text = score.ToString() + "m";
+            WebSocketClient.Instance.SendMessageToSocket($"Score updated: {score}");
         }
     }
 }

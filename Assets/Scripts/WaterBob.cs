@@ -2,6 +2,9 @@
 
 public class WaterBob : MonoBehaviour
 {
+    
+    public static bool isSunk;
+
     [SerializeField]
     float height = 0.1f;
 
@@ -21,8 +24,16 @@ public class WaterBob : MonoBehaviour
 
     private void Update()
     {
-        Vector3 currentPosition = transform.position;
-        currentPosition.y = initialPosition.y - Mathf.Sin((Time.time + offset) * period) * height;
-        transform.position = currentPosition;
+        if (!isSunk)
+        {
+            Vector3 currentPosition = transform.position;
+            currentPosition.y = initialPosition.y - Mathf.Sin((Time.time + offset) * period) * height;
+            transform.position = currentPosition;
+        }
+
+        else
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y - 0.01f, transform.position.z);
+        }
     }
 }
