@@ -61,10 +61,10 @@ void setup() {
 void loop() {
 
   if(millis() > lastRevolutionLeft + (lastRevolutionLeft - previousRevolutionLeft) && lastRevolutionLeft != 0){
-    revolutionsPerSecondLeft = 1000.0 / (millis() - lastRevolutionLeft);
+    revolutionsPerSecondLeft = (1000.0 / (millis() - lastRevolutionLeft))/2;
   }
   if(millis() > lastRevolutionRight + (lastRevolutionRight - previousRevolutionRight) && lastRevolutionRight != 0){
-    revolutionsPerSecondRight = 1000.0 / (millis() - lastRevolutionRight);
+    revolutionsPerSecondRight = (1000.0 / (millis() - lastRevolutionRight))/2;
   }
 
   delay(interval);

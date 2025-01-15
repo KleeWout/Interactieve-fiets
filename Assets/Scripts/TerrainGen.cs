@@ -74,6 +74,13 @@ public class TerrainGen : MonoBehaviour
 
         }
 
+        foreach(var point in bezierPoints){
+            if (!bezierCurve.Contains(point))
+            {
+                bezierCurve.Add(point);
+            }
+        }
+
     }
 
     async Task<float[,]> CarveTerrainAsync()
@@ -245,7 +252,6 @@ public class TerrainGen : MonoBehaviour
             {
                 Vector3 point = CalculateBezierPoint(t, controlPoints[i], controlPoints[i + 1], controlPoints[i + 2], controlPoints[i + 3]);
                 bezierPoints.Add(point);
-                bezierCurve.Add(point);
             }
         }
 
@@ -256,6 +262,7 @@ public class TerrainGen : MonoBehaviour
 
         foreach(Vector3 point in bezierPoints)
         {
+            
             if(point.z < (chunkCount*513) - 300 || point.z > (chunkCount*513) + 300)
             {
                 pointsToRemove.Add(point);
@@ -271,7 +278,7 @@ public class TerrainGen : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        foreach (Vector3 point in bezierPoints)
+        foreach (Vector3 point in bezierCurve)
         {
             Gizmos.DrawSphere(point, 1);
         }
