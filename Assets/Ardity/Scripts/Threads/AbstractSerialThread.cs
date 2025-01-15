@@ -249,15 +249,16 @@ public abstract class AbstractSerialThread
             object inputMessage = ReadFromWire(serialPort);
             if (inputMessage != null)
             {
-                // inputQueue.Enqueue(inputMessage);
-                if (inputQueue.Count < maxUnreadMessages)
-                {
-                    inputQueue.Enqueue(inputMessage);
-                }
-                else
-                {
-                    Debug.LogWarning("Queue is full. Dropping message: " + inputMessage);
-                }
+                inputQueue.Enqueue(inputMessage);
+                // // inputQueue.Enqueue(inputMessage);
+                // if (inputQueue.Count < maxUnreadMessages)
+                // {
+                //     inputQueue.Enqueue(inputMessage);
+                // }
+                // else
+                // {
+                //     Debug.LogWarning("Queue is full. Dropping message: " + inputMessage);
+                // }
             }
         }
         catch (TimeoutException)
