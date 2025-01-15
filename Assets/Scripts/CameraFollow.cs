@@ -34,7 +34,7 @@ public class CameraFollow : MonoBehaviour
         // Vector3 desiredPosition = new Vector3(target.position.x - offset.x, offset.y, target.position.z - offset.z);
         // Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
 
-        var test = GetNearestPoint(terrainGen.bezierCurve);
+        GetNearestPoint(terrainGen.bezierCurve);
         Vector3 desiredPosition = new Vector3(terrainGen.bezierCurve[0].x, 1.25f, terrainGen.bezierCurve[0].z);
         Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, 1 * Time.deltaTime);
         transform.position = smoothedPosition;
