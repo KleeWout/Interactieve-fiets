@@ -56,7 +56,7 @@ public class CanoeMovement : MonoBehaviour
                 leftAnimation = Gamepad.all[0].leftStick.ReadValue().y;
                 rightAnimation = Gamepad.all[0].rightStick.ReadValue().y;
                 userInput = Gamepad.all[0].leftStick.ReadValue().y - Gamepad.all[0].rightStick.ReadValue().y;
-                userThrust = (Gamepad.all[0].leftStick.ReadValue().y + Gamepad.all[0].rightStick.ReadValue().y)/2;  
+                userThrust = (Gamepad.all[0].leftStick.ReadValue().y + Gamepad.all[0].rightStick.ReadValue().y)/2;
             }
 
         }
@@ -64,6 +64,10 @@ public class CanoeMovement : MonoBehaviour
         {
             userInput = Input.GetAxis("Horizontal");
             userThrust = Input.GetAxis("Vertical");
+            if(isSinglePlayer){
+                userInput = 0;
+                userThrust = Input.GetAxis("Vertical");
+            }
         }
         else if(!isSinglePlayer)
         {

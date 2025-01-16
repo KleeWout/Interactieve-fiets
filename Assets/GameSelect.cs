@@ -15,10 +15,12 @@ public class GameSelect : MonoBehaviour
     public GameObject playerObject;
 
     public GameObject terrainObject;
+    private TerrainGen terrain;
 
 
     void Start()
     {
+        terrain = terrainObject.GetComponent<TerrainGen>();
 
         if (gameMode == GameMode.SinglePlayer)
         {
@@ -61,9 +63,7 @@ public class GameSelect : MonoBehaviour
         ResetPlayer();
         canoeSingleplayer.SetActive(true);
 
-
-        // terrain.GenerateTerrain(gameMode);
-        // loadPlayer.InitializeStart();
+        terrain.GenerateTerrain(gameMode);
 
     }
 
@@ -75,8 +75,7 @@ public class GameSelect : MonoBehaviour
 
 
 
-        // terrain.GenerateTerrain(gameMode);
-        // loadPlayer.InitializeStart();
+        terrain.GenerateTerrain(gameMode);
     }
 
     void ResetPlayer()
@@ -87,6 +86,7 @@ public class GameSelect : MonoBehaviour
 
         playerObject.transform.position = Vector3.zero;
         playerObject.transform.rotation = Quaternion.identity;
+
     }
 
 }

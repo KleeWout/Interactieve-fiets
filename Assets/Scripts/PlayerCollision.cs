@@ -3,22 +3,20 @@ using System.Collections;
 
 public class PlayerCollision : MonoBehaviour
 {
+
+    private HealthManager HealthManager;
+
+    void Start(){
+        HealthManager = GetComponent<HealthManager>();
+    }
+
     void OnCollisionEnter(Collision collision)
     {
+        HealthManager.TakeDamage();
         //when hitting the logs
         if (collision.collider.tag == "Obstacle")
         {
-            HealthManager.health--;
-            if (HealthManager.health <= 0)
-            {
-                Debug.Log("Game Over!");
-            }
-            else
-            {
-                StartCoroutine(GetHurt());
-            }
-
-
+            HealthManager.TakeDamage();
         }
         Debug.Log(collision.collider.tag);
 

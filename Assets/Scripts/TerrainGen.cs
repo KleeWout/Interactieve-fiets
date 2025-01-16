@@ -21,8 +21,6 @@ public class TerrainGen : MonoBehaviour
     public Vector3[] controlPoints;
     public List<Vector3> bezierPoints = new List<Vector3>();
 
-    public List<Vector3> bezierCurve = new List<Vector3>();
-
     private int chunkCount = 0;
 
 
@@ -34,7 +32,6 @@ public class TerrainGen : MonoBehaviour
     {
         currentGameMode = mode;
 
-        bezierCurve.Clear();
         bezierPoints.Clear();
         heights = null;
         lastHeights = null;
@@ -43,18 +40,16 @@ public class TerrainGen : MonoBehaviour
         terrain1.transform.position = new Vector3(-256.5f, -10, -256.5f);
         terrain2.transform.position = new Vector3(-256.5f, -10, 256.5f);
 
-
-        Debug.Log("Generating terrain");
         if (mode == GameMode.SinglePlayer)
         {
-            GenerateRandomBezierCurve(true, new Vector2(0, 0), 10);
+            GenerateRandomBezierCurve(true, new Vector2(0, 0), 0);
             heights = CarveTerrainAsync();
             await heights;
             lastHeights = heights.Result;
             terrainData1.SetHeights(0, 0, heights.Result);
 
             chunkCount += 1;
-            GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 10);
+            GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 0);
             heights = CarveTerrainAsync();
             await heights;
             lastHeights = heights.Result;
@@ -62,14 +57,14 @@ public class TerrainGen : MonoBehaviour
         }
         else if (mode == GameMode.MultiPlayer)
         {
-            GenerateRandomBezierCurve(true, new Vector2(0, 0), 50);
+            GenerateRandomBezierCurve(true, new Vector2(0, 0), 100);
             heights = CarveTerrainAsync();
             await heights;
             lastHeights = heights.Result;
             terrainData1.SetHeights(0, 0, heights.Result);
 
             chunkCount += 1;
-            GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 50);
+            GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 100);
             heights = CarveTerrainAsync();
             await heights;
             lastHeights = heights.Result;
@@ -120,7 +115,7 @@ public class TerrainGen : MonoBehaviour
                     Vector3 newPosition = terrain2.transform.position;
                     newPosition.z += 1026f;
                     terrain2.transform.position = newPosition;
-                    GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 50);
+                    GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 100);
                     var heights = CarveTerrainAsync();
                     await heights;
                     lastHeights = heights.Result;
@@ -132,7 +127,7 @@ public class TerrainGen : MonoBehaviour
                     Vector3 newPosition = terrain1.transform.position;
                     newPosition.z += 1026f;
                     terrain1.transform.position = newPosition;
-                    GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 50);
+                    GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 100);
                     var heights = CarveTerrainAsync();
                     await heights;
                     lastHeights = heights.Result;
@@ -312,13 +307,6 @@ public class TerrainGen : MonoBehaviour
             {
                 Vector3 point = CalculateBezierPoint(t, controlPoints[i], controlPoints[i + 1], controlPoints[i + 2], controlPoints[i + 3]);
                 bezierPoints.Add(point);
-                bezierCurve.Add(point);
-
-                Debug.Log(point.z);
-
-                // if(point.z < (chunkCount * 513)+256.5){
-                //     bezierCurve.Add(point);
-                // }
             }
 
         }
@@ -336,19 +324,13 @@ public class TerrainGen : MonoBehaviour
         foreach (Vector3 point in pointsToRemove)
         {
             bezierPoints.Remove(point);
-            if (point.z > (chunkCount * 513) + 256.5f)
-            {
-                if(bezierCurve.Contains(point)){
-                    bezierCurve.Remove(point);
-                }
-            }
         }
     }
 
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        foreach (Vector3 point in bezierCurve)
+        foreach (Vector3 point in bezierPoints)
         {
             Gizmos.DrawSphere(point, 1);
         }
