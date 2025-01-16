@@ -1656,7 +1656,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!54 &1480849957
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1904,7 +1904,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9975d2752467d40d4beed0512e606e2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMode: 1
+  gameMode: 0
   canoeSingleplayer: {fileID: 1480849956}
   canoeMultiplayer: {fileID: 20283344}
   playerObject: {fileID: 39061749}
