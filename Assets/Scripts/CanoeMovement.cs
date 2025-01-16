@@ -39,7 +39,7 @@ public class CanoeMovement : MonoBehaviour
 
     void Start()
     {
-        espListener = GetComponent<EspListener>();
+        espListener = GetComponentInParent<EspListener>();
         rb = GetComponent<Rigidbody>();
         player = transform.parent.gameObject;// Get the parent transform
         rbPlayer = player.GetComponent<Rigidbody>();

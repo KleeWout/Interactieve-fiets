@@ -3,36 +3,39 @@ using models.GameMode;
 
 public class GameSelect : MonoBehaviour
 {
-    TerrainGen terrain;
-    LoadPlayer loadPlayer;
     public GameMode gameMode;
     private bool switchSingleplayer = false;
     private bool switchMultiplayer = false;
 
+
+
+
+    public GameObject canoeSingleplayer;
+    public GameObject canoeMultiplayer;
+    public GameObject playerObject;
+
+    public GameObject terrainObject;
+
+
     void Start()
     {
-        terrain = GameObject.Find("Terrains").GetComponent<TerrainGen>();
-        loadPlayer = GameObject.Find("Player").GetComponent<LoadPlayer>();
-        if (terrain == null)
-        {
-            Debug.LogError("Terrains GameObject or TerrainGen component not found.");
-            return;
-        }
 
-        if(gameMode == GameMode.SinglePlayer){
+        if (gameMode == GameMode.SinglePlayer)
+        {
             LoadSinglePlayer();
             switchMultiplayer = true;
         }
-        else if(gameMode == GameMode.MultiPlayer){
+        else if (gameMode == GameMode.MultiPlayer)
+        {
             LoadMultiPlayer();
             switchSingleplayer = true;
-        }        
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(gameMode == GameMode.SinglePlayer && switchSingleplayer)
+        if (gameMode == GameMode.SinglePlayer && switchSingleplayer)
         {
             Debug.Log("Single Player");
             switchSingleplayer = false;
@@ -40,7 +43,7 @@ public class GameSelect : MonoBehaviour
             LoadSinglePlayer();
 
         }
-        else if(gameMode == GameMode.MultiPlayer && switchMultiplayer)
+        else if (gameMode == GameMode.MultiPlayer && switchMultiplayer)
         {
             Debug.Log("Multi Player");
             switchSingleplayer = true;
@@ -54,14 +57,36 @@ public class GameSelect : MonoBehaviour
 
     void LoadSinglePlayer()
     {
-        terrain.GenerateTerrain(gameMode);
-        loadPlayer.InitializeStart();
+        canoeMultiplayer.SetActive(false);
+        ResetPlayer();
+        canoeSingleplayer.SetActive(true);
+
+
+        // terrain.GenerateTerrain(gameMode);
+        // loadPlayer.InitializeStart();
+
     }
 
     void LoadMultiPlayer()
     {
-        terrain.GenerateTerrain(gameMode);
-        loadPlayer.InitializeStart();
+        canoeSingleplayer.SetActive(false);
+        ResetPlayer();
+        canoeMultiplayer.SetActive(true);
+
+
+
+        // terrain.GenerateTerrain(gameMode);
+        // loadPlayer.InitializeStart();
+    }
+
+    void ResetPlayer()
+    {
+        Rigidbody playerRb = playerObject.GetComponent<Rigidbody>();
+        playerRb.linearVelocity = Vector3.zero;
+        playerRb.angularVelocity = Vector3.zero;
+
+        playerObject.transform.position = Vector3.zero;
+        playerObject.transform.rotation = Quaternion.identity;
     }
 
 }
