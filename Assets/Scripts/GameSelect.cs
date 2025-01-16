@@ -4,8 +4,6 @@ using models.GameMode;
 public class GameSelect : MonoBehaviour
 {
     public GameMode gameMode;
-    private bool switchSingleplayer = false;
-    private bool switchMultiplayer = false;
 
 
 
@@ -25,33 +23,22 @@ public class GameSelect : MonoBehaviour
         if (gameMode == GameMode.SinglePlayer)
         {
             LoadSinglePlayer();
-            switchMultiplayer = true;
         }
         else if (gameMode == GameMode.MultiPlayer)
         {
             LoadMultiPlayer();
-            switchSingleplayer = true;
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SwitchGameMode(GameMode mode)
     {
-        if (gameMode == GameMode.SinglePlayer && switchSingleplayer)
+        if (mode == GameMode.SinglePlayer)
         {
-            Debug.Log("Single Player");
-            switchSingleplayer = false;
-            switchMultiplayer = true;
             LoadSinglePlayer();
-
         }
-        else if (gameMode == GameMode.MultiPlayer && switchMultiplayer)
+        else if (mode == GameMode.MultiPlayer)
         {
-            Debug.Log("Multi Player");
-            switchSingleplayer = true;
-            switchMultiplayer = false;
             LoadMultiPlayer();
-
         }
     }
 
@@ -59,23 +46,31 @@ public class GameSelect : MonoBehaviour
 
     void LoadSinglePlayer()
     {
+        if(gameMode == GameMode.SinglePlayer)
+        {
+            return;
+        }
+        gameMode = GameMode.SinglePlayer;
         canoeMultiplayer.SetActive(false);
         ResetPlayer();
         canoeSingleplayer.SetActive(true);
 
-        terrain.GenerateTerrain(gameMode);
+        terrain.GenerateTerrain(GameMode.SinglePlayer);
 
     }
 
     void LoadMultiPlayer()
     {
+        if(gameMode == GameMode.MultiPlayer)
+        {
+            return;
+        }
+        gameMode = GameMode.MultiPlayer;
         canoeSingleplayer.SetActive(false);
         ResetPlayer();
         canoeMultiplayer.SetActive(true);
 
-
-
-        terrain.GenerateTerrain(gameMode);
+        terrain.GenerateTerrain(GameMode.MultiPlayer);
     }
 
     void ResetPlayer()
