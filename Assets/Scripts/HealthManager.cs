@@ -1,28 +1,30 @@
-using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
 public class HealthManager : MonoBehaviour
 {
-    public static int health = 5;
+    private int health = 5;
 
-    [SerializeField] //change the health in the inspector
-    private int inspectorHealth = 5;
-
-    void Start()
-    {
-        health = inspectorHealth;
-    }
     public Image[] hearts;
-
     public Sprite fullHeart;
     public Sprite emptyHeart;
 
-    public GameOverScreen GameOverScreen;
+    public Animator[] heartAnimators; // Add this line to reference the animators
 
-    bool isAlive = true;
-
-
-    void Update()
+    // public GameOverScreen GameOverScreen;
+    
+    public void TakeDamage()
+    {
+        health -= 1;
+        if (health <= 0)
+        {
+            Debug.Log("gameover");
+            // send gameover
+        }
+        else
+            PlayHeartBounceAnimation();
+            UpdateHearts();
+    }
+    void UpdateHearts()
     {
         foreach (Image img in hearts)
         {
@@ -32,10 +34,10 @@ public class HealthManager : MonoBehaviour
         {
             hearts[i].sprite = fullHeart;
         }
-        if (health <= 0 && isAlive)
-        {
-            isAlive = false;
-            GameOverScreen.Setup();
-        }
+    }
+
+    void PlayHeartBounceAnimation()
+    {
+        heartAnimators[health].SetTrigger("Bounce");
     }
 }

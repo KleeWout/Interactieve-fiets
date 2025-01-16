@@ -3,14 +3,8 @@ using TMPro;
 public class GameOverScreen : MonoBehaviour
 {
     public TMP_Text score;
+
     public static bool isGameOver = false;
-
-    //keep script active
-    void Awake()
-    {
-
-        DontDestroyOnLoad(gameObject);
-    }
 
     public void Setup()
     {

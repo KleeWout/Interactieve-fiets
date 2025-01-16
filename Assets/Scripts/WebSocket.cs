@@ -6,7 +6,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
-using UnityEngine.Analytics;
+
+using models.GameMode;
 
 
 public class WebSocketClient : MonoBehaviour
@@ -19,22 +20,13 @@ public class WebSocketClient : MonoBehaviour
     private Queue<string> sceneLoadRequests = new Queue<string>();
     private bool sceneChangeRequested = false;
 
-    public GameOverScreen GameOverScreen;
+    private GameSelect gameSelect;
 
-    //keep script active
-    // void Awake()
-    // {
-    //     if (Instance != null && Instance != this)
-    //     {
-    //         Destroy(gameObject);
-    //         return;
-    //     }
-    //     Instance = this;
-    //     DontDestroyOnLoad(gameObject);
-    // }
+    // public GameOverScreen GameOverScreen;
 
     private async void Start()
     {
+        gameSelect = GetComponent<GameSelect>();
         webSocket = new ClientWebSocket();
         Uri serverUri = new Uri("ws://localhost:8080");
         Debug.Log("Connecting to WebSocket server...");
@@ -77,20 +69,17 @@ public class WebSocketClient : MonoBehaviour
                     if (gameMode == "singleplayer")
                     {
                         Debug.Log("Queueing scene change: SinglePlayer");
-                        sceneLoadRequests.Enqueue("SinglePlayer");
-                        sceneChangeRequested = true;
+
+                        // sceneLoadRequests.Enqueue("SinglePlayer");
+                        // sceneChangeRequested = true;
+                        gameSelect.SwitchGameMode(GameMode.SinglePlayer);
                     }
                     else if (gameMode == "multiplayer")
                     {
                         Debug.Log("Queueing scene change: MultiPlayer");
-                        sceneLoadRequests.Enqueue("MultiPlayer");
-                        sceneChangeRequested = true;
-                    }
-                    else if (gameMode == "main")
-                    {
-                        Debug.Log("Queueing scene change: Main");
-                        sceneLoadRequests.Enqueue("Main");
-                        sceneChangeRequested = true;
+                        // sceneLoadRequests.Enqueue("MultiPlayer");
+                        // sceneChangeRequested = true;
+                        gameSelect.SwitchGameMode(GameMode.MultiPlayer);
                     }
                 }
 
@@ -99,7 +88,7 @@ public class WebSocketClient : MonoBehaviour
                     string gameState = jsonObject["gameState"].ToString();
                     if (gameState == "stop")
                     {
-                        GameOverScreen.Setup();
+                        // GameOverScreen.Setup();
 
                     }
                     if (gameState == "restart")

@@ -1,24 +1,20 @@
 using UnityEngine;
 using TMPro;
-// using UnityEngine.UI;
 
 public class ScoreSystem : MonoBehaviour
 {
-    float distance_for_1_point = 1f;
-    Vector3 previousPlayerPosition;
-    float distanceSinceLastScore;
+    private float distance_for_1_point = 1f;
+    private Vector3 previousPlayerPosition;
+    private float distanceSinceLastScore;
 
-    public Transform player;
+    private Transform player;
     public static float score = 0f;
     public TMP_Text scoreText;
 
-
-    void Awake()
-    {
-        //save start pos
+    void Start(){
+        player = GetComponent<Transform>();
         previousPlayerPosition = player.position;
     }
-
 
     void Update()
     {
@@ -38,7 +34,7 @@ public class ScoreSystem : MonoBehaviour
         {
             score += scoreToAdd;
             scoreText.text = score.ToString() + "m";
-            WebSocketClient.Instance.SendMessageToSocket($"Score updated: {score}");
+            // WebSocketClient.Instance.SendMessageToSocket($"Score updated: {score}");
         }
     }
 }
