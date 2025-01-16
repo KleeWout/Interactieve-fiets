@@ -428,6 +428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4793940dc20ccbc40b7aa9c1e9b94a7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageCooldown: 2
 --- !u!1 &65586075 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c934c4caa80014082beef7cf25eefe3e,
@@ -1904,7 +1905,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9975d2752467d40d4beed0512e606e2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMode: 0
+  gameMode: 1
   canoeSingleplayer: {fileID: 1480849956}
   canoeMultiplayer: {fileID: 20283344}
   playerObject: {fileID: 39061749}

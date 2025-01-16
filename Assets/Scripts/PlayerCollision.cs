@@ -5,13 +5,20 @@ public class PlayerCollision : MonoBehaviour
 {
 
     private HealthManager HealthManager;
+    private float lastDamageTime;
+    public  float damageCooldown = 2f;
 
     void Start(){
         HealthManager = GetComponent<HealthManager>();
+        lastDamageTime = Time.time - damageCooldown;
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        if(Time.time - lastDamageTime < damageCooldown){
+            return;
+        }
+        lastDamageTime = Time.time;
         HealthManager.TakeDamage();
         //when hitting the logs
         if (collision.collider.tag == "Obstacle")
