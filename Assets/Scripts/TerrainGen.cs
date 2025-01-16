@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using models.GameMode;
 
 public class TerrainGen : MonoBehaviour
 {
+    private GameMode currentGameMode;
     public GameObject player;
     public Terrain terrain1;
     public Terrain terrain2;
@@ -16,7 +18,7 @@ public class TerrainGen : MonoBehaviour
     private float sizeY = 600;
 
     // Bezier
-    public Vector3[] controlPoints = new Vector3[10];
+    public Vector3[] controlPoints;
     public List<Vector3> bezierPoints = new List<Vector3>();
 
     public List<Vector3> bezierCurve = new List<Vector3>();
@@ -25,55 +27,119 @@ public class TerrainGen : MonoBehaviour
 
 
     private float[,] lastHeights;
+    Task<float[,]> heights;
 
-    async void Start()
+
+    public async void GenerateTerrain(GameMode mode)
     {
-        Task<float[,]> heights;
+        currentGameMode = mode;
+
+        bezierCurve.Clear();
+        bezierPoints.Clear();
+        heights = null;
+        lastHeights = null;
+        chunkCount = 0;
+        controlPoints = new Vector3[14];
+        terrain1.transform.position = new Vector3(-256.5f, -10, -256.5f);
+        terrain2.transform.position = new Vector3(-256.5f, -10, 256.5f);
+
+
+        Debug.Log("Generating terrain");
+        if (mode == GameMode.SinglePlayer)
+        {
+            GenerateRandomBezierCurve(true, new Vector2(0, 0), 10);
+            heights = CarveTerrainAsync();
+            await heights;
+            lastHeights = heights.Result;
+            terrainData1.SetHeights(0, 0, heights.Result);
+
+            chunkCount += 1;
+            GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 10);
+            heights = CarveTerrainAsync();
+            await heights;
+            lastHeights = heights.Result;
+            terrainData2.SetHeights(0, 0, heights.Result);
+        }
+        else if (mode == GameMode.MultiPlayer)
+        {
+            GenerateRandomBezierCurve(true, new Vector2(0, 0), 50);
+            heights = CarveTerrainAsync();
+            await heights;
+            lastHeights = heights.Result;
+            terrainData1.SetHeights(0, 0, heights.Result);
+
+            chunkCount += 1;
+            GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 50);
+            heights = CarveTerrainAsync();
+            await heights;
+            lastHeights = heights.Result;
+            terrainData2.SetHeights(0, 0, heights.Result);
+        }
+    }
+
+    void Start()
+    {
         terrainData1 = terrain1.terrainData;
         terrainData2 = terrain2.terrainData;
-
-        GenerateRandomBezierCurve(true, new Vector2(0, 0));
-        heights = CarveTerrainAsync();
-        await heights;
-        lastHeights = heights.Result;
-        terrainData1.SetHeights(0, 0, heights.Result);
-
-        chunkCount += 1;
-        GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z));
-        heights = CarveTerrainAsync();
-        await heights;
-        lastHeights = heights.Result;
-        terrainData2.SetHeights(0, 0, heights.Result);
     }
 
     async void Update()
     {
         if (player.transform.position.z > (chunkCount * 513))
         {
-            if (chunkCount % 2 == 0)
-            {
-                chunkCount += 1;
-                Vector3 newPosition = terrain2.transform.position;
-                newPosition.z += 1026f;
-                terrain2.transform.position = newPosition;
-                GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z));
-                var heights = CarveTerrainAsync();
-                await heights;
-                lastHeights = heights.Result;
-                terrainData2.SetHeights(0, 0, heights.Result);
+            if(currentGameMode == GameMode.SinglePlayer){
+                if (chunkCount % 2 == 0)
+                {
+                    chunkCount += 1;
+                    Vector3 newPosition = terrain2.transform.position;
+                    newPosition.z += 1026f;
+                    terrain2.transform.position = newPosition;
+                    GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 0);
+                    var heights = CarveTerrainAsync();
+                    await heights;
+                    lastHeights = heights.Result;
+                    terrainData2.SetHeights(0, 0, heights.Result);
+                }
+                else
+                {
+                    chunkCount += 1;
+                    Vector3 newPosition = terrain1.transform.position;
+                    newPosition.z += 1026f;
+                    terrain1.transform.position = newPosition;
+                    GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 0);
+                    var heights = CarveTerrainAsync();
+                    await heights;
+                    lastHeights = heights.Result;
+                    terrainData1.SetHeights(0, 0, heights.Result);
+                }
             }
-            else
-            {
-                chunkCount += 1;
-                Vector3 newPosition = terrain1.transform.position;
-                newPosition.z += 1026f;
-                terrain1.transform.position = newPosition;
-                GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z));
-                var heights = CarveTerrainAsync();
-                await heights;
-                lastHeights = heights.Result;
-                terrainData1.SetHeights(0, 0, heights.Result);
+            else if(currentGameMode == GameMode.MultiPlayer){
+                if (chunkCount % 2 == 0)
+                {
+                    chunkCount += 1;
+                    Vector3 newPosition = terrain2.transform.position;
+                    newPosition.z += 1026f;
+                    terrain2.transform.position = newPosition;
+                    GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 50);
+                    var heights = CarveTerrainAsync();
+                    await heights;
+                    lastHeights = heights.Result;
+                    terrainData2.SetHeights(0, 0, heights.Result);
+                }
+                else
+                {
+                    chunkCount += 1;
+                    Vector3 newPosition = terrain1.transform.position;
+                    newPosition.z += 1026f;
+                    terrain1.transform.position = newPosition;
+                    GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 50);
+                    var heights = CarveTerrainAsync();
+                    await heights;
+                    lastHeights = heights.Result;
+                    terrainData1.SetHeights(0, 0, heights.Result);
+                }
             }
+
 
         }
     }
@@ -213,7 +279,7 @@ public class TerrainGen : MonoBehaviour
     }
 
 
-    void GenerateRandomBezierCurve(bool isFirstGen, Vector2 firstPoint)
+    void GenerateRandomBezierCurve(bool isFirstGen, Vector2 firstPoint, int deviation)
     {
         if (isFirstGen)
         {
@@ -222,7 +288,7 @@ public class TerrainGen : MonoBehaviour
             controlPoints[2] = new Vector3(0, 0, 102.6f);
             for (int i = 3; i < controlPoints.Length; i++)
             {
-                float randomX = Random.Range(-200f, 200f);
+                float randomX = Random.Range(-deviation, deviation);
                 float z = i * 51.3f;
                 controlPoints[i] = new Vector3(randomX, 0, z);
             }
@@ -232,7 +298,7 @@ public class TerrainGen : MonoBehaviour
             controlPoints[0] = new Vector3(firstPoint.x, 0, firstPoint.y);
             for (int i = 1; i < controlPoints.Length; i++)
             {
-                float randomX = Random.Range(-200f, 200f);
+                float randomX = Random.Range(-deviation, deviation);
                 float z = i * 51.3f + firstPoint.y;
                 controlPoints[i] = new Vector3(randomX, 0, z);
             }
