@@ -22,12 +22,15 @@ public class GameSelect : MonoBehaviour
 
         if (gameMode == GameMode.SinglePlayer)
         {
-            LoadSinglePlayer();
+            canoeSingleplayer.SetActive(true);
+            canoeMultiplayer.SetActive(false);
         }
         else if (gameMode == GameMode.MultiPlayer)
         {
-            LoadMultiPlayer();
+            canoeSingleplayer.SetActive(false);
+            canoeMultiplayer.SetActive(true);
         }
+        terrain.GenerateTerrain(gameMode);
     }
 
     public void SwitchGameMode(GameMode mode)
