@@ -74,4 +74,4 @@ crashlytics-build.properties
 .DS_Store
 /.vscode
 
-/Assets/TerrainData/
+Assets/Terraindata/
