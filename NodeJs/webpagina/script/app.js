@@ -1,5 +1,5 @@
 "use strict";
-let htmlSingleplayerButton, htmlMultiplayerButton, htmlScoreValue;
+let htmlSingleplayerButton, htmlMultiplayerButton, htmlScoreValue, htmlName;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 
@@ -38,12 +38,15 @@ ws.onerror = (error) => {
   console.error("WebSocket error:", error);
 };
 
-const listenToButtons = function () {
+const listenToInputs = function () {
   htmlSingleplayerButton.addEventListener("click", function () {
     ws.send('{"gameMode": "singleplayer"}');
   });
   htmlMultiplayerButton.addEventListener("click", function () {
     ws.send('{"gameMode": "multiplayer"}');
+  });
+  htmlName.addEventListener("input", function () {
+    ws.send('{"userName": "' + htmlName.value + '"}');
   });
 };
 
@@ -65,9 +68,11 @@ const joinGameConnection = async function (gameCode) {
 
   return name;
 }
-const changeUserName = function(name){
+
+const changeUserName = function(name) {
   ws.send('{"userName": "' + name + '"}');
 }
+
 const getRandomName = async function () {
   try {
     const response = await fetch('script/names.json');
@@ -81,7 +86,7 @@ const getRandomName = async function () {
   }
 };
 
-function validateAndMove(current, nextFieldID) {
+const validateAndMove = function(current, nextFieldID) {
   current.value = current.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
   if (current.value.length >= current.maxLength && nextFieldID) {
       document.getElementById(nextFieldID).focus();
@@ -91,40 +96,34 @@ function validateAndMove(current, nextFieldID) {
   }
 }
 
-function moveToPrevious(event, previousFieldID) {
+const moveToPrevious = function(event, previousFieldID) {
   if (event.key === 'Backspace' && event.target.value === '') {
       document.getElementById(previousFieldID).focus();
   }
 }
-function getCombinedInput() {
+
+const getCombinedInput = async function() {
   const input1 = document.getElementById('input1');
   const input2 = document.getElementById('input2');
   const input3 = document.getElementById('input3');
   const input4 = document.getElementById('input4');
   const combinedInput = input1.value + input2.value + input3.value + input4.value;
-  joinGameConnection(combinedInput);
+  htmlName.value = await joinGameConnection(combinedInput);
   input1.value = "";
   input2.value = "";
   input3.value = "";
   input4.value = "";
 }
 
-
 const init = function () {
   console.log("DOM loaded");
-
 
   htmlSingleplayerButton = document.querySelector(".js-singleplayer");
   htmlMultiplayerButton = document.querySelector(".js-multiplayer");
   htmlScoreValue = document.querySelector(".js-score");
+  htmlName = document.querySelector(".js-name");
 
-  listenToButtons();
-
-  joinGameConnection();
-
-
-
-
+  listenToInputs();
 };
 
 document.addEventListener("DOMContentLoaded", init);
