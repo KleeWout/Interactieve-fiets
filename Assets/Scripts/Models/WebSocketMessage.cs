@@ -2,23 +2,13 @@
 
 namespace Models.WebSocketMessage
 {
+    [System.Serializable]
     public class WebSocketMessage
     {
         public bool IsGameClient = true;
-        public string? GameState { get; set;}
+        public bool NewConnection = false;
+        public string? Score;
+        public bool? GameOver;
 
-
-
-        // public string? Secret { get; set;}
-
-        // public WebSocketMessage()
-        // {
-        //     Secret = "your_secret_value"; // Set your secret value here
-        // }
-
-        // public override string ToString()
-        // {
-        //     return $"GameState: {GameState}, Code: {Code}, Score: {Score}";
-        // }
     }
 }

@@ -36,17 +36,30 @@ wss.on("connection", function (ws) {
     // check for game clients a stuur game code om spel te starten
     if (message.IsGameClient === true) {
 
-      // generate game code number
-      do {
-        gameCode = Math.floor(1000 + Math.random() * 9000);
-      } while (activeGameCodes.includes(gameCode));      
-      gameCode = gameCode.toString();
-      activeGameCodes.push(gameCode);
+      if(message.NewConnection === true){
+        // generate game code number
+        do {
+          gameCode = Math.floor(1000 + Math.random() * 9000);
+        } while (activeGameCodes.includes(gameCode));      
+        gameCode = gameCode.toString();
+        activeGameCodes.push(gameCode);
 
-      gameClients.set(gameCode, ws);
-      console.log("Active game codes: ", activeGameCodes);
+        gameClients.set(gameCode, ws);
+        console.log("Active game codes: ", activeGameCodes);
 
-      ws.send(JSON.stringify({ gameCode }));
+        ws.send(JSON.stringify({ gameCode }));
+      }
+      else if (game2browser.has(ws)){
+        const strippedMessage = { ...message };
+        delete strippedMessage.IsGameClient;
+        delete strippedMessage.NewConnection;
+        console.log(JSON.stringify(strippedMessage));
+        game2browser.get(ws).send(JSON.stringify(strippedMessage));
+      }
+      else{
+        console.log("Game client not associated with any browser client");
+      }
+
     }
     else{
       // Handle browser client joining a game

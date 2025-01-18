@@ -8,26 +8,10 @@ ws.onopen = () => {
 };
 ws.onmessage = (event) => {
   const message = event.data;
-  console.log("Raw message received:", message);
   try {
-    // Parse JSON data
     const jsonData = JSON.parse(message);
-    console.log("Parsed JSON data:", jsonData);
-    // Check if it has score property
-    if (jsonData.score !== undefined) {
-      htmlScoreValue.innerHTML = `<p>Current Score: ${jsonData.score}</p>`;
-    }
-    if (jsonData.gameState == "started") {
-      htmlButtons.innerHTML = `<button class="button js-stop">Stop</button>`;
-      htmlStop = document.querySelector(".js-stop");
-      htmlStop.addEventListener("click", function () {
-        ws.send('{"gameState": "stop"}');
-      });
-    }
-    if (jsonData.gameState == "stopped") {
-      htmlButtons.innerHTML = `<button class="js-singleplayer">Singleplayer</button>
-        <button class="js-multiplayer">Multiplayer</button>
-        <button class="js-main">Main</button>`;
+    if (jsonData.Score !== undefined) {
+      htmlScoreValue.innerHTML = `${jsonData.Score}m</p>`;
     }
   } catch (error) {
     console.error("Error parsing JSON:", error);
@@ -113,15 +97,14 @@ const getCombinedInput = async function() {
   const input3 = document.getElementById('input3');
   const input4 = document.getElementById('input4');
   const combinedInput = input1.value + input2.value + input3.value + input4.value;
-  htmlName.value = await joinGameConnection(combinedInput);
   input1.value = "";
   input2.value = "";
   input3.value = "";
   input4.value = "";
+  htmlName.value = await joinGameConnection(combinedInput);
 }
 
 const init = function () {
-  console.log("DOM loaded");
 
   htmlScoreValue = document.querySelector(".js-score");
   htmlName = document.querySelector(".js-name");

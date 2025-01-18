@@ -24,7 +24,18 @@ public class WebSocketClient : MonoBehaviour
 
     private GameSelect gameSelect;
 
-    // public GameOverScreen GameOverScreen;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private async void Start()
     {
@@ -37,7 +48,7 @@ public class WebSocketClient : MonoBehaviour
 
         // Start receiving messages
         ReceiveMessages();
-        SendMessageToSocket(new WebSocketMessage());
+        SendMessageToSocket(new WebSocketMessage { NewConnection = true });
     }
 
     private async void ReceiveMessages()
@@ -128,7 +139,7 @@ public class WebSocketClient : MonoBehaviour
             string json = JsonUtility.ToJson(data);
             var bytes = Encoding.UTF8.GetBytes(json);
             await webSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
-            // Debug.Log($"Sent: {json}");
+            Debug.Log($"Sent: {json}");
         }
         else
         {
@@ -145,13 +156,6 @@ public class WebSocketClient : MonoBehaviour
             Debug.Log($"Loading scene: {sceneName}");
             SceneManager.LoadScene(sceneName);
             sceneChangeRequested = false;
-        }
-
-        // Example: Send a message when the spacebar is pressed
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            WebSocketMessage message = new WebSocketMessage();
-            SendMessageToSocket(message);
         }
     }
 
