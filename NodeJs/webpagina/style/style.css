@@ -181,11 +181,12 @@ button {
 }
 .c-gamemode:has(input[type="radio"][value="Singleplayer"]:checked) .c-gamemode__item__multiplayer{
   opacity: 0.5;
-  transform: scale(0.8);
+  transform: scale(0.9) translateX(10%);
 }
 .c-gamemode:has(input[type="radio"][value="Multiplayer"]:checked) .c-gamemode__item__singleplayer{
   opacity: 0.5;
-  transform: scale(0.8);
+  transform: scale(0.9) translateX(-10%);
+
 }
 
 .c-gamemode__select input{
