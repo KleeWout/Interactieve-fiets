@@ -43,7 +43,6 @@ html {
   color: var(--text-color);
   background-color: var(--page-background-color);
   background: radial-gradient(105.02% 39.32% at 50.13% 45.07%, #c16863 0%, #904849 100%);
-
 }
 
 /* Responsive images */
@@ -162,27 +161,41 @@ button {
 }
 
 .c-gamemode {
-  width: 280px;
+  margin-left: calc(calc(280px * 1.2)- 280px);
+  width: calc(280px * 1.2);
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
+
 .c-gamemode__title {
   text-align: center;
   font-size: 1.5rem;
   text-transform: uppercase;
 }
 
-.c-gamemoded__img {
-  height: 265px;
-  align-self: stretch;
+.c-carousel-cell {
+  width: 80%; /* half-width */
+  height: 280px;
 }
 
-.c-gamemode__selector {
-  display: flex;
-  justify-content: center;
-  gap: 0.25rem;
+.flickity-button {
+  display: none;
 }
+
+/* white circles */
+.flickity-page-dots .dot {
+  width: 10px;
+  height: 10px;
+  opacity: 1;
+  background: transparent;
+  border: 1px solid var(--text-color);
+}
+/* fill-in selected dot */
+.flickity-page-dots .dot.is-selected {
+  background: var(--text-color);
+}
+
 
 /* Buttons onderaan */
 .c-buttons {

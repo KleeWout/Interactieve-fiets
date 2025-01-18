@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Entertainende FietsGame</title>
+    <!-- Carousel -->
+    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css" />
+    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
     <link rel="stylesheet" href="style/style.css" />
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
     <script src="script/app.js"></script>
@@ -27,18 +30,20 @@
             </svg>
           </button>
         </div>
-        <div class="c-gamemode__container">
-          <div class="c-gamemode">
-            <p class="c-gamemode__title">Twee spelers</p>
-            <img class="c-gamemode__img c-gamemode__img--multiplayer" src="Images/multiplayerimg.png" alt="multiplayer" />
-          </div>
-          <div class="c-gamemode__selector">
-            <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
-              <circle cx="4" cy="4" r="4" fill="#FDF9EE" />
-            </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
-              <circle cx="4" cy="4" r="3.5" stroke="#FDF9EE" />
-            </svg>
+        <div class="c-gamemode">
+          <div class="carousel" data-flickity>
+            <div class="c-carousel-cell">
+              <p class="c-gamemode__title">Twee spelers</p>
+              <div class="c-gamemode__img--container">
+                <img class="c-gamemode__img c-gamemode__img--multiplayer" src="Images/multiplayerimg.png" alt="multiplayer" />
+              </div>
+            </div>
+            <div class="c-carousel-cell">
+              <p class="c-gamemode__title">Enkele speler</p>
+              <div class="c-gamemode__img--container">
+                <img class="c-gamemode__img c-gamemode__img--multiplayer" src="Images/multiplayerimg.png" alt="multiplayer" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
