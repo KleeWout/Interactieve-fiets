@@ -32,19 +32,27 @@
           </button>
         </div>
         <div class="c-gamemode">
-          <div class="carousel" data-flickity>
-            <div class="c-carousel-cell">
-              <p class="c-gamemode__title">Twee spelers</p>
-              <div class="c-gamemode__img--container">
-                <img class="c-gamemode__img c-gamemode__img--multiplayer" src="Images/multiplayerimg.png" alt="multiplayer" />
+          <div class="c-gamemode__container">
+              <div class="c-gamemode__item c-gamemode__item__multiplayer">
+                <label for="Multiplayer">
+                  <p>Multiplayer</p>
+                  <img class="c-gamemode__img c-gamemode__img--multiplayer" src="Images/multiplayerimg.png" alt="multiplayer"  width="280" height="280"/>
+                </label>
               </div>
-            </div>
-            <div class="c-carousel-cell">
-              <p class="c-gamemode__title">Enkele speler</p>
-              <div class="c-gamemode__img--container">
-                <img class="c-gamemode__img c-gamemode__img--multiplayer" src="Images/multiplayerimg.png" alt="multiplayer" />
+              <div class="c-gamemode__item c-gamemode__item__singleplayer">
+                <label for="Singleplayer">
+                  <p>Singleplayer</p>
+                  <img class="c-gamemode__img c-gamemode__img--multiplayer" src="Images/multiplayerimg.png" alt="multiplayer" width="280" height="280"/>
+                </label>
               </div>
-            </div>
+          </div>
+          <div class="c-gamemode__select">
+            <input type="radio" id="Multiplayer" name="gameMode" value="Multiplayer" checked>
+            <label for="Multiplayer">
+            </label>
+            <input type="radio" id="Singleplayer" name="gameMode" value="Singleplayer">
+            <label for="Singleplayer">
+            </label>
           </div>
         </div>
       </div>

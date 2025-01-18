@@ -1,8 +1,5 @@
-//to do:
-// input voor naam --> width dynamisch aanpassen gebaseerd op lengte van naam
-
 "use strict";
-let htmlSingleplayer, htmlMultiplayer, htmlMain, messagesDiv, htmlscore, htmlButtons, htmlStop;
+let htmlGameMode, htmlScoreValue, htmlName, touchArea;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 
@@ -11,26 +8,10 @@ ws.onopen = () => {
 };
 ws.onmessage = (event) => {
   const message = event.data;
-  console.log("Raw message received:", message);
   try {
-    // Parse JSON data
     const jsonData = JSON.parse(message);
-    console.log("Parsed JSON data:", jsonData);
-    // Check if it has score property
-    if (jsonData.score !== undefined) {
-      htmlscore.innerHTML = `<p>Current Score: ${jsonData.score}</p>`;
-    }
-    if (jsonData.gameState == "started") {
-      htmlButtons.innerHTML = `<button class="button js-stop">Stop</button>`;
-      htmlStop = document.querySelector(".js-stop");
-      htmlStop.addEventListener("click", function () {
-        ws.send('{"gameState": "stop"}');
-      });
-    }
-    if (jsonData.gameState == "stopped") {
-      htmlButtons.innerHTML = `<button class="js-singleplayer">Singleplayer</button>
-        <button class="js-multiplayer">Multiplayer</button>
-        <button class="js-main">Main</button>`;
+    if (jsonData.Score !== undefined) {
+      htmlScoreValue.innerHTML = `${jsonData.Score}m</p>`;
     }
   } catch (error) {
     console.error("Error parsing JSON:", error);
@@ -41,30 +22,136 @@ ws.onerror = (error) => {
   console.error("WebSocket error:", error);
 };
 
-const listenToButtons = function () {
-  htmlSingleplayer.addEventListener("click", function () {
-    console.log("singleplayer");
-    ws.send('{"gamemode": "singleplayer"}');
+const listenToInputs = function () {
+  htmlName.addEventListener("input", function () {
+    ws.send('{"userName": "' + htmlName.value + '"}');
   });
-  htmlMultiplayer.addEventListener("click", function () {
-    console.log("multiplayer");
-    ws.send('{"gamemode": "multiplayer"}');
-  });
-  htmlMain.addEventListener("click", function () {
-    console.log("main");
-    ws.send('{"gamemode": "main"}');
+  htmlGameMode.forEach(radio => {
+    radio.addEventListener('change', () => {
+      const selectedOption = document.querySelector('input[name="gameMode"]:checked').value;
+      if (selectedOption == "Singleplayer") {
+        ws.send('{"gameMode": "singleplayer"}');
+      }
+      if (selectedOption === "Multiplayer") {
+        ws.send('{"gameMode": "multiplayer"}');
+      }
+    });
   });
 };
 
+const joinGameConnection = async function (gameCode) {
+  let name = await getRandomName();
+
+  // Basic validation: check if gameCode is a 6-digit number
+  if (/^\d{4}$/.test(gameCode)) {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send('{"gameCode": "' + gameCode + '", "userName": "' + name + '"}');
+    } else {
+      ws.addEventListener('open', function () {
+        ws.send('{"gameCode": "' + gameCode + '", "userName": "' + name + '"}');
+      });
+    }
+  } else {
+    console.error("Invalid game code:", gameCode);
+  }
+
+  return name;
+}
+
+const changeUserName = function(name) {
+  ws.send('{"userName": "' + name + '"}');
+}
+
+const getRandomName = async function () {
+  try {
+    const response = await fetch('script/names.json');
+    const data = await response.json();
+    const names = data.names;
+    const randomIndex = Math.floor(Math.random() * names.length);
+    return names[randomIndex];
+  } catch (error) {
+    console.error("Error fetching names:", error);
+    return "PeddelPiraat";
+  }
+};
+
+const validateAndMove = function(current, nextFieldID) {
+  current.value = current.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+  if (current.value.length >= current.maxLength && nextFieldID) {
+      document.getElementById(nextFieldID).focus();
+  }
+  if(current === document.getElementById('input4')){
+    getCombinedInput();
+  }
+}
+
+const moveToPrevious = function(event, previousFieldID) {
+  if (event.key === 'Backspace' && event.target.value === '') {
+      document.getElementById(previousFieldID).focus();
+  }
+}
+
+const getCombinedInput = async function() {
+  const input1 = document.getElementById('input1');
+  const input2 = document.getElementById('input2');
+  const input3 = document.getElementById('input3');
+  const input4 = document.getElementById('input4');
+  const combinedInput = input1.value + input2.value + input3.value + input4.value;
+  input1.value = "";
+  input2.value = "";
+  input3.value = "";
+  input4.value = "";
+  htmlName.value = await joinGameConnection(combinedInput);
+}
+
+
+
+
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+
+const handleTouchStart = (event) => {
+  touchStartX = event.touches[0].clientX;
+  touchStartY = event.touches[0].clientY;
+};
+
+const handleTouchMove = (event) => {
+  touchEndX = event.touches[0].clientX;
+  touchEndY = event.touches[0].clientY;
+};
+
+const handleTouchEnd = () => {
+  const deltaX = touchEndX - touchStartX;
+  const deltaY = touchEndY - touchStartY;
+
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    if (deltaX > 0) {
+      if (htmlGameMode[1].checked){
+        htmlGameMode[0].checked = true;
+      }
+    } 
+    else {
+      if(htmlGameMode[0].checked){
+        htmlGameMode[1].checked = true;
+      }
+    }
+  }
+};
+
 const init = function () {
-  console.log("DOM loaded");
-  htmlSingleplayer = document.querySelector(".js-singleplayer");
-  htmlMultiplayer = document.querySelector(".js-multiplayer");
-  htmlMain = document.querySelector(".js-main");
-  messagesDiv = document.querySelector(".js-messages");
-  htmlscore = document.querySelector(".js-score");
-  htmlButtons = document.querySelector(".js-buttons");
-  listenToButtons();
+
+  htmlScoreValue = document.querySelector(".js-score");
+  htmlName = document.querySelector(".js-name");
+  htmlGameMode = document.querySelectorAll('input[name="gameMode"]');
+
+  touchArea = document.querySelector(".c-gamemode__container");
+  touchArea.addEventListener("touchstart", handleTouchStart);
+  touchArea.addEventListener("touchmove", handleTouchMove);
+  touchArea.addEventListener("touchend", handleTouchEnd);
+
+  listenToInputs();
 };
 
 document.addEventListener("DOMContentLoaded", init);
