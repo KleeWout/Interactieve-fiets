@@ -40,22 +40,16 @@ ws.onerror = (error) => {
 
 const listenToButtons = function () {
   htmlSingleplayer.addEventListener("click", function () {
-    console.log("singleplayer");
-    ws.send('{"gamemode": "singleplayer"}');
+    ws.send('{"gameMode": "singleplayer"}');
   });
   htmlMultiplayer.addEventListener("click", function () {
-    console.log("multiplayer");
-    ws.send('{"gamemode": "multiplayer"}');
-  });
-  htmlMain.addEventListener("click", function () {
-    console.log("main");
-    ws.send('{"gamemode": "main"}');
+    ws.send('{"gameMode": "multiplayer"}');
   });
 };
 
 const joinGameConnection = function () {
   // const gameCode = new URL(window.location.href).pathname.split('/')[parts.length - 1];
-  let gameCode = "137309";
+  let gameCode = "475013";
 
   // Basic validation: check if gameCode is a 6-digit number
   if (/^\d{6}$/.test(gameCode)) {
@@ -75,13 +69,13 @@ const joinGameConnection = function () {
 
 const init = function () {
   console.log("DOM loaded");
-  // htmlSingleplayer = document.querySelector(".js-singleplayer");
-  // htmlMultiplayer = document.querySelector(".js-multiplayer");
-  // htmlMain = document.querySelector(".js-main");
-  // messagesDiv = document.querySelector(".js-messages");
-  // htmlscore = document.querySelector(".js-score");
-  // htmlButtons = document.querySelector(".js-buttons");
-  // listenToButtons();
+  htmlSingleplayer = document.querySelector(".js-singleplayer");
+  htmlMultiplayer = document.querySelector(".js-multiplayer");
+  htmlMain = document.querySelector(".js-main");
+  messagesDiv = document.querySelector(".js-messages");
+  htmlscore = document.querySelector(".js-score");
+  htmlButtons = document.querySelector(".js-buttons");
+  listenToButtons();
 
   joinGameConnection();
 

@@ -58,7 +58,7 @@ public class WebSocketClient : MonoBehaviour
                 }
 
                 string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                // Debug.Log($"Received: {message}");
+                Debug.Log($"Received: {message}");
                 JObject jsonObject = JObject.Parse(message);
 
 
@@ -67,38 +67,42 @@ public class WebSocketClient : MonoBehaviour
                 {
                     gameSelect.SetGameCode(jsonObject["gameCode"].ToString());
                 }
-
+                if (jsonObject.ContainsKey("connectionStatus"))
+                {
+                    string connectionStatus = jsonObject["connectionStatus"].ToString();
+                    if (connectionStatus == "connected")
+                    {
+                        Debug.Log("Browser connection established");
+                    }
+                    else if (connectionStatus == "disconnected")
+                    {
+                        Debug.Log("Browser disconnected");
+                    }
+                }
                 if (jsonObject.ContainsKey("gameMode"))
                 {
                     string gameMode = jsonObject["gameMode"].ToString();
                     if (gameMode == "singleplayer")
                     {
-                        Debug.Log("Queueing scene change: SinglePlayer");
-
-                        // sceneLoadRequests.Enqueue("SinglePlayer");
-                        // sceneChangeRequested = true;
+                        Debug.Log("singleplayer");
                         gameSelect.SwitchGameMode(GameMode.SinglePlayer);
                     }
                     else if (gameMode == "multiplayer")
                     {
-                        Debug.Log("Queueing scene change: MultiPlayer");
-                        // sceneLoadRequests.Enqueue("MultiPlayer");
-                        // sceneChangeRequested = true;
+                        Debug.Log("multiplayer");
                         gameSelect.SwitchGameMode(GameMode.MultiPlayer);
                     }
                 }
-
                 if (jsonObject.ContainsKey("gameState"))
                 {
                     string gameState = jsonObject["gameState"].ToString();
                     if (gameState == "stop")
                     {
-                        // GameOverScreen.Setup();
-
+                        Debug.Log("stop");
                     }
                     if (gameState == "restart")
                     {
-                        GameController.RestartGame();
+                        Debug.Log("restart");
                     }
 
                 }

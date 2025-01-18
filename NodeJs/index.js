@@ -4,6 +4,7 @@ const app = express();
 const path = require("path");
 const readline = require("readline");
 const { Console } = require("console");
+const { connect } = require("http2");
 
 app.use("/", express.static(path.resolve(__dirname, "../webpagina")));
 
@@ -49,21 +50,34 @@ wss.on("connection", function (ws) {
     }
     else{
       // Handle browser client joining a game
-      const gameCode = message.gameCode;
-      if (activeGameCodes.includes(gameCode)) {
-        if(game2browser.has(gameClients.get(gameCode))){
-          console.log("Browser client already connected to game");
+      if (message.hasOwnProperty('gameCode')){
+        const gameCode = message.gameCode;
+        if (activeGameCodes.includes(gameCode)) {
+          if(game2browser.has(gameClients.get(gameCode))){
+            console.log("Browser client already connected to game");
+          }
+          else{
+            game2browser.set(gameClients.get(gameCode), ws);
+            browser2game.set(ws, gameClients.get(gameCode));
+
+            browser2game.get(ws).send(JSON.stringify({connectionStatus: "connected"}));
+  
+            console.log("Browser client joined game with code: ", gameCode);
+          }
         }
         else{
-          game2browser.set(gameClients.get(gameCode), ws);
-          browser2game.set(ws, gameClients.get(gameCode));
-
-          console.log("Browser client joined game with code: ", gameCode);
+          console.log("Invalid game code");
         }
       }
       else{
-        console.log("Invalid game code");
+        if (browser2game.has(ws)) {
+          browser2game.get(ws).send(JSON.stringify(message));
+          console.log(JSON.stringify(message));
+        } else {
+          console.log("Browser client not associated with any game");
+        }
       }
+
         
 
       //   if (gameCodeToBrowserClient.has(gameCode)) {
