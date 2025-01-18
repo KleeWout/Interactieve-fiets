@@ -387,12 +387,7 @@ MonoBehaviour:
   - {fileID: 1608535656}
   fullHeart: {fileID: -33249765, guid: 4c9c3e4bd4a5c439ba9a25a21c084aa9, type: 3}
   emptyHeart: {fileID: 2034109338, guid: 15f6406688bf74eccb2d338ac83d85e3, type: 3}
-  heartAnimators:
-  - {fileID: 756857327}
-  - {fileID: 1884443380}
-  - {fileID: 789820556}
-  - {fileID: 1733320564}
-  - {fileID: 1608535659}
+  heartAnimators: []
 --- !u!136 &39061756
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2096,6 +2091,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 373fa3917bd0f1647b72138864b4e085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serverAddress: localhost:8080
 --- !u!1001 &1568818823
 PrefabInstance:
   m_ObjectHideFlags: 0
