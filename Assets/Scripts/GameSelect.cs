@@ -16,6 +16,7 @@ public class GameSelect : MonoBehaviour
 
 
     private string gameCode;
+    public static string userName;
 
 
     void Start()

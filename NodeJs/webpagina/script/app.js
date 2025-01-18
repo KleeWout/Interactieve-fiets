@@ -1,5 +1,5 @@
 "use strict";
-let htmlSingleplayer, htmlMultiplayer, htmlMain, messagesDiv, htmlscore, htmlButtons, htmlStop;
+let htmlSingleplayerButton, htmlMultiplayerButton, htmlScoreValue;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 
@@ -15,7 +15,7 @@ ws.onmessage = (event) => {
     console.log("Parsed JSON data:", jsonData);
     // Check if it has score property
     if (jsonData.score !== undefined) {
-      htmlscore.innerHTML = `<p>Current Score: ${jsonData.score}</p>`;
+      htmlScoreValue.innerHTML = `<p>Current Score: ${jsonData.score}</p>`;
     }
     if (jsonData.gameState == "started") {
       htmlButtons.innerHTML = `<button class="button js-stop">Stop</button>`;
@@ -39,45 +39,89 @@ ws.onerror = (error) => {
 };
 
 const listenToButtons = function () {
-  htmlSingleplayer.addEventListener("click", function () {
+  htmlSingleplayerButton.addEventListener("click", function () {
     ws.send('{"gameMode": "singleplayer"}');
   });
-  htmlMultiplayer.addEventListener("click", function () {
+  htmlMultiplayerButton.addEventListener("click", function () {
     ws.send('{"gameMode": "multiplayer"}');
   });
 };
 
-const joinGameConnection = function () {
-  // const gameCode = new URL(window.location.href).pathname.split('/')[parts.length - 1];
-  let gameCode = "475013";
+const joinGameConnection = async function (gameCode) {
+  let name = await getRandomName();
 
   // Basic validation: check if gameCode is a 6-digit number
-  if (/^\d{6}$/.test(gameCode)) {
+  if (/^\d{4}$/.test(gameCode)) {
     if (ws.readyState === WebSocket.OPEN) {
-      ws.send('{"gameCode": "' + gameCode + '"}');
+      ws.send('{"gameCode": "' + gameCode + '", "userName": "' + name + '"}');
     } else {
       ws.addEventListener('open', function () {
-        ws.send('{"gameCode": "' + gameCode + '"}');
+        ws.send('{"gameCode": "' + gameCode + '", "userName": "' + name + '"}');
       });
     }
   } else {
     console.error("Invalid game code:", gameCode);
   }
+
+  return name;
+}
+const changeUserName = function(name){
+  ws.send('{"userName": "' + name + '"}');
+}
+const getRandomName = async function () {
+  try {
+    const response = await fetch('script/names.json');
+    const data = await response.json();
+    const names = data.names;
+    const randomIndex = Math.floor(Math.random() * names.length);
+    return names[randomIndex];
+  } catch (error) {
+    console.error("Error fetching names:", error);
+    return "PeddelPiraat";
+  }
+};
+
+function validateAndMove(current, nextFieldID) {
+  current.value = current.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+  if (current.value.length >= current.maxLength && nextFieldID) {
+      document.getElementById(nextFieldID).focus();
+  }
+  if(current === document.getElementById('input4')){
+    getCombinedInput();
+  }
 }
 
+function moveToPrevious(event, previousFieldID) {
+  if (event.key === 'Backspace' && event.target.value === '') {
+      document.getElementById(previousFieldID).focus();
+  }
+}
+function getCombinedInput() {
+  const input1 = document.getElementById('input1');
+  const input2 = document.getElementById('input2');
+  const input3 = document.getElementById('input3');
+  const input4 = document.getElementById('input4');
+  const combinedInput = input1.value + input2.value + input3.value + input4.value;
+  joinGameConnection(combinedInput);
+  input1.value = "";
+  input2.value = "";
+  input3.value = "";
+  input4.value = "";
+}
 
 
 const init = function () {
   console.log("DOM loaded");
-  htmlSingleplayer = document.querySelector(".js-singleplayer");
-  htmlMultiplayer = document.querySelector(".js-multiplayer");
-  htmlMain = document.querySelector(".js-main");
-  messagesDiv = document.querySelector(".js-messages");
-  htmlscore = document.querySelector(".js-score");
-  htmlButtons = document.querySelector(".js-buttons");
+
+
+  htmlSingleplayerButton = document.querySelector(".js-singleplayer");
+  htmlMultiplayerButton = document.querySelector(".js-multiplayer");
+  htmlScoreValue = document.querySelector(".js-score");
+
   listenToButtons();
 
   joinGameConnection();
+
 
 
 

@@ -1,6 +1,36 @@
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+
+
 body {
   height: 100vh;
 }
+
+
+.c-code__input {
+	width: .86em;
+	line-height: 1;
+	margin: .1em;
+	padding: 8px 0 4px;
+	font-size: 2.65em;
+	text-align: center;
+	appearance: textfield;
+	-webkit-appearance: textfield;
+	border: 0;
+	color: #073A39;
+	border-radius: 6px;
+  background-color: pink;
+}
+
+
 .o-container {
   margin: 0 auto;
   height: 100vh;

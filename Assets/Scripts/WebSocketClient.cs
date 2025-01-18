@@ -79,6 +79,12 @@ public class WebSocketClient : MonoBehaviour
                         Debug.Log("Browser disconnected");
                     }
                 }
+                if (jsonObject.ContainsKey("userName"))
+                {
+                    string userName = jsonObject["userName"].ToString();
+                    GameSelect.userName = userName;
+                    Debug.Log("Username: " + userName);
+                }
                 if (jsonObject.ContainsKey("gameMode"))
                 {
                     string gameMode = jsonObject["gameMode"].ToString();

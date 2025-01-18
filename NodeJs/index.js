@@ -38,7 +38,7 @@ wss.on("connection", function (ws) {
 
       // generate game code number
       do {
-        gameCode = Math.floor(100000 + Math.random() * 900000);
+        gameCode = Math.floor(1000 + Math.random() * 9000);
       } while (activeGameCodes.includes(gameCode));      
       gameCode = gameCode.toString();
       activeGameCodes.push(gameCode);
@@ -60,7 +60,7 @@ wss.on("connection", function (ws) {
             game2browser.set(gameClients.get(gameCode), ws);
             browser2game.set(ws, gameClients.get(gameCode));
 
-            browser2game.get(ws).send(JSON.stringify({connectionStatus: "connected"}));
+            browser2game.get(ws).send(JSON.stringify({connectionStatus: "connected", userName: message.userName}));
   
             console.log("Browser client joined game with code: ", gameCode);
           }

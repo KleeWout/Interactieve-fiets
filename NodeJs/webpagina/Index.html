@@ -10,6 +10,17 @@
   </head>
   <body>
     <div class="o-container">
+
+
+      <div class="">
+        <input class="c-code__input" type="number" id="input1" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input2')" onkeydown="moveToPrevious(event, 'input1')" onpaste="return false;" />
+        <input class="c-code__input" type="number" id="input2" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input3')" onkeydown="moveToPrevious(event, 'input1')" onpaste="return false;" />
+        <input class="c-code__input" type="number" id="input3" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input4')" onkeydown="moveToPrevious(event, 'input2')" onpaste="return false;" />
+        <input class="c-code__input" type="number" id="input4" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input1')" onkeydown="moveToPrevious(event, 'input3')" onpaste="return false;" /> 
+      </div>
+    
+
+
       <div class="js-buttons c-buttons">
         <button class="js-singleplayer">Singleplayer</button>
         <button class="js-multiplayer">Multiplayer</button>
