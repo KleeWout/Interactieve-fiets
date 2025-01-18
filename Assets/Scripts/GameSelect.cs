@@ -1,19 +1,21 @@
 using UnityEngine;
-using models.GameMode;
+using Models.GameModeModel;
+using System.ComponentModel;
+using System.Net.WebSockets;
 
 public class GameSelect : MonoBehaviour
 {
     public GameMode gameMode;
-
-
-
-
     public GameObject canoeSingleplayer;
     public GameObject canoeMultiplayer;
     public GameObject playerObject;
 
     public GameObject terrainObject;
     private TerrainGen terrain;
+
+
+
+    private string gameCode;
 
 
     void Start()
@@ -43,6 +45,12 @@ public class GameSelect : MonoBehaviour
         {
             LoadMultiPlayer();
         }
+    }
+
+    public void SetGameCode(string code)
+    {
+        Debug.Log("Setting game code to: " + code);
+        gameCode = code;
     }
 
 

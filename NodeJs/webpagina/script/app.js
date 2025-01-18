@@ -53,15 +53,40 @@ const listenToButtons = function () {
   });
 };
 
+const joinGameConnection = function () {
+  // const gameCode = new URL(window.location.href).pathname.split('/')[parts.length - 1];
+  let gameCode = "137309";
+
+  // Basic validation: check if gameCode is a 6-digit number
+  if (/^\d{6}$/.test(gameCode)) {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send('{"gameCode": "' + gameCode + '"}');
+    } else {
+      ws.addEventListener('open', function () {
+        ws.send('{"gameCode": "' + gameCode + '"}');
+      });
+    }
+  } else {
+    console.error("Invalid game code:", gameCode);
+  }
+}
+
+
+
 const init = function () {
   console.log("DOM loaded");
-  htmlSingleplayer = document.querySelector(".js-singleplayer");
-  htmlMultiplayer = document.querySelector(".js-multiplayer");
-  htmlMain = document.querySelector(".js-main");
-  messagesDiv = document.querySelector(".js-messages");
-  htmlscore = document.querySelector(".js-score");
-  htmlButtons = document.querySelector(".js-buttons");
-  listenToButtons();
+  // htmlSingleplayer = document.querySelector(".js-singleplayer");
+  // htmlMultiplayer = document.querySelector(".js-multiplayer");
+  // htmlMain = document.querySelector(".js-main");
+  // messagesDiv = document.querySelector(".js-messages");
+  // htmlscore = document.querySelector(".js-score");
+  // htmlButtons = document.querySelector(".js-buttons");
+  // listenToButtons();
+
+  joinGameConnection();
+
+
+
 };
 
 document.addEventListener("DOMContentLoaded", init);

@@ -7,15 +7,17 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
-using models.GameMode;
+using Models.GameModeModel;
+using Models.WebSocketMessage;
 
 
 public class WebSocketClient : MonoBehaviour
 {
     public static WebSocketClient Instance;
+    public string serverAddress = "localhost:8080";
 
 
-    private ClientWebSocket webSocket;
+    private ClientWebSocket webSocket = new ClientWebSocket();
 
     private Queue<string> sceneLoadRequests = new Queue<string>();
     private bool sceneChangeRequested = false;
@@ -27,13 +29,15 @@ public class WebSocketClient : MonoBehaviour
     private async void Start()
     {
         gameSelect = GetComponent<GameSelect>();
-        webSocket = new ClientWebSocket();
-        Uri serverUri = new Uri("ws://localhost:8080");
+        Uri serverUri = new Uri($"ws://{serverAddress}");
+
         Debug.Log("Connecting to WebSocket server...");
         await webSocket.ConnectAsync(serverUri, CancellationToken.None);
         Debug.Log("Connected to WebSocket server!");
+
         // Start receiving messages
         ReceiveMessages();
+        SendMessageToSocket(new WebSocketMessage());
     }
 
     private async void ReceiveMessages()
@@ -54,18 +58,19 @@ public class WebSocketClient : MonoBehaviour
                 }
 
                 string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                Debug.Log($"Received: {message}");
-
-                // Parse the JSON message
-                // var jsonObject = JsonUtility.FromJson<Dictionary<string, string>>(message);
+                // Debug.Log($"Received: {message}");
                 JObject jsonObject = JObject.Parse(message);
 
 
-                // Switch scenes based on the "gamemode" value in the JSON message
-
-                if (jsonObject.ContainsKey("gamemode"))
+                // Switch scenes based on the "gameMode" value in the JSON message
+                if (jsonObject.ContainsKey("gameCode"))
                 {
-                    string gameMode = jsonObject["gamemode"].ToString();
+                    gameSelect.SetGameCode(jsonObject["gameCode"].ToString());
+                }
+
+                if (jsonObject.ContainsKey("gameMode"))
+                {
+                    string gameMode = jsonObject["gameMode"].ToString();
                     if (gameMode == "singleplayer")
                     {
                         Debug.Log("Queueing scene change: SinglePlayer");
@@ -98,9 +103,6 @@ public class WebSocketClient : MonoBehaviour
 
                 }
 
-
-
-
             }
         }
         catch (Exception ex)
@@ -108,14 +110,15 @@ public class WebSocketClient : MonoBehaviour
             Debug.LogError($"Error receiving WebSocket messages: {ex.Message}");
         }
     }
-
-    public async void SendMessageToSocket(string message)
+    
+    public async void SendMessageToSocket(WebSocketMessage data)
     {
         if (webSocket.State == WebSocketState.Open)
         {
-            var bytes = Encoding.UTF8.GetBytes(message);
+            string json = JsonUtility.ToJson(data);
+            var bytes = Encoding.UTF8.GetBytes(json);
             await webSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
-            Debug.Log($"Sent: {message}");
+            // Debug.Log($"Sent: {json}");
         }
         else
         {
@@ -137,7 +140,8 @@ public class WebSocketClient : MonoBehaviour
         // Example: Send a message when the spacebar is pressed
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            SendMessageToSocket("Hello from Unity!");
+            WebSocketMessage message = new WebSocketMessage();
+            SendMessageToSocket(message);
         }
     }
 

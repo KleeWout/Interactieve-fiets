@@ -12,7 +12,7 @@ public class GameOverScreen : MonoBehaviour
         gameObject.SetActive(true);
         WaterBob.isSunk = true;
         score.text = "behaalde score: " + ScoreSystem.score.ToString() + "m";
-        WebSocketClient.Instance.SendMessageToSocket($"{{\"score\" : \"{ScoreSystem.score}\"}}");
+        // WebSocketClient.Instance.SendMessageToSocket($"{{\"score\" : \"{ScoreSystem.score}\"}}");
         Debug.Log("Game Over");
     }
 
