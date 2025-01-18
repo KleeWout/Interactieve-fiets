@@ -1,3 +1,6 @@
+//to do:
+// input voor naam --> width dynamisch aanpassen gebaseerd op lengte van naam
+
 "use strict";
 let htmlSingleplayer, htmlMultiplayer, htmlMain, messagesDiv, htmlscore, htmlButtons, htmlStop;
 const lanIP = `${window.location.hostname}:8080`;
