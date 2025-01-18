@@ -1,5 +1,5 @@
 "use strict";
-let htmlSingleplayerButton, htmlMultiplayerButton, htmlScoreValue, htmlName;
+let htmlGameMode, htmlScoreValue, htmlName;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 
@@ -39,14 +39,19 @@ ws.onerror = (error) => {
 };
 
 const listenToInputs = function () {
-  htmlSingleplayerButton.addEventListener("click", function () {
-    ws.send('{"gameMode": "singleplayer"}');
-  });
-  htmlMultiplayerButton.addEventListener("click", function () {
-    ws.send('{"gameMode": "multiplayer"}');
-  });
   htmlName.addEventListener("input", function () {
     ws.send('{"userName": "' + htmlName.value + '"}');
+  });
+  htmlGameMode.forEach(radio => {
+    radio.addEventListener('change', () => {
+      const selectedOption = document.querySelector('input[name="gameMode"]:checked').value;
+      if (selectedOption == "Singleplayer") {
+        ws.send('{"gameMode": "singleplayer"}');
+      }
+      if (selectedOption === "Multiplayer") {
+        ws.send('{"gameMode": "multiplayer"}');
+      }
+    });
   });
 };
 
@@ -118,10 +123,9 @@ const getCombinedInput = async function() {
 const init = function () {
   console.log("DOM loaded");
 
-  htmlSingleplayerButton = document.querySelector(".js-singleplayer");
-  htmlMultiplayerButton = document.querySelector(".js-multiplayer");
   htmlScoreValue = document.querySelector(".js-score");
   htmlName = document.querySelector(".js-name");
+  htmlGameMode = document.querySelectorAll('input[name="gameMode"]');
 
   listenToInputs();
 };

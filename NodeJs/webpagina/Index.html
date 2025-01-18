@@ -11,7 +11,7 @@
   <body>
     <div class="o-container">
 
-
+      <!-- GameCode input -->
       <div class="">
         <input class="c-code__input" type="number" id="input1" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input2')" onkeydown="moveToPrevious(event, 'input1')" onpaste="return false;" />
         <input class="c-code__input" type="number" id="input2" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input3')" onkeydown="moveToPrevious(event, 'input1')" onpaste="return false;" />
@@ -19,17 +19,21 @@
         <input class="c-code__input" type="number" id="input4" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input1')" onkeydown="moveToPrevious(event, 'input3')" onpaste="return false;" /> 
       </div>
 
+      <!-- Name input -->
       <div>
         <input class="js-name" type="text" id="nameInput" value="Default Name" maxlength="24" />
+      </div>
+
+      <!-- GameMode input -->
+      <div>
+        <input type="radio" id="Multiplayer" name="gameMode" value="Multiplayer">
+        <label for="Multiplayer">Multiplayer</label>
+        <input type="radio" id="Singleplayer" name="gameMode" value="Singleplayer">
+        <label for="Singleplayer">Singleplayer</label>
       </div>
     
 
 
-      <div class="js-buttons c-buttons">
-        <button class="js-singleplayer">Singleplayer</button>
-        <button class="js-multiplayer">Multiplayer</button>
-        <button class="js-main">Main</button>
-      </div>
       <div class="js-messages"><p>Current Scene: </p></div>
       <div class="js-score"><p>Current Score: </p></div>
     </div>
