@@ -33,7 +33,6 @@
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
   font-size: 100%;
 }
 
@@ -43,14 +42,50 @@ html {
   font-style: normal;
   color: var(--text-color);
   background-color: var(--page-background-color);
-  /* background: radial-gradient(105.02% 39.32% at 50.13% 45.07%, #c16863 0%, #904849 100%); */
   background: radial-gradient(105.02% 39.32% at 50.13% 45.07%, #C16863 0%, #904849 100%);
 
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+
+}
+head{
+  height: 0;
+}
+body{
   height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
-/* Responsive images */
+body::before, body::after {
+  content: '';
+  position: fixed;
+  background: red;
+  z-index: 9999;
+}
 
+body::after {
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  transform: translateX(-50%);
+}
+
+body::before {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+
+/* Responsive images */
 img,
 svg {
   display: block;
@@ -109,31 +144,22 @@ button {
   outline: inherit;
 }
 
-/*
-  Specific styles
-*/
-
-/* Site header */
-
-.c-header {
-  margin-top: 3rem;
-  margin-right: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.c-main {
+.c-main{
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 2rem;
-  overflow: hidden;
-  margin-top: 5rem;
+  /* height: 100%; */
 }
 
+
 .c-namecontainer {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -141,36 +167,52 @@ button {
 }
 /* moet dynamisch veranderen in js */
 .c-namecontainer__input {
-  width: 10rem;
+  text-align: center;
+  font: inherit;
+  font-size: inherit;
+}
+.c-inputname__widthbox{
+  position: fixed;
+  right: -500%;
 }
 
+.c-button__pencil{
+  position: absolute;
+  right: -2rem;
+}
+
+
 .c-gamemode {
+  width: 100%;
+  height: 22rem;
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0rem;
+  height: 100%;
 }
 
 .c-gamemode__container {
   display: flex;
   justify-content: space-between;
   width: max-content;
-  transform: translateX(25%);
   transition: all 0.2s;
   transition-timing-function: ease-in;
+  transform: translateX(25%);
+
 }
 
 .c-gamemode:has(input[type="radio"][value="Singleplayer"]:checked) .c-gamemode__container{
   transform: translateX(-25%);
-}
 
+}
 .c-gamemode__item{
   opacity: 1;
   transition: all 0.4s;
 }
+
 .c-gamemode__item p{
-  color: black;
   text-align: center;
   color: var(--text-30, #FDF9EE);
   text-align: center;
@@ -192,16 +234,22 @@ button {
 
 }
 
+.c-gamemode__select{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .c-gamemode__select input{
   padding: 0;
   margin: 0;
-  width: 0%;
+  width: 0;
+  height: 0;
 }
 
 .c-gamemode__select label[for="Multiplayer"]::before, .c-gamemode__select label[for="Singleplayer"]::before {
   content: "";
   display: inline-block;
-  margin: 0;
+  margin: 0 0.2rem;
   padding: 0;
   width: 0.5rem;
   height: 0.5rem;
@@ -216,21 +264,17 @@ button {
 }
 
 
-.c-gamemode__title {
-  text-align: center;
-  font-size: 1.5rem;
-  text-transform: uppercase;
-}
-
-
 
 /* Buttons onderaan */
 .c-buttons {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   gap: 1rem;
   justify-content: center;
   align-items: center;
-  margin-bottom: 6rem;
 }
 
 .c-button__icon {
@@ -248,7 +292,7 @@ button {
 }
 
 .c-button__icon--help{
-  position: absolute;
+  position: fixed;
   top: 1rem;
   right: 1rem;
 }

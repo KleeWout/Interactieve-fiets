@@ -140,6 +140,26 @@ const handleTouchEnd = () => {
   }
 };
 
+document.addEventListener('DOMContentLoaded', function() {
+  const input = document.querySelector('.c-namecontainer__input');
+  const width = document.querySelector('.c-inputname__widthbox');
+
+  function adjustWidth() {
+    const inputValue = input.value;
+    width.textContent = inputValue; // Set the widthBox text to the input value
+    input.style.width = (width.offsetWidth + 1) + 'px'; // Set the input width to the widthBox width
+    console.log(width);
+  }
+
+  input.addEventListener('input', adjustWidth);
+  adjustWidth(); // Initial call to set the width based on the initial value
+  input.addEventListener('keydown', function(event) {
+    if (event.key === ' ') {
+      event.preventDefault(); // Prevent space character
+    }
+  });
+});
+
 const init = function () {
 
   htmlScoreValue = document.querySelector(".js-score");
