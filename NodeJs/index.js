@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const readline = require("readline");
+const { Console } = require("console");
+const { connect } = require("http2");
 
 app.use("/", express.static(path.resolve(__dirname, "../webpagina")));
 
@@ -11,21 +13,128 @@ const wss = new WebSocket.Server({ port: 8080 }, () => {
   console.log("server started");
 });
 
+
+let gameClients = new Map();
+let activeGameCodes = [];
+
+let game2browser = new Map();
+let browser2game = new Map();
+
 wss.on("connection", function (ws) {
-  //client connects
-  console.log("A new client connected!");
+
   ws.on("message", function (msg) {
-    const message = msg.toString();
-    console.log("data received:", message);
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        //check if client is ready
-        //send message to all clients
-        client.send(msg.toString());
+
+    // serialize incoming message
+    let message;
+    try {
+      message = JSON.parse(msg.toString());
+    } catch (e) {
+      console.error("Invalid JSON received:", msg.toString());
+      return;
+    }
+
+    // check for game clients a stuur game code om spel te starten
+    if (message.IsGameClient === true) {
+
+      if(message.NewConnection === true){
+        // generate game code number
+        do {
+          gameCode = Math.floor(1000 + Math.random() * 9000);
+        } while (activeGameCodes.includes(gameCode));      
+        gameCode = gameCode.toString();
+        activeGameCodes.push(gameCode);
+
+        gameClients.set(gameCode, ws);
+        console.log("Active game codes: ", activeGameCodes);
+
+        ws.send(JSON.stringify({ gameCode }));
       }
-    });
+      else if (game2browser.has(ws)){
+        const strippedMessage = { ...message };
+        delete strippedMessage.IsGameClient;
+        delete strippedMessage.NewConnection;
+        console.log(JSON.stringify(strippedMessage));
+        game2browser.get(ws).send(JSON.stringify(strippedMessage));
+      }
+      else{
+        console.log("Game client not associated with any browser client");
+      }
+
+    }
+    else{
+      // Handle browser client joining a game
+      if (message.hasOwnProperty('gameCode')){
+        const gameCode = message.gameCode;
+        if (activeGameCodes.includes(gameCode)) {
+          if(game2browser.has(gameClients.get(gameCode))){
+            console.log("Browser client already connected to game");
+          }
+          else{
+            game2browser.set(gameClients.get(gameCode), ws);
+            browser2game.set(ws, gameClients.get(gameCode));
+
+            browser2game.get(ws).send(JSON.stringify({connectionStatus: "connected", userName: message.userName}));
+  
+            console.log("Browser client joined game with code: ", gameCode);
+          }
+        }
+        else{
+          console.log("Invalid game code");
+        }
+      }
+      else{
+        if (browser2game.has(ws)) {
+          browser2game.get(ws).send(JSON.stringify(message));
+          console.log(JSON.stringify(message));
+        } else {
+          console.log("Browser client not associated with any game");
+        }
+      }
+
+        
+
+      //   if (gameCodeToBrowserClient.has(gameCode)) {
+      //     ws.send(JSON.stringify({ success: false, error: "Game already has a browser client" }));
+      //   } else {
+      //     browserClients.set(ws, gameCode);
+      //     gameCodeToBrowserClient.set(gameCode, ws);
+      //     console.log(`Browser client joined game with code: ${gameCode}`);
+      //     ws.send(JSON.stringify({ success: true, gameCode }));
+      //   }
+      // } else {
+      //   ws.send(JSON.stringify({ success: false, error: "Invalid game code" }));
+    }
+
+
+
   });
+
+  ws.on("close", function () {
+    if (getGameClientFromGameCode(ws) !== null) {
+      activeGameCodes = activeGameCodes.filter((code) => code !== getGameClientFromGameCode(ws));
+      gameClients.delete(ws);
+      console.log("Game client disconnected");
+      console.log("Active game codes: ", activeGameCodes);
+    }
+    else if(browser2game.has(ws)){
+      game2browser.delete(browser2game.get(ws));
+      browser2game.delete(ws);
+      console.log("Browser client disconnected");
+    }
+
+
+  });
+
 });
+
+function getGameClientFromGameCode(ws) {
+  for (let [gameCode, clientWs] of gameClients.entries()) {
+    if (clientWs === ws) {
+      return gameCode;
+    }
+  }
+  return null;
+}
 
 myServer.on("upgrade", async function upgrade(request, socket, head) {
   //handling upgrade(http to websocekt) event
@@ -49,9 +158,7 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-wss.on("close", function () {
-  console.log("I lost a client");
-});
+
 
 rl.on("line", (input) => {
   wss.clients.forEach((client) => {
