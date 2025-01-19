@@ -68,6 +68,7 @@ wss.on("connection", function (ws) {
         if (activeGameCodes.includes(gameCode)) {
           if(game2browser.has(gameClients.get(gameCode))){
             console.log("Browser client already connected to game");
+            ws.send(JSON.stringify({connectionStatus: "busy", id: message.id}));
           }
           else{
             game2browser.set(gameClients.get(gameCode), ws);
@@ -76,10 +77,12 @@ wss.on("connection", function (ws) {
             browser2game.get(ws).send(JSON.stringify({connectionStatus: "connected", userName: message.userName}));
   
             console.log("Browser client joined game with code: ", gameCode);
+            ws.send(JSON.stringify({connectionStatus: "success", id: message.id}));
           }
         }
         else{
           console.log("Invalid game code");
+          ws.send(JSON.stringify({connectionStatus: "failed", id: message.id}));
         }
       }
       else{

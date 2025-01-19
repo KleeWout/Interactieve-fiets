@@ -7,6 +7,7 @@ ws.onopen = () => {
   console.log("Connected to WebSocket server");
 };
 ws.onmessage = (event) => {
+  console.log("Data received from server:", event.data);
   const message = event.data;
   try {
     const jsonData = JSON.parse(message);
@@ -45,20 +46,47 @@ const listenToInputs = function () {
 const joinGameConnection = async function (gameCode) {
   let name = await getRandomName();
 
-  // Basic validation: check if gameCode is a 6-digit number
-  if (/^\d{4}$/.test(gameCode)) {
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send('{"gameCode": "' + gameCode + '", "userName": "' + name + '"}');
-    } else {
-      ws.addEventListener('open', function () {
-        ws.send('{"gameCode": "' + gameCode + '", "userName": "' + name + '"}');
-      });
-    }
+
+  const requestId = generateUniqueId();
+  const request = {
+      id: requestId,
+      gameCode: { gameCode },
+      userName: { name }
+  };
+
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify(request));
   } else {
-    console.error("Invalid game code:", gameCode);
+    ws.addEventListener('open', function () {
+      ws.send(JSON.stringify(request));
+    });
   }
 
-  return name;
+  ws.addEventListener('message', function(event) {
+    const response = JSON.parse(event.data);
+    if (response.id === requestId) {
+      if (response.connectionStatus === "failed") { 
+        console.log("Invalid game code");
+      }
+      else if(response.connectionStatus === "busy"){
+        console.log("Game already has a browser client");
+      }
+      else if (response.connectionStatus === "success"){
+        htmlName.value = name;
+
+        document.querySelector(".c-main").classList.remove('blurred');
+        document.querySelector(".c-buttons").classList.remove('blurred');
+
+
+
+        console.log("Name set to:", name);
+      }
+    }
+  }, { once: true });
+}
+
+function generateUniqueId() {
+  return Math.random().toString(36).substr(2, 9);
 }
 
 const changeUserName = function(name) {
@@ -100,11 +128,11 @@ const getCombinedInput = async function() {
   const input3 = document.getElementById('input3');
   const input4 = document.getElementById('input4');
   const combinedInput = input1.value + input2.value + input3.value + input4.value;
+  await joinGameConnection(combinedInput);
   input1.value = "";
   input2.value = "";
   input3.value = "";
   input4.value = "";
-  htmlName.value = await joinGameConnection(combinedInput);
 }
 
 
