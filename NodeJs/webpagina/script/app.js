@@ -1,5 +1,5 @@
 "use strict";
-let htmlGameMode, htmlScoreValue, htmlName;
+let htmlGameMode, htmlScoreValue, htmlName, touchArea;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 
@@ -7,6 +7,7 @@ ws.onopen = () => {
   console.log("Connected to WebSocket server");
 };
 ws.onmessage = (event) => {
+  console.log("Data received from server:", event.data);
   const message = event.data;
   try {
     const jsonData = JSON.parse(message);
@@ -23,6 +24,7 @@ ws.onerror = (error) => {
 };
 
 const listenToInputs = function () {
+  console.log("Listening to inputs");
   htmlName.addEventListener("input", function () {
     ws.send('{"userName": "' + htmlName.value + '"}');
   });
@@ -30,9 +32,11 @@ const listenToInputs = function () {
     radio.addEventListener('change', () => {
       const selectedOption = document.querySelector('input[name="gameMode"]:checked').value;
       if (selectedOption == "Singleplayer") {
+        console.log("Singleplayer");
         ws.send('{"gameMode": "singleplayer"}');
       }
       if (selectedOption === "Multiplayer") {
+        console.log("Multiplayer");
         ws.send('{"gameMode": "multiplayer"}');
       }
     });
@@ -42,20 +46,47 @@ const listenToInputs = function () {
 const joinGameConnection = async function (gameCode) {
   let name = await getRandomName();
 
-  // Basic validation: check if gameCode is a 6-digit number
-  if (/^\d{4}$/.test(gameCode)) {
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send('{"gameCode": "' + gameCode + '", "userName": "' + name + '"}');
-    } else {
-      ws.addEventListener('open', function () {
-        ws.send('{"gameCode": "' + gameCode + '", "userName": "' + name + '"}');
-      });
-    }
+
+  const requestId = generateUniqueId();
+  const request = {
+      id: requestId,
+      gameCode: { gameCode },
+      userName: { name }
+  };
+
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify(request));
   } else {
-    console.error("Invalid game code:", gameCode);
+    ws.addEventListener('open', function () {
+      ws.send(JSON.stringify(request));
+    });
   }
 
-  return name;
+  ws.addEventListener('message', function(event) {
+    const response = JSON.parse(event.data);
+    if (response.id === requestId) {
+      if (response.connectionStatus === "failed") { 
+        console.log("Invalid game code");
+      }
+      else if(response.connectionStatus === "busy"){
+        console.log("Game already has a browser client");
+      }
+      else if (response.connectionStatus === "success"){
+        htmlName.value = name;
+
+        document.querySelector(".c-main").classList.remove('blurred');
+        document.querySelector(".c-buttons").classList.remove('blurred');
+
+
+
+        console.log("Name set to:", name);
+      }
+    }
+  }, { once: true });
+}
+
+function generateUniqueId() {
+  return Math.random().toString(36).substr(2, 9);
 }
 
 const changeUserName = function(name) {
@@ -97,18 +128,80 @@ const getCombinedInput = async function() {
   const input3 = document.getElementById('input3');
   const input4 = document.getElementById('input4');
   const combinedInput = input1.value + input2.value + input3.value + input4.value;
+  await joinGameConnection(combinedInput);
   input1.value = "";
   input2.value = "";
   input3.value = "";
   input4.value = "";
-  htmlName.value = await joinGameConnection(combinedInput);
 }
+
+
+
+
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+
+const handleTouchStart = (event) => {
+  touchStartX = event.touches[0].clientX;
+  touchStartY = event.touches[0].clientY;
+};
+
+const handleTouchMove = (event) => {
+  touchEndX = event.touches[0].clientX;
+  touchEndY = event.touches[0].clientY;
+};
+
+const handleTouchEnd = () => {
+  const deltaX = touchEndX - touchStartX;
+  const deltaY = touchEndY - touchStartY;
+
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    if (deltaX > 0) {
+      if (htmlGameMode[1].checked){
+        htmlGameMode[0].checked = true;
+        htmlGameMode[0].dispatchEvent(new Event('change'));
+      }
+    } 
+    else {
+      if(htmlGameMode[0].checked){
+        htmlGameMode[1].checked = true;
+        htmlGameMode[0].dispatchEvent(new Event('change'));
+      }
+    }
+  }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  const input = document.querySelector('.c-namecontainer__input');
+  const width = document.querySelector('.c-inputname__widthbox');
+
+  function adjustWidth() {
+    const inputValue = input.value;
+    width.textContent = inputValue; // Set the widthBox text to the input value
+    input.style.width = (width.offsetWidth + 1) + 'px'; // Set the input width to the widthBox width
+  }
+
+  input.addEventListener('input', adjustWidth);
+  adjustWidth(); // Initial call to set the width based on the initial value
+  input.addEventListener('keydown', function(event) {
+    if (event.key === ' ') {
+      event.preventDefault(); // Prevent space character
+    }
+  });
+});
 
 const init = function () {
 
   htmlScoreValue = document.querySelector(".js-score");
   htmlName = document.querySelector(".js-name");
   htmlGameMode = document.querySelectorAll('input[name="gameMode"]');
+
+  touchArea = document.querySelector(".c-gamemode__container");
+  touchArea.addEventListener("touchstart", handleTouchStart);
+  touchArea.addEventListener("touchmove", handleTouchMove);
+  touchArea.addEventListener("touchend", handleTouchEnd);
 
   listenToInputs();
 };

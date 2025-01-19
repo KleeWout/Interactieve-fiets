@@ -1,3 +1,85 @@
+@import url("https://fonts.googleapis.com/css2?family=Patrick+Hand+SC&display=swap");
+:root {
+  --text-color: #fdf9ee;
+
+  --page-background-color: white;
+
+  --border-color: var(--neutral-300);
+  --border-radius: 8px;
+  --border-radius-l: 16px;
+
+  --font-weight-normal: 300;
+  --font-weight-bold: 400;
+
+  --font-size-base: 1rem;
+  --font-size-l: 1.5rem;
+  --font-size-xl: 2.25rem;
+  --font-size-xxl: 3.375rem;
+
+  --space-xxs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-s: 1rem;
+  --space-m: 1.5rem;
+  --space-l: 2rem;
+  --space-xl: 3rem;
+  --space-xxl: 4.5rem;
+}
+
+/*
+  Global styles
+*/
+
+
+* {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+}
+
+html {
+  font-family: "Patrick Hand SC", serif;
+  font-weight: 400;
+  font-style: normal;
+  color: var(--text-color);
+  background-color: var(--page-background-color);
+  background: radial-gradient(105.02% 39.32% at 50.13% 45.07%, #C16863 0%, #904849 100%);
+
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+
+}
+head{
+  height: 0;
+}
+body{
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Responsive images */
+img,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input {
+  border: none;
+  outline: none;
+  font: inherit;
+  color: var(--text-color);
+  background: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  appearance: none;
+}
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -8,53 +90,277 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
+/* Headings */
 
-
-body {
-  height: 100vh;
+h1,
+h2,
+h3,
+h4 {
+  font-weight: var(--font-weight-normal);
 }
 
+h2 {
+  font-size: var(--font-size-xl);
+  line-height: 3rem;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+
+/* lists */
+
+.list-reset {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* button */
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
+
+.c-entry{
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3.25rem;
+  width: 100%;
+  z-index: 9999; /* high z-index to cover other elements */
+  height: 100%;
+
+}
+.c-entry__container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+}
+
+.c-entry__titel{
+  color: var(--text-30, #FDF9EE);
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 400;
+}
+.c-entry__text{
+  color: var(--text-30, #FDF9EE);
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 400;
+  max-width: 21.5rem;
+}
+.c-code{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: stretch;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .c-code__input {
-	width: .86em;
-	line-height: 1;
-	margin: .1em;
-	padding: 8px 0 4px;
-	font-size: 2.65em;
-	text-align: center;
 	appearance: textfield;
 	-webkit-appearance: textfield;
-	border: 0;
-	color: #073A39;
-	border-radius: 6px;
-  background-color: pink;
+  width: 5.125rem;
+  height: 5.3125rem;
+  box-shadow: 0px 4px 11px 0px rgba(0, 0, 0, 0.25) inset;
+  border-radius: 1.5rem;
+  color: var(--accent-10, #261516);
+  text-align: center;
+  font-size: 3rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  background: rgba(255, 255, 255, 0.043);
+
+
+}
+
+.c-main{
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+
+}
+
+.blurred{
+  filter: blur(50px);
+  z-index: 1;
 }
 
 
-.o-container {
-  margin: 0 auto;
-  height: 100vh;
+.c-namecontainer {
+  position: relative;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+}
+/* moet dynamisch veranderen in js */
+.c-namecontainer__input {
+  text-align: center;
+  font: inherit;
+  font-size: inherit;
+}
+.c-inputname__widthbox{
+  position: fixed;
+  right: -500%;
+}
+
+.c-button__pencil{
+  position: absolute;
+  right: -2rem;
+}
+
+
+.c-gamemode {
+  width: 100%;
+  height: 22rem;
   display: flex;
   justify-content: center;
   flex-direction: column;
+  align-items: center;
+  gap: 0rem;
+  height: 100%;
 }
 
+.c-gamemode__container {
+  display: flex;
+  justify-content: space-between;
+  width: max-content;
+  transition: all 0.2s;
+  transition-timing-function: ease-in;
+  transform: translateX(25%);
+
+}
+
+.c-gamemode:has(input[type="radio"][value="Multiplayer"]:checked) .c-gamemode__container{
+  transform: translateX(-25%);
+
+}
+.c-gamemode__item{
+  opacity: 1;
+  transition: all 0.4s;
+}
+
+.c-gamemode__item p{
+  text-align: center;
+  color: var(--text-30, #FDF9EE);
+  text-align: center;
+  font-family: "Patrick Hand SC";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-transform: lowercase;
+  padding-bottom: 2rem;
+}
+.c-gamemode:has(input[type="radio"][value="Singleplayer"]:checked) .c-gamemode__item__multiplayer{
+  opacity: 0.5;
+  transform: scale(0.9) translateX(-10%);
+}
+.c-gamemode:has(input[type="radio"][value="Multiplayer"]:checked) .c-gamemode__item__singleplayer{
+  opacity: 0.5;
+  transform: scale(0.9) translateX(10%);
+
+}
+
+.c-gamemode__select{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.c-gamemode__select input{
+  padding: 0;
+  margin: 0;
+  width: 0;
+  height: 0;
+}
+
+.c-gamemode__select label[for="Multiplayer"]::before, .c-gamemode__select label[for="Singleplayer"]::before {
+  content: "";
+  display: inline-block;
+  margin: 0 0.2rem;
+  padding: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid var(--text-color);
+  border-radius: 100%;
+}
+.c-gamemode:has(input[type="radio"][value="Singleplayer"]:checked) .c-gamemode__select label[for="Singleplayer"]::before{
+  background-color: var(--text-color);
+}
+.c-gamemode:has(input[type="radio"][value="Multiplayer"]:checked) .c-gamemode__select label[for="Multiplayer"]::before{
+  background-color: var(--text-color);
+}
+
+
+
+/* Buttons onderaan */
 .c-buttons {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
-  gap: 32px;
+  gap: 1rem;
   justify-content: center;
-  margin-top: 20px;
   align-items: center;
 }
 
-.c-buttons button {
-  margin: 0 10px;
-  padding: 10px 20px;
-  background-color: #f1f1f1;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 20rem;
+.c-button__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  border: 1px solid var(--text-color);
+  border-radius: 1.5rem;
+  padding: 0.5rem;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0px 0px 4px 1px rgba(238, 253, 247, 0.2) inset;
+}
+
+.c-button__icon--help{
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+}
+
+.c-button__start {
+  display: flex;
+  padding: 16px 24px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 24px;
+  background: var(--accent-10, #261516);
+  box-shadow: 0px 0px 4px 1px rgba(238, 253, 247, 0.2) inset;
+  font-size: 24px;
+  text-transform: uppercase;
 }
