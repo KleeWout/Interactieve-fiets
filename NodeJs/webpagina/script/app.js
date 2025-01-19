@@ -23,6 +23,7 @@ ws.onerror = (error) => {
 };
 
 const listenToInputs = function () {
+  console.log("Listening to inputs");
   htmlName.addEventListener("input", function () {
     ws.send('{"userName": "' + htmlName.value + '"}');
   });
@@ -30,9 +31,11 @@ const listenToInputs = function () {
     radio.addEventListener('change', () => {
       const selectedOption = document.querySelector('input[name="gameMode"]:checked').value;
       if (selectedOption == "Singleplayer") {
+        console.log("Singleplayer");
         ws.send('{"gameMode": "singleplayer"}');
       }
       if (selectedOption === "Multiplayer") {
+        console.log("Multiplayer");
         ws.send('{"gameMode": "multiplayer"}');
       }
     });
@@ -130,11 +133,13 @@ const handleTouchEnd = () => {
     if (deltaX > 0) {
       if (htmlGameMode[1].checked){
         htmlGameMode[0].checked = true;
+        htmlGameMode[0].dispatchEvent(new Event('change'));
       }
     } 
     else {
       if(htmlGameMode[0].checked){
         htmlGameMode[1].checked = true;
+        htmlGameMode[0].dispatchEvent(new Event('change'));
       }
     }
   }
@@ -148,7 +153,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const inputValue = input.value;
     width.textContent = inputValue; // Set the widthBox text to the input value
     input.style.width = (width.offsetWidth + 1) + 'px'; // Set the input width to the widthBox width
-    console.log(width);
   }
 
   input.addEventListener('input', adjustWidth);
