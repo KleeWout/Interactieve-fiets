@@ -61,30 +61,6 @@ body{
   padding: 0;
 }
 
-body::before, body::after {
-  content: '';
-  position: fixed;
-  background: red;
-  z-index: 9999;
-}
-
-body::after {
-  left: 50%;
-  top: 0;
-  width: 1px;
-  height: 100%;
-  transform: translateX(-50%);
-}
-
-body::before {
-  top: 50%;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  transform: translateY(-50%);
-}
-
-
 /* Responsive images */
 img,
 svg {
