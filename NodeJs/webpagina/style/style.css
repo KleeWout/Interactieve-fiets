@@ -210,6 +210,9 @@ button {
   filter: blur(50px);
   z-index: 1;
 }
+.hidden{
+  display: none;
+}
 
 
 .c-namecontainer {

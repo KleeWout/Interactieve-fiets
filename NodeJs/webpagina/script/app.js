@@ -50,8 +50,8 @@ const joinGameConnection = async function (gameCode) {
   const requestId = generateUniqueId();
   const request = {
       id: requestId,
-      gameCode: { gameCode },
-      userName: { name }
+      gameCode: gameCode,
+      userName: name
   };
 
   if (ws.readyState === WebSocket.OPEN) {
@@ -73,9 +73,11 @@ const joinGameConnection = async function (gameCode) {
       }
       else if (response.connectionStatus === "success"){
         htmlName.value = name;
+        document.querySelector('.c-inputname__widthbox').value = name;
 
         document.querySelector(".c-main").classList.remove('blurred');
         document.querySelector(".c-buttons").classList.remove('blurred');
+        document.querySelector(".c-entry").classList.add('hidden');
 
 
 

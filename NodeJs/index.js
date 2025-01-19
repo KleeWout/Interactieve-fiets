@@ -66,6 +66,7 @@ wss.on("connection", function (ws) {
       if (message.hasOwnProperty('gameCode')){
         const gameCode = message.gameCode;
         if (activeGameCodes.includes(gameCode)) {
+          console.log(gameCode)
           if(game2browser.has(gameClients.get(gameCode))){
             console.log("Browser client already connected to game");
             ws.send(JSON.stringify({connectionStatus: "busy", id: message.id}));

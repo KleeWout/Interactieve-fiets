@@ -2,6 +2,7 @@ using UnityEngine;
 using Models.GameModeModel;
 using System.ComponentModel;
 using System.Net.WebSockets;
+using System.Collections;
 
 public class GameSelect : MonoBehaviour
 {
@@ -14,6 +15,11 @@ public class GameSelect : MonoBehaviour
     private TerrainGen terrain;
 
 
+    private Animator singleplayerAnimator;
+    private Animator multiplayerAnimator;
+
+    public Transform cameraTransform;
+    private Coroutine cameraTransitionCoroutine;
 
     private string gameCode;
     public static string userName;
@@ -21,17 +27,17 @@ public class GameSelect : MonoBehaviour
 
     void Start()
     {
+        singleplayerAnimator = canoeSingleplayer.GetComponent<Animator>();
+        multiplayerAnimator = canoeMultiplayer.GetComponent<Animator>();
         terrain = terrainObject.GetComponent<TerrainGen>();
 
         if (gameMode == GameMode.SinglePlayer)
         {
-            canoeSingleplayer.SetActive(true);
-            canoeMultiplayer.SetActive(false);
+            ChangeState(GameMode.SinglePlayer);
         }
         else if (gameMode == GameMode.MultiPlayer)
         {
-            canoeSingleplayer.SetActive(false);
-            canoeMultiplayer.SetActive(true);
+            ChangeState(GameMode.MultiPlayer);
         }
         terrain.GenerateTerrain(gameMode);
     }
@@ -54,6 +60,50 @@ public class GameSelect : MonoBehaviour
         gameCode = code;
     }
 
+    public void ChangeState(GameMode mode)
+    {
+        if (cameraTransitionCoroutine != null)
+        {
+            StopCoroutine(cameraTransitionCoroutine);
+        }
+        if (mode == GameMode.SinglePlayer)
+        {
+            StartCoroutine(RotateAndSwitch(singleplayerAnimator, canoeMultiplayer, canoeSingleplayer));
+            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(2f,1.25f,0.15f),  Quaternion.Euler(25, -90, 0)));       
+        }
+        else if (mode == GameMode.MultiPlayer)
+        {
+            StartCoroutine(RotateAndSwitch(multiplayerAnimator, canoeSingleplayer, canoeMultiplayer));
+            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0f,1.25f,-2.5f),  Quaternion.Euler(25, 0, 0)));
+        }
+    }
+
+    private IEnumerator RotateAndSwitch(Animator toAnimator, GameObject fromObject, GameObject toObject)
+    {
+        ResetPlayer();
+        fromObject.SetActive(false);
+        toObject.SetActive(true);
+        toAnimator.enabled = true;
+        yield return new WaitForSeconds(0.5f);
+        toAnimator.enabled = false;
+    }
+    private IEnumerator AnimateCamera(Vector3 targetPosition, Quaternion targetRotation)
+    {
+        Vector3 startPosition = cameraTransform.position;
+        Quaternion startRotation = cameraTransform.rotation;
+        float elapsedTime = 0f;     
+
+        while (elapsedTime < 0.5f)
+        {
+            cameraTransform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / 0.5f);
+            cameraTransform.rotation = Quaternion.Slerp(startRotation, targetRotation, elapsedTime / 0.5f);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        cameraTransform.position = targetPosition;
+        cameraTransform.rotation = targetRotation;
+    }
 
 
     void LoadSinglePlayer()
@@ -63,11 +113,17 @@ public class GameSelect : MonoBehaviour
             return;
         }
         gameMode = GameMode.SinglePlayer;
-        canoeMultiplayer.SetActive(false);
-        ResetPlayer();
-        canoeSingleplayer.SetActive(true);
+   
+        ChangeState(GameMode.SinglePlayer);
 
-        terrain.GenerateTerrain(GameMode.SinglePlayer);
+        // try
+        // {
+        //     terrain.GenerateTerrain(GameMode.SinglePlayer);
+        // }
+        // catch (System.Exception ex)
+        // {
+        //     Debug.LogError($"Error generating terrain: {ex.Message}");
+        // }
 
     }
 
@@ -78,11 +134,17 @@ public class GameSelect : MonoBehaviour
             return;
         }
         gameMode = GameMode.MultiPlayer;
-        canoeSingleplayer.SetActive(false);
-        ResetPlayer();
-        canoeMultiplayer.SetActive(true);
 
-        terrain.GenerateTerrain(GameMode.MultiPlayer);
+        ChangeState(GameMode.MultiPlayer);
+
+        // try
+        // {
+        //     terrain.GenerateTerrain(GameMode.MultiPlayer);
+        // }
+        // catch (System.Exception ex)
+        // {
+        //     Debug.LogError($"Error generating terrain: {ex.Message}");
+        // }   
     }
 
     void ResetPlayer()
@@ -95,5 +157,4 @@ public class GameSelect : MonoBehaviour
         playerObject.transform.rotation = Quaternion.identity;
 
     }
-
 }
