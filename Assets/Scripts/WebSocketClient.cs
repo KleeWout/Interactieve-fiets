@@ -84,10 +84,20 @@ public class WebSocketClient : MonoBehaviour
                     string connectionStatus = jsonObject["connectionStatus"].ToString();
                     if (connectionStatus == "connected")
                     {
+                        if (jsonObject.ContainsKey("gameMode") && jsonObject["gameMode"].ToString() == "multiplayer")
+                        {
+                            gameSelect.ChangeState(GameMode.MultiPlayer);
+                        }
+                        else if(jsonObject.ContainsKey("gameMode") && jsonObject["gameMode"].ToString() == "singleplayer")
+                        { 
+                            gameSelect.ChangeState(GameMode.SinglePlayer);
+                        }
+    
                         Debug.Log("Browser connection established");
                     }
                     else if (connectionStatus == "disconnected")
                     {
+                        gameSelect.ChangeState(GameMode.Menu);
                         Debug.Log("Browser disconnected");
                     }
                 }
@@ -114,11 +124,15 @@ public class WebSocketClient : MonoBehaviour
                 if (jsonObject.ContainsKey("gameState"))
                 {
                     string gameState = jsonObject["gameState"].ToString();
-                    if (gameState == "stop")
+                    if (gameState == "start")
+                    {
+                        Debug.Log("start");
+                    }
+                    else if (gameState == "stop")
                     {
                         Debug.Log("stop");
                     }
-                    if (gameState == "restart")
+                    else if (gameState == "restart")
                     {
                         Debug.Log("restart");
                     }

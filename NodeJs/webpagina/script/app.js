@@ -1,10 +1,24 @@
 "use strict";
-let htmlGameMode, htmlScoreValue, htmlName, touchArea;
+let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
+let clientId;
+
+const urlParams = new URLSearchParams(window.location.search);
+const code = urlParams.get('code');
+if (!urlParams.has('clientid')) {
+  clientId = generateUniqueId();
+  const url = new URL(window.location);
+  url.searchParams.set('clientid', clientId.toString());
+  window.history.pushState({}, '', url);
+}
+else {
+  clientId = urlParams.get('clientid');
+}
 
 ws.onopen = () => {
   console.log("Connected to WebSocket server");
+  joinGameConnection(code || "0000");
 };
 ws.onmessage = (event) => {
   console.log("Data received from server:", event.data);
@@ -41,17 +55,26 @@ const listenToInputs = function () {
       }
     });
   });
+  htmlName.addEventListener('input', adjustWidth);
+  htmlName.addEventListener('keydown', function(event) {
+    if (event.key === ' ') {
+      event.preventDefault();
+    }
+  });
+  htmlStartButton.addEventListener('click', function() {
+    ws.send(`{"gameState": "start", "gameMode": ${htmlGameMode[0].checked ? "singleplayer" : "multiplayer"}}`);
+  });
 };
 
 const joinGameConnection = async function (gameCode) {
   let name = await getRandomName();
 
 
-  const requestId = generateUniqueId();
   const request = {
-      id: requestId,
+      id: clientId,
       gameCode: gameCode,
-      userName: name
+      userName: name,
+      gameMode: htmlGameMode[0].checked ? "singleplayer" : "multiplayer"
   };
 
   if (ws.readyState === WebSocket.OPEN) {
@@ -64,7 +87,7 @@ const joinGameConnection = async function (gameCode) {
 
   ws.addEventListener('message', function(event) {
     const response = JSON.parse(event.data);
-    if (response.id === requestId) {
+    if (response.id === clientId) {
       if (response.connectionStatus === "failed") { 
         console.log("Invalid game code");
       }
@@ -72,8 +95,9 @@ const joinGameConnection = async function (gameCode) {
         console.log("Game already has a browser client");
       }
       else if (response.connectionStatus === "success"){
-        htmlName.value = name;
         document.querySelector('.c-inputname__widthbox').value = name;
+        htmlName.value = name;
+        adjustWidth();
 
         document.querySelector(".c-main").classList.remove('blurred');
         document.querySelector(".c-buttons").classList.remove('blurred');
@@ -131,6 +155,10 @@ const getCombinedInput = async function() {
   const input4 = document.getElementById('input4');
   const combinedInput = input1.value + input2.value + input3.value + input4.value;
   await joinGameConnection(combinedInput);
+  const url = new URL(window.location);
+  url.searchParams.set('code', combinedInput);
+  window.history.pushState({}, '', url);
+
   input1.value = "";
   input2.value = "";
   input3.value = "";
@@ -175,30 +203,19 @@ const handleTouchEnd = () => {
   }
 };
 
-document.addEventListener('DOMContentLoaded', function() {
-  const input = document.querySelector('.c-namecontainer__input');
-  const width = document.querySelector('.c-inputname__widthbox');
-
-  function adjustWidth() {
-    const inputValue = input.value;
-    width.textContent = inputValue; // Set the widthBox text to the input value
-    input.style.width = (width.offsetWidth + 1) + 'px'; // Set the input width to the widthBox width
-  }
-
-  input.addEventListener('input', adjustWidth);
-  adjustWidth(); // Initial call to set the width based on the initial value
-  input.addEventListener('keydown', function(event) {
-    if (event.key === ' ') {
-      event.preventDefault(); // Prevent space character
-    }
-  });
-});
+const adjustWidth = function() {
+  const inputValue = htmlName.value;
+  htmlNameBox.textContent = inputValue; // Set the widthBox text to the input value
+  htmlName.style.width = (htmlNameBox.offsetWidth + 1) + 'px'; // Set the input width to the widthBox width
+}
 
 const init = function () {
 
   htmlScoreValue = document.querySelector(".js-score");
   htmlName = document.querySelector(".js-name");
+  htmlNameBox = document.querySelector(".c-inputname__widthbox");
   htmlGameMode = document.querySelectorAll('input[name="gameMode"]');
+  htmlStartButton = document.querySelector(".js-start");
 
   touchArea = document.querySelector(".c-gamemode__container");
   touchArea.addEventListener("touchstart", handleTouchStart);
@@ -206,6 +223,7 @@ const init = function () {
   touchArea.addEventListener("touchend", handleTouchEnd);
 
   listenToInputs();
+
 };
 
 document.addEventListener("DOMContentLoaded", init);

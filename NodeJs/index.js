@@ -1,10 +1,13 @@
 const WebSocket = require("ws");
 const express = require("express");
+const QRCode = require('qrcode');
 const app = express();
 const path = require("path");
 const readline = require("readline");
 const { Console } = require("console");
 const { connect } = require("http2");
+const os = require("os");
+
 
 app.use("/", express.static(path.resolve(__dirname, "../webpagina")));
 
@@ -19,6 +22,44 @@ let activeGameCodes = [];
 
 let game2browser = new Map();
 let browser2game = new Map();
+
+let gameStatus = new Map();
+
+function getIPAddress() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return '127.0.0.1';
+}
+
+app.get('/generateQR', async (req, res) => {
+  try {
+    const url = req.query.url || `http://${getIPAddress()}:5501/NodeJs/webpagina/Index.html`;
+    const code = req.query.code || 'none';
+    const qrCodeImage = await QRCode.toDataURL(`${url}?code=${code}`, {
+      color: {
+        dark: "#261516",
+        light: "#0000"
+      },
+      margin: 2
+    });
+
+    const imgBuffer = Buffer.from(qrCodeImage.split(",")[1], 'base64');
+    res.writeHead(200, {
+      'Content-Type': 'image/png',
+      'Content-Length': imgBuffer.length
+    });
+    res.end(imgBuffer);
+  } catch (err) {
+    console.error('Error generating QR code:', err);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 wss.on("connection", function (ws) {
 
@@ -53,7 +94,6 @@ wss.on("connection", function (ws) {
         const strippedMessage = { ...message };
         delete strippedMessage.IsGameClient;
         delete strippedMessage.NewConnection;
-        console.log(JSON.stringify(strippedMessage));
         game2browser.get(ws).send(JSON.stringify(strippedMessage));
       }
       else{
@@ -61,12 +101,19 @@ wss.on("connection", function (ws) {
       }
 
     }
+    if (message.gameState) {
+      if (browser2game.has(ws)) {
+        if(message.gameState === "start"){
+          gameStatus.set(browser2game.get(ws), "start");
+          browser2game.get(ws).send(JSON.stringify({gameState: "start", gameMode: message.gameMode}));
+        }
+      }
+    }
     else{
       // Handle browser client joining a game
       if (message.hasOwnProperty('gameCode')){
         const gameCode = message.gameCode;
         if (activeGameCodes.includes(gameCode)) {
-          console.log(gameCode)
           if(game2browser.has(gameClients.get(gameCode))){
             console.log("Browser client already connected to game");
             ws.send(JSON.stringify({connectionStatus: "busy", id: message.id}));
@@ -75,7 +122,7 @@ wss.on("connection", function (ws) {
             game2browser.set(gameClients.get(gameCode), ws);
             browser2game.set(ws, gameClients.get(gameCode));
 
-            browser2game.get(ws).send(JSON.stringify({connectionStatus: "connected", userName: message.userName}));
+            browser2game.get(ws).send(JSON.stringify({connectionStatus: "connected", userName: message.userName, gameMode: message.gameMode}));
   
             console.log("Browser client joined game with code: ", gameCode);
             ws.send(JSON.stringify({connectionStatus: "success", id: message.id}));
@@ -94,19 +141,6 @@ wss.on("connection", function (ws) {
           console.log("Browser client not associated with any game");
         }
       }
-
-        
-
-      //   if (gameCodeToBrowserClient.has(gameCode)) {
-      //     ws.send(JSON.stringify({ success: false, error: "Game already has a browser client" }));
-      //   } else {
-      //     browserClients.set(ws, gameCode);
-      //     gameCodeToBrowserClient.set(gameCode, ws);
-      //     console.log(`Browser client joined game with code: ${gameCode}`);
-      //     ws.send(JSON.stringify({ success: true, gameCode }));
-      //   }
-      // } else {
-      //   ws.send(JSON.stringify({ success: false, error: "Invalid game code" }));
     }
 
 
@@ -121,12 +155,16 @@ wss.on("connection", function (ws) {
       console.log("Active game codes: ", activeGameCodes);
     }
     else if(browser2game.has(ws)){
+      if(gameStatus.get(browser2game.get(ws)) == "start"){
+        // do not reset all cuz game has started
+      }
+      else{
+        browser2game.get(ws).send(JSON.stringify({connectionStatus: "disconnected"}));
+      }
       game2browser.delete(browser2game.get(ws));
       browser2game.delete(ws);
       console.log("Browser client disconnected");
     }
-
-
   });
 
 });
