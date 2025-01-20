@@ -3,6 +3,11 @@ using Models.GameModeModel;
 using System.ComponentModel;
 using System.Net.WebSockets;
 using System.Collections;
+using TMPro;
+using UnityEngine.Networking;
+using UnityEngine.UI;
+using System.Threading;
+
 
 public class GameSelect : MonoBehaviour
 {
@@ -11,8 +16,16 @@ public class GameSelect : MonoBehaviour
     public GameObject canoeMultiplayer;
     public GameObject playerObject;
 
+
+    public Canvas gameCodeCanvas;
+    public Canvas overlayCanvas;
+    public TMP_Text gameCodeText;
+    public RawImage qrDisplay;
+    
     public GameObject terrainObject;
     private TerrainGen terrain;
+    private CancellationTokenSource cts;
+
 
 
     private Animator singleplayerAnimator;
@@ -31,15 +44,8 @@ public class GameSelect : MonoBehaviour
         multiplayerAnimator = canoeMultiplayer.GetComponent<Animator>();
         terrain = terrainObject.GetComponent<TerrainGen>();
 
-        if (gameMode == GameMode.SinglePlayer)
-        {
-            ChangeState(GameMode.SinglePlayer);
-        }
-        else if (gameMode == GameMode.MultiPlayer)
-        {
-            ChangeState(GameMode.MultiPlayer);
-        }
-        terrain.GenerateTerrain(gameMode);
+        // terrain.GenerateTerrain(GameMode.MultiPlayer);
+        // StartCoroutine(terrain.GenerateTerrain(GameMode.SinglePlayer));
     }
 
     public void SwitchGameMode(GameMode mode)
@@ -56,9 +62,30 @@ public class GameSelect : MonoBehaviour
 
     public void SetGameCode(string code)
     {
-        Debug.Log("Setting game code to: " + code);
+        StartCoroutine(GetQrImageFromApi(code));
+        gameCodeText.text = code;
         gameCode = code;
     }
+    IEnumerator GetQrImageFromApi(string code)
+    {
+        string url = "http://localhost:80/generateQR?code=" + code;
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("QR code downloaded");
+            Debug.Log(DownloadHandlerTexture.GetContent(request));
+            Texture2D qrTexture = DownloadHandlerTexture.GetContent(request);
+            qrDisplay.texture = qrTexture;
+        }
+        else
+        {
+            Debug.LogError("Failed to download QR code: " + request.error);
+        }
+    }
+
+    // maak nog een ding spel gestart...
 
     public void ChangeState(GameMode mode)
     {
@@ -75,6 +102,13 @@ public class GameSelect : MonoBehaviour
         {
             StartCoroutine(RotateAndSwitch(multiplayerAnimator, canoeSingleplayer, canoeMultiplayer));
             cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0f,1.25f,-2.5f),  Quaternion.Euler(25, 0, 0)));
+        }
+        else if(mode == GameMode.Menu)
+        {
+            canoeSingleplayer.SetActive(false);
+            canoeMultiplayer.SetActive(false);
+            ResetPlayer();
+            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0,2,0),  Quaternion.Euler(-90, 0, 0)));
         }
     }
 
@@ -105,47 +139,56 @@ public class GameSelect : MonoBehaviour
         cameraTransform.rotation = targetRotation;
     }
 
+    public void StartGame()
+    {
+        if (gameMode == GameMode.SinglePlayer)
+        {
+            // terrain.GenerateTerrain(GameMode.SinglePlayer);
+        }
+        else if (gameMode == GameMode.MultiPlayer)
+        {
+            // terrain.GenerateTerrain(GameMode.MultiPlayer);
+        }
+    }
+
 
     void LoadSinglePlayer()
     {
         if(gameMode == GameMode.SinglePlayer)
         {
+            cts?.Cancel();
+            cts = new CancellationTokenSource();
+            terrain.GenerateTerrain(GameMode.SinglePlayer, cts.Token);
             return;
         }
         gameMode = GameMode.SinglePlayer;
    
         ChangeState(GameMode.SinglePlayer);
 
-        // try
-        // {
-        //     terrain.GenerateTerrain(GameMode.SinglePlayer);
-        // }
-        // catch (System.Exception ex)
-        // {
-        //     Debug.LogError($"Error generating terrain: {ex.Message}");
-        // }
 
+        cts?.Cancel();
+        cts = new CancellationTokenSource();
+        terrain.GenerateTerrain(GameMode.SinglePlayer, cts.Token);
     }
 
     void LoadMultiPlayer()
     {
         if(gameMode == GameMode.MultiPlayer)
         {
+            cts?.Cancel();
+            cts = new CancellationTokenSource();
+            terrain.GenerateTerrain(GameMode.MultiPlayer, cts.Token);
             return;
         }
         gameMode = GameMode.MultiPlayer;
 
         ChangeState(GameMode.MultiPlayer);
 
-        // try
-        // {
-        //     terrain.GenerateTerrain(GameMode.MultiPlayer);
-        // }
-        // catch (System.Exception ex)
-        // {
-        //     Debug.LogError($"Error generating terrain: {ex.Message}");
-        // }   
+        cts?.Cancel();
+        cts = new CancellationTokenSource();
+        terrain.GenerateTerrain(GameMode.MultiPlayer, cts.Token);
     }
+
 
     void ResetPlayer()
     {
