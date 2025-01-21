@@ -1,6 +1,7 @@
 using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Models.WebSocketMessage;
 public class CanoeMovement : MonoBehaviour
 {
     private Rigidbody rb;
@@ -23,6 +24,11 @@ public class CanoeMovement : MonoBehaviour
     // boat movement speed
     public float steeringSpeed;
     public float thrustSpeed;
+
+    private float zeroInputStartTime = -1;
+    private float timeOutTime = 20f;
+
+    public WebSocketClient webSocketClient;
 
     // input
     public enum InputType
@@ -48,40 +54,71 @@ public class CanoeMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-
-        if (inputType == InputType.Controller)
+        if (GameSelect.isGameStarted)
         {
-            if (Gamepad.all.Count > 0)
+            if (inputType == InputType.Controller)
             {
-                leftAnimation = Gamepad.all[0].leftStick.ReadValue().y;
-                rightAnimation = Gamepad.all[0].rightStick.ReadValue().y;
-                userInput = Gamepad.all[0].leftStick.ReadValue().y - Gamepad.all[0].rightStick.ReadValue().y;
-                userThrust = (Gamepad.all[0].leftStick.ReadValue().y + Gamepad.all[0].rightStick.ReadValue().y)/2;
-            }
+                if (Gamepad.all.Count > 0)
+                {
+                    leftAnimation = Gamepad.all[0].leftStick.ReadValue().y;
+                    rightAnimation = Gamepad.all[0].rightStick.ReadValue().y;
+                    userInput = Gamepad.all[0].leftStick.ReadValue().y - Gamepad.all[0].rightStick.ReadValue().y;
+                    userThrust = (Gamepad.all[0].leftStick.ReadValue().y + Gamepad.all[0].rightStick.ReadValue().y) / 2;
+                }
 
-        }
-        else if(inputType == InputType.Keyboard)
-        {
-            userInput = Input.GetAxis("Horizontal");
-            userThrust = Input.GetAxis("Vertical");
-            if(isSinglePlayer){
-                userInput = 0;
+            }
+            else if (inputType == InputType.Keyboard)
+            {
+                userInput = Input.GetAxis("Horizontal");
                 userThrust = Input.GetAxis("Vertical");
+                if (isSinglePlayer)
+                {
+                    userInput = 0;
+                    userThrust = Input.GetAxis("Vertical");
+                }
             }
-        }
-        else if(!isSinglePlayer)
-        {
-            leftAnimation = espListener.valueLeft;
-            rightAnimation = espListener.valueRight;
-            userInput = (espListener.valueLeft / 1.5f) - (espListener.valueRight / 1.5f);
-            userThrust = (espListener.valueLeft + espListener.valueRight) / 2;
+            else if (!isSinglePlayer)
+            {
+                leftAnimation = espListener.valueLeft;
+                rightAnimation = espListener.valueRight;
+                userInput = (espListener.valueLeft / 1.5f) - (espListener.valueRight / 1.5f);
+                userThrust = (espListener.valueLeft + espListener.valueRight) / 2;
 
+            }
+            else
+            {
+                userInput = 0;
+                userThrust = (espListener.valueLeft) + (espListener.valueRight);
+            }
+            if(!GameSelect.isIdle){
+                zeroInputStartTime = -1f;
+            }
+            else if (userThrust <= 0.05)
+            {
+                if (zeroInputStartTime < 0)
+                {
+                    zeroInputStartTime = Time.time;
+                    Debug.Log(2);
+                }
+                else if (Time.time - zeroInputStartTime >= timeOutTime)
+                {
+                    // user has been idle too long
+                    WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { NewConnection = true });
+                    zeroInputStartTime = -1f;
+                }
+            }
+            else
+            {
+                zeroInputStartTime = -1f;
+            }
         }
         else
         {
             userInput = 0;
-            userThrust = (espListener.valueLeft) + (espListener.valueRight);
+            userThrust = 0;
         }
+
+
 
         // boat animations (rotations left/right and wobble)
         float wobble = Mathf.Sin(Time.time * 2f) * wobbleMaxAngle;

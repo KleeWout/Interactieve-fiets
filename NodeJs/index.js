@@ -79,6 +79,10 @@ wss.on("connection", function (ws) {
 
       if(message.NewConnection === true){
         // generate game code number
+        activeGameCodes = activeGameCodes.filter((code) => code !== getGameCodeFromGameClient(ws));
+        gameClients.delete(getGameCodeFromGameClient(ws));
+        console.log("Game client disconnected");
+        console.log(gameClients);
         do {
           gameCode = Math.floor(1000 + Math.random() * 9000);
         } while (activeGameCodes.includes(gameCode));      
@@ -90,6 +94,9 @@ wss.on("connection", function (ws) {
 
         ws.send(JSON.stringify({ gameCode }));
       }
+      // else if(message.ReNewConnection === true){
+
+      // }
       else if (game2browser.has(ws)){
         const strippedMessage = { ...message };
         delete strippedMessage.IsGameClient;
@@ -101,7 +108,7 @@ wss.on("connection", function (ws) {
       }
 
     }
-    if (message.gameState) {
+    else if (message.gameState) {
       if (browser2game.has(ws)) {
         if(message.gameState === "start"){
           gameStatus.set(browser2game.get(ws), "start");
@@ -121,7 +128,8 @@ wss.on("connection", function (ws) {
           else{
             game2browser.set(gameClients.get(gameCode), ws);
             browser2game.set(ws, gameClients.get(gameCode));
-
+            // make a reconnect option 
+            // if game was already started, give reconnect instead of connect
             browser2game.get(ws).send(JSON.stringify({connectionStatus: "connected", userName: message.userName, gameMode: message.gameMode}));
   
             console.log("Browser client joined game with code: ", gameCode);
@@ -148,15 +156,16 @@ wss.on("connection", function (ws) {
   });
 
   ws.on("close", function () {
-    if (getGameClientFromGameCode(ws) !== null) {
-      activeGameCodes = activeGameCodes.filter((code) => code !== getGameClientFromGameCode(ws));
-      gameClients.delete(ws);
+    if (getGameCodeFromGameClient(ws) !== null) {
+      activeGameCodes = activeGameCodes.filter((code) => code !== getGameCodeFromGameClient(ws));
+      gameClients.delete(getGameCodeFromGameClient(ws));
       console.log("Game client disconnected");
       console.log("Active game codes: ", activeGameCodes);
+      console.log(gameClients);
     }
     else if(browser2game.has(ws)){
       if(gameStatus.get(browser2game.get(ws)) == "start"){
-        // do not reset all cuz game has started
+        browser2game.get(ws).send(JSON.stringify({connectionStatus: "idle"}));
       }
       else{
         browser2game.get(ws).send(JSON.stringify({connectionStatus: "disconnected"}));
@@ -169,7 +178,7 @@ wss.on("connection", function (ws) {
 
 });
 
-function getGameClientFromGameCode(ws) {
+function getGameCodeFromGameClient(ws) {
   for (let [gameCode, clientWs] of gameClients.entries()) {
     if (clientWs === ws) {
       return gameCode;

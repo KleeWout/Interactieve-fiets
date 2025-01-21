@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 
 using Models.GameModeModel;
 using Models.WebSocketMessage;
+using System.Data.Common;
 
 
 
@@ -82,7 +83,7 @@ public class WebSocketClient : MonoBehaviour
                 if (jsonObject.ContainsKey("connectionStatus"))
                 {
                     string connectionStatus = jsonObject["connectionStatus"].ToString();
-                    if (connectionStatus == "connected")
+                    if (connectionStatus == "connected" && !GameSelect.isGameStarted)
                     {
                         if (jsonObject.ContainsKey("gameMode") && jsonObject["gameMode"].ToString() == "multiplayer")
                         {
@@ -99,6 +100,9 @@ public class WebSocketClient : MonoBehaviour
                     {
                         gameSelect.ChangeState(GameMode.Menu);
                         Debug.Log("Browser disconnected");
+                    }
+                    else if(connectionStatus == "idle"){
+                        GameSelect.isIdle = true;
                     }
                 }
                 if (jsonObject.ContainsKey("userName"))
@@ -126,7 +130,12 @@ public class WebSocketClient : MonoBehaviour
                     string gameState = jsonObject["gameState"].ToString();
                     if (gameState == "start")
                     {
-                        Debug.Log("start");
+                        if(jsonObject["gameMode"].ToString() == "multiplayer"){
+                            gameSelect.StartGame(GameMode.MultiPlayer);
+                        }
+                        else if(jsonObject["gameMode"].ToString() == "multiplayer"){
+                            gameSelect.StartGame(GameMode.SinglePlayer);
+                        }
                     }
                     else if (gameState == "stop")
                     {

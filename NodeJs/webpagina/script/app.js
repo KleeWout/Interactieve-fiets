@@ -62,7 +62,7 @@ const listenToInputs = function () {
     }
   });
   htmlStartButton.addEventListener('click', function() {
-    ws.send(`{"gameState": "start", "gameMode": ${htmlGameMode[0].checked ? "singleplayer" : "multiplayer"}}`);
+    ws.send(`{"gameState": "start", "gameMode": ${htmlGameMode[0].checked ? `"singleplayer"` : `"multiplayer"`}}`);
   });
 };
 
@@ -221,6 +221,7 @@ const init = function () {
   touchArea.addEventListener("touchstart", handleTouchStart);
   touchArea.addEventListener("touchmove", handleTouchMove);
   touchArea.addEventListener("touchend", handleTouchEnd);
+
 
   listenToInputs();
 
