@@ -8,6 +8,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Threading;
 using Models.WebSocketMessage;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class GameSelect : MonoBehaviour
 {
@@ -143,7 +144,6 @@ public class GameSelect : MonoBehaviour
     public void StartGame(GameMode mode)
     {
         isGameStarted = true;
-        ScoreSystem.score = 0f;
         hudCanvas.SetActive(true);
         if (mode == GameMode.SinglePlayer)
         {
@@ -203,6 +203,9 @@ public class GameSelect : MonoBehaviour
 
     void ResetPlayer()
     {
+        Debug.Log("score reset");
+        ScoreSystem.score = 0f;
+        Debug.Log("Score reset to: " + ScoreSystem.score);
         Rigidbody playerRb = playerObject.GetComponent<Rigidbody>();
         playerRb.linearVelocity = Vector3.zero;
         playerRb.angularVelocity = Vector3.zero;

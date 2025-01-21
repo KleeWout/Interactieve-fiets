@@ -12,6 +12,7 @@ public class ScoreSystem : MonoBehaviour
     public static float score = 0f;
     public TMP_Text scoreText;
     private WebSocketClient webSocketClient;
+    private bool isReset;
 
     void Start(){
         webSocketClient = WebSocketClient.Instance;
@@ -21,6 +22,12 @@ public class ScoreSystem : MonoBehaviour
 
     void Update()
     {
+        if(score == 0f && !isReset){
+            previousPlayerPosition = player.position;
+            scoreText.text = score.ToString() + "m";
+            isReset = true;
+        }
+
         //Calculate dist
         distanceSinceLastScore += player.position.z - previousPlayerPosition.z;
         previousPlayerPosition = player.position;
@@ -35,10 +42,13 @@ public class ScoreSystem : MonoBehaviour
 
         if (scoreToAdd > 0)
         {
+            isReset = false;
             score += scoreToAdd;
             scoreText.text = score.ToString() + "m";
             webSocketClient.SendMessageToSocket(new WebSocketMessage { Score = score.ToString() });
         }
     }
+
+
 }
 
