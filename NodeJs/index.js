@@ -79,6 +79,7 @@ wss.on("connection", function (ws) {
 
       if(message.NewConnection === true){
         // generate game code number
+        ws.send(JSON.stringify({connectionStatus: "disconnected"}));
         activeGameCodes = activeGameCodes.filter((code) => code !== getGameCodeFromGameClient(ws));
         gameClients.delete(getGameCodeFromGameClient(ws));
         console.log("Game client disconnected");

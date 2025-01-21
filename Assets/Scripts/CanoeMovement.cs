@@ -28,8 +28,6 @@ public class CanoeMovement : MonoBehaviour
     private float zeroInputStartTime = -1;
     private float timeOutTime = 20f;
 
-    public WebSocketClient webSocketClient;
-
     // input
     public enum InputType
     {
@@ -104,6 +102,8 @@ public class CanoeMovement : MonoBehaviour
                 {
                     // user has been idle too long
                     WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { NewConnection = true });
+                    GameSelect.isGameStarted = false;
+                    GameSelect.isIdle = false;
                     zeroInputStartTime = -1f;
                 }
             }

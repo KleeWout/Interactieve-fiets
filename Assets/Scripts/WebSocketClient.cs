@@ -150,9 +150,8 @@ public class WebSocketClient : MonoBehaviour
 
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Debug.LogError($"Error receiving WebSocket messages: {ex.Message}");
         }
     }
     

@@ -188,6 +188,7 @@ MonoBehaviour:
   tiltSmoothing: 8
   steeringSpeed: 85
   thrustSpeed: 5
+  webSocketClient: {fileID: 1562793648}
   inputType: 0
 --- !u!114 &20283348
 MonoBehaviour:
@@ -2430,6 +2431,7 @@ MonoBehaviour:
   tiltSmoothing: 8
   steeringSpeed: 85
   thrustSpeed: 5
+  webSocketClient: {fileID: 1562793648}
   inputType: 0
 --- !u!114 &1480849960
 MonoBehaviour:
