@@ -1,6 +1,6 @@
 "use strict";
 let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea;
-let htmlStopButton;
+let htmlStopButton, htmlEndScoreMenuButton;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 let clientId;
@@ -63,18 +63,26 @@ const listenToInputs = function () {
   });
   htmlStartButton.addEventListener("click", function () {
     ws.send(`{"gameState": "start", "gameMode": ${htmlGameMode[0].checked ? `"singleplayer"` : `"multiplayer"`}}`);
-    document.querySelector(".c-home").classList.toggle("hide");
-    document.querySelector(".c-boat").classList.toggle("activated");
-
-
-    
+    console.log("Start button clicked");
+    document.querySelector(".c-home").classList.add("hide");
+    document.querySelector(".c-endgame__fixed").classList.remove("deactivated");
+    document.querySelector(".c-boat").classList.add("activated");
   });
 
   htmlStopButton.addEventListener("click", function () {
     ws.send('{"gameState": "stop"}');
-    document.querySelector(".c-home").classList.toggle("hide");
-    document.querySelector(".c-boat").classList.toggle("activated");
-    
+    document.querySelector(".c-boat").classList.remove("activated");
+    document.querySelector(".c-boat").classList.add("deactivated");
+    document.querySelector(".c-endgame__fixed").classList.add("activated");
+  });
+
+  htmlEndScoreMenuButton = document.querySelector(".js-endscore-menu");
+  htmlEndScoreMenuButton.addEventListener("click", function () {
+    console.log("End score menu button clicked");
+    document.querySelector(".c-endgame__fixed").classList.remove("activated");
+    document.querySelector(".c-endgame__fixed").classList.add("deactivated");
+    document.querySelector(".c-boat").classList.remove("deactivated");
+    document.querySelector(".c-home").classList.remove("hide");
   });
 };
 
@@ -233,4 +241,3 @@ const init = function () {
 };
 
 document.addEventListener("DOMContentLoaded", init);
-
