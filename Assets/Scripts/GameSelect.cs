@@ -16,9 +16,7 @@ public class GameSelect : MonoBehaviour
     public GameObject canoeMultiplayer;
     public GameObject playerObject;
 
-
-    public Canvas gameCodeCanvas;
-    public Canvas overlayCanvas;
+    public GameObject hudCanvas;
     public TMP_Text gameCodeText;
     public RawImage qrDisplay;
 
@@ -107,6 +105,7 @@ public class GameSelect : MonoBehaviour
         }
         else if (mode == GameMode.Menu)
         {
+            hudCanvas.SetActive(false);
             canoeSingleplayer.SetActive(false);
             canoeMultiplayer.SetActive(false);
             ResetPlayer();
@@ -144,6 +143,8 @@ public class GameSelect : MonoBehaviour
     public void StartGame(GameMode mode)
     {
         isGameStarted = true;
+        ScoreSystem.score = 0f;
+        hudCanvas.SetActive(true);
         if (mode == GameMode.SinglePlayer)
         {
             cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(3.8f, 5f, 0.15f), Quaternion.Euler(50, -90, 0)));
