@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 
 using Models.GameModeModel;
 using Models.WebSocketMessage;
+using System.Data.Common;
 
 
 
@@ -82,13 +83,26 @@ public class WebSocketClient : MonoBehaviour
                 if (jsonObject.ContainsKey("connectionStatus"))
                 {
                     string connectionStatus = jsonObject["connectionStatus"].ToString();
-                    if (connectionStatus == "connected")
+                    if (connectionStatus == "connected" && !GameSelect.isGameStarted)
                     {
+                        if (jsonObject.ContainsKey("gameMode") && jsonObject["gameMode"].ToString() == "multiplayer")
+                        {
+                            gameSelect.ChangeState(GameMode.MultiPlayer);
+                        }
+                        else if(jsonObject.ContainsKey("gameMode") && jsonObject["gameMode"].ToString() == "singleplayer")
+                        { 
+                            gameSelect.ChangeState(GameMode.SinglePlayer);
+                        }
+    
                         Debug.Log("Browser connection established");
                     }
                     else if (connectionStatus == "disconnected")
                     {
+                        gameSelect.ChangeState(GameMode.Menu);
                         Debug.Log("Browser disconnected");
+                    }
+                    else if(connectionStatus == "idle"){
+                        GameSelect.isIdle = true;
                     }
                 }
                 if (jsonObject.ContainsKey("userName"))
@@ -114,11 +128,20 @@ public class WebSocketClient : MonoBehaviour
                 if (jsonObject.ContainsKey("gameState"))
                 {
                     string gameState = jsonObject["gameState"].ToString();
-                    if (gameState == "stop")
+                    if (gameState == "start")
+                    {
+                        if(jsonObject["gameMode"].ToString() == "multiplayer"){
+                            gameSelect.StartGame(GameMode.MultiPlayer);
+                        }
+                        else if(jsonObject["gameMode"].ToString() == "multiplayer"){
+                            gameSelect.StartGame(GameMode.SinglePlayer);
+                        }
+                    }
+                    else if (gameState == "stop")
                     {
                         Debug.Log("stop");
                     }
-                    if (gameState == "restart")
+                    else if (gameState == "restart")
                     {
                         Debug.Log("restart");
                     }
@@ -127,9 +150,8 @@ public class WebSocketClient : MonoBehaviour
 
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Debug.LogError($"Error receiving WebSocket messages: {ex.Message}");
         }
     }
     

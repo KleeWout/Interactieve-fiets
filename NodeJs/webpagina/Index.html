@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entertainende FietsGame</title>
+  <link rel="stylesheet" href="style/style.css" />
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+  <script src="script/app.js"></script>
+  <meta name="theme-color" content="#904849"> <!-- This sets the top bar color to red -->
+</head>
+<body>
+  <button class="c-button c-button__icon c-button__icon--help">
+    <svg class="c-icon c-icon--help" xmlns="http://www.w3.org/2000/svg" width="12" height="20" viewBox="0 0 12 20" fill="none">
+      <path d="M1.66921 5.04C0.869211 4.7 0.529212 3.71 1.00921 2.99C1.97921 1.55 3.59921 0.5 5.73921 0.5C8.08921 0.5 9.69921 1.57 10.5192 2.91C11.2192 4.06 11.6292 6.21 10.5492 7.81C9.34921 9.58 8.19921 10.12 7.57921 11.26C7.42921 11.53 7.33921 11.75 7.27921 12.2C7.18921 12.93 6.58921 13.5 5.84921 13.5C4.97921 13.5 4.26921 12.75 4.36921 11.88C4.42921 11.37 4.54921 10.84 4.82921 10.34C5.59921 8.95 7.07921 8.13 7.93921 6.9C8.84921 5.61 8.33921 3.2 5.75921 3.2C4.58921 3.2 3.82921 3.81 3.35921 4.54C3.00921 5.11 2.27921 5.29 1.66921 5.04ZM7.74921 17.5C7.74921 18.6 6.84921 19.5 5.74921 19.5C4.64921 19.5 3.74921 18.6 3.74921 17.5C3.74921 16.4 4.64921 15.5 5.74921 15.5C6.84921 15.5 7.74921 16.4 7.74921 17.5Z" fill="#FDF9EE" />
+    </svg>
+  </button>
+  <div class="c-entry">
+      <div class="c-entry__container">
+        <h1 class="c-entry__titel">Spelcode</h1>
+        <p class="c-entry__text">Voer de code in die op het scherm wordt weergegeven om een spel te starten</p>
+      </div>
+      <div class="c-code">
+        <input class="c-code__input" type="number" id="input1" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input2')" onkeydown="moveToPrevious(event, 'input1')" onpaste="return false;" />
+        <input class="c-code__input" type="number" id="input2" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input3')" onkeydown="moveToPrevious(event, 'input1')" onpaste="return false;" />
+        <input class="c-code__input" type="number" id="input3" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input4')" onkeydown="moveToPrevious(event, 'input2')" onpaste="return false;" />
+        <input class="c-code__input" type="number" id="input4" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input1')" onkeydown="moveToPrevious(event, 'input3')" onpaste="return false;" /> 
+      </div>
+  </div>
+  <div class="c-home">
+    <div class="c-main blurred">
+      <div class="c-namecontainer">
+        <p class="c-inputname__widthbox">KanoKonijn</p>
+        <input class="c-namecontainer__input js-name" type="text" value="KanoKonijn" maxlength="18"/>
+        <button class="c-button c-button__pencil">
+          <svg class="c-icon c-icon--pencil" xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+            <path d="M2.99878 21.5013H6.74878L17.8088 10.4413L14.0588 6.69128L2.99878 17.7513V21.5013ZM4.99878 18.5813L14.0588 9.52128L14.9788 10.4413L5.91878 19.5013H4.99878V18.5813Z" fill="#FDF9EE" />
+            <path d="M18.3688 3.79128C17.9788 3.40128 17.3488 3.40128 16.9588 3.79128L15.1288 5.62128L18.8788 9.37128L20.7088 7.54128C21.0988 7.15128 21.0988 6.52128 20.7088 6.13128L18.3688 3.79128Z" fill="#FDF9EE" />
+          </svg>
+        </button>
+      </div>
+      <div class="c-gamemode">
+        <div class="c-gamemode__container">
+            <div class="c-gamemode__item c-gamemode__item__singleplayer">
+              <label for="Singleplayer">
+                <p>Singleplayer</p>
+                <img class="c-gamemode__img c-gamemode__img--singleplayer" src="Images/multiplayerimg.png" alt="singleplayer"  width="280" height="280"/>
+              </label>
+            </div>
+            <div class="c-gamemode__item c-gamemode__item__multiplayer">
+              <label for="Multiplayer">
+                <p>Multiplayer</p>
+                <img class="c-gamemode__img c-gamemode__img--multiplayer" src="Images/multiplayerimg.png" alt="multiplayer" width="280" height="280"/>
+              </label>
+            </div>
+        </div> 
+        <div class="c-gamemode__select">
+          <input type="radio" id="Singleplayer" name="gameMode" value="Singleplayer" checked>
+          <label for="Singleplayer">
+          </label>
+          <input type="radio" id="Multiplayer" name="gameMode" value="Multiplayer">
+          <label for="Multiplayer">
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="c-buttons blurred">
+      <button class="c-button c-button__icon c-button__icon--trophy">
+        <svg class="c-icon c-icon--trophy" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M19 5H17V4C17 3.45 16.55 3 16 3H8C7.45 3 7 3.45 7 4V5H5C3.9 5 3 5.9 3 7V8C3 10.55 4.92 12.63 7.39 12.94C8.02 14.44 9.37 15.57 11 15.9V19H8C7.45 19 7 19.45 7 20C7 20.55 7.45 21 8 21H16C16.55 21 17 20.55 17 20C17 19.45 16.55 19 16 19H13V15.9C14.63 15.57 15.98 14.44 16.61 12.94C19.08 12.63 21 10.55 21 8V7C21 5.9 20.1 5 19 5ZM5 8V7H7V10.82C5.84 10.4 5 9.3 5 8ZM19 8C19 9.3 18.16 10.4 17 10.82V7H19V8Z" fill="#FDF9EE" />
+        </svg>
+      </button>
+      <button class="c-button c-button__start js-start">Start</button>
+      <button class="c-button c-button__icon c-button__icon--settings">
+        <svg class="c-icon c-icon--trophy" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M19.5 12C19.5 11.77 19.49 11.55 19.47 11.32L21.33 9.91C21.73 9.61 21.84 9.05 21.59 8.61L19.72 5.38C19.47 4.94 18.93 4.76 18.47 4.96L16.32 5.87C15.95 5.61 15.56 5.38 15.15 5.19L14.86 2.88C14.8 2.38 14.37 2 13.87 2H10.14C9.63003 2 9.20003 2.38 9.14003 2.88L8.85003 5.19C8.44003 5.38 8.05003 5.61 7.68003 5.87L5.53003 4.96C5.07003 4.76 4.53003 4.94 4.28003 5.38L2.41003 8.62C2.16003 9.06 2.27003 9.61 2.67003 9.92L4.53003 11.33C4.51003 11.55 4.50003 11.77 4.50003 12C4.50003 12.23 4.51003 12.45 4.53003 12.68L2.67003 14.09C2.27003 14.39 2.16003 14.95 2.41003 15.39L4.28003 18.62C4.53003 19.06 5.07003 19.24 5.53003 19.04L7.68003 18.13C8.05003 18.39 8.44003 18.62 8.85003 18.81L9.14003 21.12C9.20003 21.62 9.63003 22 10.13 22H13.86C14.36 22 14.79 21.62 14.85 21.12L15.14 18.81C15.55 18.62 15.94 18.39 16.31 18.13L18.46 19.04C18.92 19.24 19.46 19.06 19.71 18.62L21.58 15.39C21.83 14.95 21.72 14.4 21.32 14.09L19.46 12.68C19.49 12.45 19.5 12.23 19.5 12ZM12.04 15.5C10.11 15.5 8.54003 13.93 8.54003 12C8.54003 10.07 10.11 8.5 12.04 8.5C13.97 8.5 15.54 10.07 15.54 12C15.54 13.93 13.97 15.5 12.04 15.5Z"
+            fill="#FDF9EE"
+          />
+        </svg>
+      </button>
+  </div>
+  </div>
+  
+</body>
+</html>

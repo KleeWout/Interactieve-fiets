@@ -7,7 +7,7 @@ using TMPro;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Threading;
-
+using Models.WebSocketMessage;
 
 public class GameSelect : MonoBehaviour
 {
@@ -21,7 +21,7 @@ public class GameSelect : MonoBehaviour
     public Canvas overlayCanvas;
     public TMP_Text gameCodeText;
     public RawImage qrDisplay;
-    
+
     public GameObject terrainObject;
     private TerrainGen terrain;
     private CancellationTokenSource cts;
@@ -36,6 +36,8 @@ public class GameSelect : MonoBehaviour
 
     private string gameCode;
     public static string userName;
+    public static bool isGameStarted;
+    public static bool isIdle = false;
 
 
     void Start()
@@ -96,19 +98,19 @@ public class GameSelect : MonoBehaviour
         if (mode == GameMode.SinglePlayer)
         {
             StartCoroutine(RotateAndSwitch(singleplayerAnimator, canoeMultiplayer, canoeSingleplayer));
-            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(2f,1.25f,0.15f),  Quaternion.Euler(25, -90, 0)));       
+            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(2f, 1.25f, 0.15f), Quaternion.Euler(25, -90, 0)));
         }
         else if (mode == GameMode.MultiPlayer)
         {
             StartCoroutine(RotateAndSwitch(multiplayerAnimator, canoeSingleplayer, canoeMultiplayer));
-            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0f,1.25f,-2.5f),  Quaternion.Euler(25, 0, 0)));
+            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0f, 1.25f, -2.5f), Quaternion.Euler(25, 0, 0)));
         }
-        else if(mode == GameMode.Menu)
+        else if (mode == GameMode.Menu)
         {
             canoeSingleplayer.SetActive(false);
             canoeMultiplayer.SetActive(false);
             ResetPlayer();
-            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0,2,0),  Quaternion.Euler(-90, 0, 0)));
+            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0, 2, 0), Quaternion.Euler(-90, 0, 0)));
         }
     }
 
@@ -125,7 +127,7 @@ public class GameSelect : MonoBehaviour
     {
         Vector3 startPosition = cameraTransform.position;
         Quaternion startRotation = cameraTransform.rotation;
-        float elapsedTime = 0f;     
+        float elapsedTime = 0f;
 
         while (elapsedTime < 0.5f)
         {
@@ -139,54 +141,62 @@ public class GameSelect : MonoBehaviour
         cameraTransform.rotation = targetRotation;
     }
 
-    public void StartGame()
+    public void StartGame(GameMode mode)
     {
-        if (gameMode == GameMode.SinglePlayer)
+        isGameStarted = true;
+        if (mode == GameMode.SinglePlayer)
         {
-            // terrain.GenerateTerrain(GameMode.SinglePlayer);
+            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(3.8f, 5f, 0.15f), Quaternion.Euler(50, -90, 0)));
         }
-        else if (gameMode == GameMode.MultiPlayer)
+        else if (mode == GameMode.MultiPlayer)
         {
-            // terrain.GenerateTerrain(GameMode.MultiPlayer);
+            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0f, 1.25f, -4f), Quaternion.Euler(0, 0, 0)));
         }
     }
 
 
     void LoadSinglePlayer()
     {
-        if(gameMode == GameMode.SinglePlayer)
+        if (!isGameStarted)
         {
+            if (gameMode == GameMode.SinglePlayer)
+            {
+                cts?.Cancel();
+                cts = new CancellationTokenSource();
+                terrain.GenerateTerrain(GameMode.SinglePlayer, cts.Token);
+                return;
+            }
+            gameMode = GameMode.SinglePlayer;
+
+            ChangeState(GameMode.SinglePlayer);
+
+
             cts?.Cancel();
             cts = new CancellationTokenSource();
             terrain.GenerateTerrain(GameMode.SinglePlayer, cts.Token);
-            return;
         }
-        gameMode = GameMode.SinglePlayer;
-   
-        ChangeState(GameMode.SinglePlayer);
 
-
-        cts?.Cancel();
-        cts = new CancellationTokenSource();
-        terrain.GenerateTerrain(GameMode.SinglePlayer, cts.Token);
     }
 
     void LoadMultiPlayer()
     {
-        if(gameMode == GameMode.MultiPlayer)
+        if (!isGameStarted)
         {
+            if (gameMode == GameMode.MultiPlayer)
+            {
+                cts?.Cancel();
+                cts = new CancellationTokenSource();
+                terrain.GenerateTerrain(GameMode.MultiPlayer, cts.Token);
+                return;
+            }
+            gameMode = GameMode.MultiPlayer;
+
+            ChangeState(GameMode.MultiPlayer);
+
             cts?.Cancel();
             cts = new CancellationTokenSource();
             terrain.GenerateTerrain(GameMode.MultiPlayer, cts.Token);
-            return;
         }
-        gameMode = GameMode.MultiPlayer;
-
-        ChangeState(GameMode.MultiPlayer);
-
-        cts?.Cancel();
-        cts = new CancellationTokenSource();
-        terrain.GenerateTerrain(GameMode.MultiPlayer, cts.Token);
     }
 
 

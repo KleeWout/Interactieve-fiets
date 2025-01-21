@@ -3,6 +3,7 @@ namespace Models.GameModeModel
     public enum GameMode
     {
         SinglePlayer,
-        MultiPlayer
+        MultiPlayer,
+        Menu
     }
 }
