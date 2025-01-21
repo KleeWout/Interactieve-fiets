@@ -23,6 +23,15 @@
   --space-l: 2rem;
   --space-xl: 3rem;
   --space-xxl: 4.5rem;
+
+  --ease-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --ease-decelerate: cubic-bezier(0, 0, 0, 1);
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  --duration-xx-fast: 100ms;
+  --duration-x-fast: 200ms;
+  --duration-fast: 300ms;
+  --duration: 400ms;
 }
 
 /*
@@ -32,10 +41,10 @@
 @view-transition {
   navigation: auto;
 }
-
 @keyframes fade-in {
   from {
     opacity: 0;
+    
   }
 }
 
@@ -45,27 +54,21 @@
   }
 }
 
-@keyframes slide-from-right {
+@keyframes slide-from-bottom {
   from {
-    transform: translateX(30px);
+    transform: translateY(120%);
   }
-}
-
-@keyframes slide-to-left {
   to {
-    transform: translateX(-30px);
+    transform: translateY(40%);
   }
 }
 
-@keyframes scale-down {
-  to {
-    transform: scale(0.9);
-  }
-}
-
-@keyframes scale-up {
+@keyframes slide-to-bottom {
   from {
-    transform: scale(0.9);
+    transform: translateY(40%);
+  }
+  to {
+    transform: translateY(120%);
   }
 }
 
@@ -252,8 +255,17 @@ button {
   filter: blur(50px);
   z-index: 1;
 }
-.hidden{
+.hidden {
   display: none;
+}
+
+.c-home{
+  animation: fade-in 0.2s ease-out forwards;
+
+}
+
+.c-home.hide {
+  animation: fade-out 0.4s ease-out forwards;
 }
 
 .c-namecontainer {
@@ -405,6 +417,18 @@ button {
 }
 
 /* Boat page */
+.c-boat {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 9999;
+  animation: slide-to-bottom 0.5s ease-in-out;
+  transform: translate(0, 120%);
+}
+.c-boat.activated {
+  animation: slide-from-bottom 0.5s ease-in-out;
+  transform: translate(0, 40%);
+}
 
 .c-boat__frame {
   display: flex;
@@ -416,10 +440,10 @@ button {
   padding-bottom: 96px;
   border-radius: 16px 16px 0px 0px;
   box-shadow: 0px -10px 17.4px 0px rgba(0, 0, 0, 0.25);
-  position: fixed;
   bottom: 0%;
   width: 100%;
 }
+
 .c-boat__score--title {
   align-self: stretch;
   color: #261516;

@@ -1,6 +1,6 @@
 "use strict";
 let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea;
-let htmlBoatPage, htmlMainPage, htmlStopButton;
+let htmlStopButton;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 let clientId;
@@ -63,12 +63,18 @@ const listenToInputs = function () {
   });
   htmlStartButton.addEventListener("click", function () {
     ws.send(`{"gameState": "start", "gameMode": ${htmlGameMode[0].checked ? `"singleplayer"` : `"multiplayer"`}}`);
-    window.location.href = "/docs/boat/index.html";
+    document.querySelector(".c-home").classList.toggle("hide");
+    document.querySelector(".c-boat").classList.toggle("activated");
+
+
+    
   });
 
   htmlStopButton.addEventListener("click", function () {
-    ws.send(`{"gameState": "stop"}`);
-    window.location.href = "/docs/endgame/index.html";
+    ws.send('{"gameState": "stop"}');
+    document.querySelector(".c-home").classList.toggle("hide");
+    document.querySelector(".c-boat").classList.toggle("activated");
+    
   });
 };
 
@@ -210,32 +216,21 @@ const adjustWidth = function () {
   htmlName.style.width = htmlNameBox.offsetWidth + 1 + "px"; // Set the input width to the widthBox width
 };
 
-//#region ***  INIT / DOMContentLoaded  ***
 const init = function () {
   htmlScoreValue = document.querySelector(".js-score");
   htmlName = document.querySelector(".js-name");
   htmlNameBox = document.querySelector(".c-inputname__widthbox");
   htmlGameMode = document.querySelectorAll('input[name="gameMode"]');
   htmlStartButton = document.querySelector(".js-start");
+  htmlStopButton = document.querySelector(".js-stop");
 
   touchArea = document.querySelector(".c-gamemode__container");
   touchArea.addEventListener("touchstart", handleTouchStart);
   touchArea.addEventListener("touchmove", handleTouchMove);
   touchArea.addEventListener("touchend", handleTouchEnd);
 
-
-  htmlStopButton = document.querySelector(".js-stop");
-  htmlMainPage = document.querySelector(".js-main");
-  htmlBoatPage = document.querySelector(".js-boat");
-
-  if (htmlMainPage) {
-    console.log("Main page loaded");
-  }
-  if (htmlBoatPage) {
-    console.log("ik ben pagina B");
-  }
   listenToInputs();
 };
 
 document.addEventListener("DOMContentLoaded", init);
-//#endregion
+
