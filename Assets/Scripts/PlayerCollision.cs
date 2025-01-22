@@ -15,17 +15,17 @@ public class PlayerCollision : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if(Time.time - lastDamageTime < damageCooldown){
+        if (collision.collider.tag == "Lifesaver")
+        {
+            HealthManager.GetHeart();
+        }
+        else if(Time.time - lastDamageTime < damageCooldown){
             return;
         }
-        lastDamageTime = Time.time;
-        HealthManager.TakeDamage();
-        //when hitting the logs
-        if (collision.collider.tag == "Obstacle")
-        {
+        else{
+            lastDamageTime = Time.time;
             HealthManager.TakeDamage();
         }
-        Debug.Log(collision.collider.tag);
 
     }
     IEnumerator GetHurt()

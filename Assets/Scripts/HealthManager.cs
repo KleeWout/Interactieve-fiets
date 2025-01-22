@@ -24,6 +24,14 @@ public class HealthManager : MonoBehaviour
             PlayHeartBounceAnimation();
             UpdateHearts();
     }
+    public void GetHeart()
+    {
+        if (health < 5)
+        {
+            health += 1;
+            UpdateHearts();
+        }
+    }
     void UpdateHearts()
     {
         foreach (Image img in hearts)
