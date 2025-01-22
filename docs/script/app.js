@@ -84,7 +84,6 @@ const listenToInputs = function () {
     document.querySelector(".c-boat").classList.remove("deactivated");
     document.querySelector(".c-home").classList.remove("hide");
   });
-
   htmlLeaderboardButton.addEventListener("click", function () {
     window.location.href = "/docs/leaderboard";
   });
