@@ -4,9 +4,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Models.GameModeModel;
 using System;
+using Unity.AI.Navigation;
+using System.Collections;
 
 public class TerrainGen : MonoBehaviour
 {
+    private NavMeshSurface navMeshSurface;
     private GameMode currentGameMode;
     public GameObject player;
     public Terrain terrain1;
@@ -37,7 +40,6 @@ public class TerrainGen : MonoBehaviour
         if(currentlyLoadedGameMode == mode){
             return;
         }
-        currentlyLoadedGameMode = mode;
 
         bezierPoints.Clear();
         heights = null;
@@ -67,6 +69,7 @@ public class TerrainGen : MonoBehaviour
                 lastHeights = heights.Result;
                 terrainData2.SetHeights(0, 0, heights.Result);
                 StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.SinglePlayer));
+                BakeNavMesh();
             }
             else if (mode == GameMode.MultiPlayer)
             {
@@ -86,7 +89,9 @@ public class TerrainGen : MonoBehaviour
                 lastHeights = heights.Result;
                 terrainData2.SetHeights(0, 0, heights.Result);
                 StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.MultiPlayer));
+                BakeNavMesh();
             }
+            currentlyLoadedGameMode = mode;
         }
         catch (OperationCanceledException)
         {
@@ -103,7 +108,10 @@ public class TerrainGen : MonoBehaviour
         terrainData1 = terrain1.terrainData;
         terrainData2 = terrain2.terrainData;
 
+        navMeshSurface = GetComponent<NavMeshSurface>();
+
         obstacles = GetComponent<Obstacles>();
+        cts = new CancellationTokenSource(); // Initialize cts here
     }
     private CancellationTokenSource cts;
 
@@ -120,11 +128,12 @@ public class TerrainGen : MonoBehaviour
                     newPosition.z += 1026f;
                     terrain2.transform.position = newPosition;
                     GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 0);
-                    var heights = CarveTerrainAsync(cts.Token);
+                    heights = CarveTerrainAsync(cts.Token);
                     await heights;
                     lastHeights = heights.Result;
                     terrainData2.SetHeights(0, 0, heights.Result);
                     StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.SinglePlayer));
+                    BakeNavMesh();
                 }
                 else
                 {
@@ -133,11 +142,12 @@ public class TerrainGen : MonoBehaviour
                     newPosition.z += 1026f;
                     terrain1.transform.position = newPosition;
                     GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 0);
-                    var heights = CarveTerrainAsync(cts.Token);
+                    heights = CarveTerrainAsync(cts.Token);
                     await heights;
                     lastHeights = heights.Result;
                     terrainData1.SetHeights(0, 0, heights.Result);
                     StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.SinglePlayer));
+                    BakeNavMesh();
                 }
             }
             else if (currentGameMode == GameMode.MultiPlayer)
@@ -155,6 +165,7 @@ public class TerrainGen : MonoBehaviour
                     lastHeights = heights.Result;
                     terrainData2.SetHeights(0, 0, heights.Result);
                     StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.MultiPlayer));
+                    BakeNavMesh();
                 }
                 else
                 {
@@ -168,6 +179,7 @@ public class TerrainGen : MonoBehaviour
                     lastHeights = heights.Result;
                     terrainData1.SetHeights(0, 0, heights.Result);
                     StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.MultiPlayer));
+                    BakeNavMesh();
                 }
             }
         }
@@ -444,5 +456,22 @@ public class TerrainGen : MonoBehaviour
             }
         }
         return smoothedHeights;
+    }
+
+    // void BakeNavMesh()
+    // {
+    //     // navMeshSurface.layerMask = LayerMask.GetMask("Walkable");
+    //     // navMeshSurface.agentTypeID = 0; // Default agent type
+    //     // navMeshSurface.UpdateNavMeshAsync();
+    //     UnityEngine.AI.NavMeshBuilder.UpdateNavMeshDataAsync(navMeshSurface.navMeshData);
+    // }
+    public async void BakeNavMesh()
+    {
+        var navMeshData = navMeshSurface.navMeshData;
+        var sources = new List<UnityEngine.AI.NavMeshBuildSource>();
+        UnityEngine.AI.NavMeshBuilder.CollectSources(navMeshSurface.transform, navMeshSurface.layerMask, navMeshSurface.useGeometry, navMeshSurface.defaultArea, new List<UnityEngine.AI.NavMeshBuildMarkup>(), sources);
+        var bounds = navMeshSurface.navMeshData.sourceBounds;
+
+        await UnityEngine.AI.NavMeshBuilder.UpdateNavMeshDataAsync(navMeshData, navMeshSurface.GetBuildSettings(), sources, bounds);
     }
 }
