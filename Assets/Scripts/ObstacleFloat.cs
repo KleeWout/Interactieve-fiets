@@ -5,6 +5,7 @@ public class ObstacleFloat : MonoBehaviour
 {
     public float speed; // Movement speed
     private float originalSpeed; // Store the original speed
+    private Animator animator;
 
     private Vector3 direction;
     private Vector3 initialPosition;
@@ -16,6 +17,8 @@ public class ObstacleFloat : MonoBehaviour
         direction = GetRandomDirection();
         speed = Random.Range(0.1f, 4f); // Set speed to a random value between 0.04 and 2
         originalSpeed = speed; // Store the original speed
+
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -43,6 +46,13 @@ public class ObstacleFloat : MonoBehaviour
             // StopCoroutine(AdjustSpeed());
             StopAllCoroutines();
             StartCoroutine(AdjustSpeed());
+        }
+        else if (collision.collider.CompareTag("Player"))
+        {
+            if(animator != null)
+            {
+                animator.enabled = true;
+            }
         }
     }
     private IEnumerator AdjustSpeed()
