@@ -15,10 +15,12 @@ public class LeaderboardRepository : ILeaderboardRepository
 {
     private readonly CosmosClient _cosmosClient;
 
-    
+
 
     public LeaderboardRepository()
     {
+
+        //add var to the variables inside the azure portal
         var cosmosDbConnectionString = Environment.GetEnvironmentVariable("CosmosDb");
         if (string.IsNullOrEmpty(cosmosDbConnectionString))
         {

@@ -582,6 +582,10 @@ button {
   border-radius: 8px;
   background: var(--secondary, #904849);
   box-shadow: 0px 0px 10px 1px rgba(253, 249, 238, 0.1) inset;
+
+}
+.c-leaderboard__item--hidden p {
+  visibility: hidden;
 }
 
 .c-leaderboard__list .c-active-score {

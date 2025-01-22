@@ -1,6 +1,6 @@
 "use strict";
 let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea;
-let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage;
+let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 let clientId;
@@ -228,6 +228,25 @@ const handleTouchEnd = () => {
   }
 };
 
+const showLeaderboard = function (jsonObject) {
+  htmlLeaderBoardList = document.querySelector(".js-leaderboard__list");
+  let position = 1;
+  let output = "";
+  console.log(jsonObject);
+  for (let player of jsonObject) {
+    console.log(player.name);
+    output += `<li class="c-scoreboard__item">
+              <div class="c-scoreboard__item--name">
+                <p>${position}</p>
+                <p>${player.name}</p>
+              </div>
+              <p class="c-scoreboard__item--score">${player.score}m</p>
+            </li>`;
+            position++;
+  }
+  htmlLeaderBoardList.innerHTML = output;
+};
+
 const adjustWidth = function () {
   const inputValue = htmlName.value;
   htmlNameBox.textContent = inputValue; // Set the widthBox text to the input value
@@ -240,6 +259,9 @@ const init = function () {
   if (htmlLeaderBoardPage) {
     console.log("Leaderboard page");
     listenToLeaderBoard();
+    // Example function to fetch JSON data from a URL
+    let url = "https://xentertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard";
+    handleData(url, showLeaderboard);
   } else {
     htmlScoreValue = document.querySelector(".js-score");
     htmlName = document.querySelector(".js-name");
