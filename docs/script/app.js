@@ -1,6 +1,6 @@
 "use strict";
 let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea;
-let htmlStopButton, htmlEndScoreMenuButton;
+let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 let clientId;
@@ -83,6 +83,17 @@ const listenToInputs = function () {
     document.querySelector(".c-endgame__fixed").classList.add("deactivated");
     document.querySelector(".c-boat").classList.remove("deactivated");
     document.querySelector(".c-home").classList.remove("hide");
+  });
+
+  htmlLeaderboardButton.addEventListener("click", function () {
+    window.location.href = "/docs/leaderboard";
+  });
+};
+
+const listenToLeaderBoard = function () {
+  htmlLeaderboardButton = document.querySelector(".js-leaderboard__return");
+  htmlLeaderboardButton.addEventListener("click", function () {
+    window.location.href = "../index.html";
   });
 };
 
@@ -225,19 +236,27 @@ const adjustWidth = function () {
 };
 
 const init = function () {
-  htmlScoreValue = document.querySelector(".js-score");
-  htmlName = document.querySelector(".js-name");
-  htmlNameBox = document.querySelector(".c-inputname__widthbox");
-  htmlGameMode = document.querySelectorAll('input[name="gameMode"]');
-  htmlStartButton = document.querySelector(".js-start");
-  htmlStopButton = document.querySelector(".js-stop");
+  htmlLeaderBoardPage = document.querySelector(".js-leaderboard");
 
-  touchArea = document.querySelector(".c-gamemode__container");
-  touchArea.addEventListener("touchstart", handleTouchStart);
-  touchArea.addEventListener("touchmove", handleTouchMove);
-  touchArea.addEventListener("touchend", handleTouchEnd);
+  if (htmlLeaderBoardPage) {
+    console.log("Leaderboard page");
+    listenToLeaderBoard();
+  } else {
+    htmlScoreValue = document.querySelector(".js-score");
+    htmlName = document.querySelector(".js-name");
+    htmlNameBox = document.querySelector(".c-inputname__widthbox");
+    htmlGameMode = document.querySelectorAll('input[name="gameMode"]');
+    htmlStartButton = document.querySelector(".js-start");
+    htmlStopButton = document.querySelector(".js-stop");
+    htmlLeaderboardButton = document.querySelector(".js-leaderboard-btn");
 
-  listenToInputs();
+    touchArea = document.querySelector(".c-gamemode__container");
+    touchArea.addEventListener("touchstart", handleTouchStart);
+    touchArea.addEventListener("touchmove", handleTouchMove);
+    touchArea.addEventListener("touchend", handleTouchEnd);
+
+    listenToInputs();
+  }
 };
 
 document.addEventListener("DOMContentLoaded", init);
