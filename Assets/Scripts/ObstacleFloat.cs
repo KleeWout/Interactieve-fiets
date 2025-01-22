@@ -1,34 +1,65 @@
+using System.Collections;
 using UnityEngine;
 
 public class ObstacleFloat : MonoBehaviour
 {
-    // -6 tot 2
+    public float speed; // Movement speed
+    private float originalSpeed; // Store the original speed
 
-    public float minPosition = -6;
-    public float maxPosition = 2;
-
-    private float amplitude;
-    private float shift;
-
-    private float offset;
+    private Vector3 direction;
     private Vector3 initialPosition;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        offset = Random.Range(0.2f, 2f);
-
         initialPosition = transform.position;
-        amplitude = (maxPosition - minPosition) / 2;
-        shift = (maxPosition + minPosition) / 2;
+        direction = GetRandomDirection();
+        speed = Random.Range(0.1f, 1.5f); // Set speed to a random value between 0.04 and 2
+        originalSpeed = speed; // Store the original speed
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        Vector3 currentPosition = transform.position;
-        currentPosition.x = amplitude * Mathf.Sin(Time.time * offset) + shift;
-        currentPosition.y = initialPosition.y - Mathf.Sin(Time.time * 3.129f + offset) * 0.1f;
-        transform.position = currentPosition;
+        MoveObstacle();
+    }
+
+    private void MoveObstacle()
+    {
+        transform.Translate(direction * speed * Time.deltaTime);
+    }
+
+    private Vector3 GetRandomDirection()
+    {
+        // Randomly choose left or right direction
+        return Random.value > 0.5f ? Vector3.right : Vector3.left;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("Terrain"))
+        {
+            direction = -direction;
+            // StopCoroutine(AdjustSpeed());
+            StopAllCoroutines();
+            StartCoroutine(AdjustSpeed());
+        }
+    }
+    private IEnumerator AdjustSpeed()
+    {
+        speed = 0.02f; // Drop the speed to half
+        float elapsedTime = 0f;
+        float duration = 50f; // Duration to regain original speed
+
+        yield return new WaitForSeconds(0.2f);
+
+        while (elapsedTime < duration)
+        {
+            speed = Mathf.Lerp(speed, originalSpeed, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        speed = originalSpeed; // Ensure the speed is set back to the original speed
     }
 }
