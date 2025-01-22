@@ -263,15 +263,6 @@ public class TerrainGen : MonoBehaviour
 
         heights = SmoothHeights(heights);
 
-        if (chunkCount != 0)
-        {
-            for (int i = 0; i < 513; i++)
-            {
-                if (cancellationToken.IsCancellationRequested) return null;
-                heights[0, i] = lastHeights[512, i];
-            }
-        }
-
         foreach (var point in bezierPoints)
         {
             if (cancellationToken.IsCancellationRequested) return null;
@@ -289,6 +280,16 @@ public class TerrainGen : MonoBehaviour
                 }
             }
         }
+
+        if (chunkCount != 0)
+        {
+            for (int i = 0; i < 513; i++)
+            {
+                if (cancellationToken.IsCancellationRequested) return null;
+                heights[0, i] = lastHeights[512, i];
+            }
+        }
+        
         return heights;
     }
 
