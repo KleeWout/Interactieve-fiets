@@ -51,7 +51,7 @@ public class TerrainGen : MonoBehaviour
                 if (cancellationToken.IsCancellationRequested) return;
                 lastHeights = heights.Result;
                 terrainData1.SetHeights(0, 0, heights.Result);
-                StartCoroutine(obstacles.GenerateObstaclesForChunk(heights.Result));
+                StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount));
 
                 chunkCount += 1;
                 GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 0);
@@ -60,7 +60,7 @@ public class TerrainGen : MonoBehaviour
                 if (cancellationToken.IsCancellationRequested) return;
                 lastHeights = heights.Result;
                 terrainData2.SetHeights(0, 0, heights.Result);
-                StartCoroutine(obstacles.GenerateObstaclesForChunk(heights.Result));
+                StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount));
             }
             else if (mode == GameMode.MultiPlayer)
             {
@@ -70,7 +70,7 @@ public class TerrainGen : MonoBehaviour
                 if (cancellationToken.IsCancellationRequested) return;
                 lastHeights = heights.Result;
                 terrainData1.SetHeights(0, 0, heights.Result);
-                StartCoroutine(obstacles.GenerateObstaclesForChunk(heights.Result));
+                StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount));
 
                 chunkCount += 1;
                 GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 100);
@@ -79,7 +79,7 @@ public class TerrainGen : MonoBehaviour
                 if (cancellationToken.IsCancellationRequested) return;
                 lastHeights = heights.Result;
                 terrainData2.SetHeights(0, 0, heights.Result);
-                StartCoroutine(obstacles.GenerateObstaclesForChunk(heights.Result));
+                StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount));
             }
         }
         catch (OperationCanceledException)
@@ -119,9 +119,9 @@ public class TerrainGen : MonoBehaviour
                     GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 0);
                     var heights = CarveTerrainAsync(cts.Token);
                     await heights;
-                    // StartCoroutine(obstacles.GenerateObstaclesForChunk(heights.Result));
                     lastHeights = heights.Result;
                     terrainData2.SetHeights(0, 0, heights.Result);
+                    StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount));
                 }
                 else
                 {
@@ -132,9 +132,9 @@ public class TerrainGen : MonoBehaviour
                     GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 0);
                     var heights = CarveTerrainAsync(cts.Token);
                     await heights;
-                    // StartCoroutine(obstacles.GenerateObstaclesForChunk(heights.Result));
                     lastHeights = heights.Result;
                     terrainData1.SetHeights(0, 0, heights.Result);
+                    StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount));
                 }
             }
             else if (currentGameMode == GameMode.MultiPlayer)
@@ -151,6 +151,7 @@ public class TerrainGen : MonoBehaviour
                     // StartCoroutine(obstacles.GenerateObstaclesForChunk(heights.Result));
                     lastHeights = heights.Result;
                     terrainData2.SetHeights(0, 0, heights.Result);
+                    StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount));
                 }
                 else
                 {
@@ -161,9 +162,9 @@ public class TerrainGen : MonoBehaviour
                     GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 100);
                     var heights = CarveTerrainAsync(cts.Token);
                     await heights;
-                    // StartCoroutine(obstacles.GenerateObstaclesForChunk(heights.Result));
                     lastHeights = heights.Result;
                     terrainData1.SetHeights(0, 0, heights.Result);
+                    StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount));
                 }
             }
         }

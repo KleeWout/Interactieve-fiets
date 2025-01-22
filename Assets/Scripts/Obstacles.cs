@@ -1,12 +1,13 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Obstacles : MonoBehaviour
 {
     public GameObject cubePrefab; // Assign the cube prefab in the inspector
+    private List<GameObject> createdInstances = new List<GameObject>();
 
-    private bool isDone = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -19,71 +20,42 @@ public class Obstacles : MonoBehaviour
 
     }
 
-    // public void GenerateObstaclesForChunk(float[,] heightmap){
-    //     foreach(float height in heightmap){
-    //         if(height<0){
-    //             Debug.Log(height);
-    //         }
-    //     }
-    // }
-    // public void GenerateObstaclesForChunk(float[,] heightmap)
-    // {
-    //     int row = 20;
-    //     System.Random random = new System.Random();
-
-    //     while (row < heightmap.GetLength(0))
-    //     {
-    //         for (int column = 0; column < heightmap.GetLength(1); column++)
-    //         {
-    //             float height = heightmap[row, column];
-    //             if (height < 0.007f)
-    //             {
-    //                 Debug.Log($"Height: {height}, Row: {row}, Column: {column}");
-    //                 Vector3 position = new Vector3(column-256.5f, 0, row-256.5f);
-    //                 Instantiate(cubePrefab, position, Quaternion.identity);
-    //                 break;
-    //             }
-    //         }
-    //         row += 20 + random.Next(5, 21);
-    //     }
-    // }
-    public IEnumerator GenerateObstaclesForChunk(float[,] heightmap)
+    public IEnumerator GenerateObstaclesForChunk(List<Vector3> points, int chunk)
     {
-        if (!isDone)
-        {
-            isDone = true;
-            int row = 20;
-            System.Random random = new System.Random();
 
-            while (row < heightmap.GetLength(0))
+        int row = 80;
+        System.Random random = new System.Random();
+
+        // Create a copy of the points list to avoid modifying the collection during enumeration
+        List<Vector3> pointsCopy = new List<Vector3>(points);
+
+        foreach (var point in pointsCopy)
+        {
+            if (point.z >= row && point.z <= (chunk * 513) - 256.5f + 513f)
             {
-                for (int column = 0; column < heightmap.GetLength(1); column++)
-                {
-                    float height = heightmap[row, column];
-                    if (height < 0.007f)
-                    {
-                        // row is z
-                        // column is x
-                        // Debug.Log($"Height: {height}, Row: {row}, Column: {column}");
-                        Vector3 position = new Vector3(column - 256.5f, 0, row - 256.5f);
-                        Instantiate(cubePrefab, position, Quaternion.identity);
+                Vector3 position = new Vector3(point.x, 0, point.z);
+                GameObject instance = Instantiate(cubePrefab, position, Quaternion.identity);
+                createdInstances.Add(instance);
 
-                        break; // Exit the loop after placing one instance
-                    }
-                }
-                row += 20 + random.Next(5, 21);
+                row += random.Next(4, 50);
 
-                // Yield to ensure the coroutine doesn't block the main thread
                 yield return null;
-
             }
-
-            Debug.Log("Finished generating obstacles for chunk.");
         }
-        else
+
+        RemoveInstancesBelowZ((chunk * 513) - 769.5f);
+
+    }
+
+    private void RemoveInstancesBelowZ(float zThreshold)
+    {
+        for (int i = createdInstances.Count - 1; i >= 0; i--)
         {
-            Debug.Log("Obstacles generation already done.");
+            if (createdInstances[i].transform.position.z < zThreshold)
+            {
+                Destroy(createdInstances[i]);
+                createdInstances.RemoveAt(i);
+            }
         }
-
     }
 }
