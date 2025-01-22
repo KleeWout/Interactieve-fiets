@@ -4,9 +4,13 @@ using Microsoft.Extensions.Hosting;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
-    .ConfigureServices(services => {
+    .ConfigureServices(services =>
+    {
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
+        services.AddSingleton<CosmosClient>(new CosmosClient(Environment.GetEnvironmentVariable("CosmosDbConnectionString")));
+        services.AddSingleton<ILeaderboardRepository, LeaderboardRepository>();
+        services.AddSingleton<ILeaderboardService, LeaderboardService>();
     })
     .Build();
 
