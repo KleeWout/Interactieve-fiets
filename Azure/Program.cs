@@ -8,7 +8,6 @@ var host = new HostBuilder()
     {
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
-        services.AddSingleton<CosmosClient>(new CosmosClient(Environment.GetEnvironmentVariable("CosmosDbConnectionString")));
         services.AddSingleton<ILeaderboardRepository, LeaderboardRepository>();
         services.AddSingleton<ILeaderboardService, LeaderboardService>();
     })

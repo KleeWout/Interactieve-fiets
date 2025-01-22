@@ -29,18 +29,15 @@ namespace FietsGame.Function
         {
             try
             {
-                var players = await _leaderboardService.GetPlayers();
-                return new OkObjectResult(players);
-                // var leaderboardRepo = new LeaderboardRepository();
-                // var players = leaderboardRepo.GetPlayers();
-                // var leaderboard = new Leaderboard { Players = players };
+               var items = await GetPlayers();
+                _logger.LogInformation("C# HTTP trigger function processed a request.");
+                return new OkObjectResult(items);
 
-                // return new OkObjectResult(leaderboard);
             }
             catch (System.Exception e)
             {
-                return new OkObjectResult(e.Message);
-                throw;
+                _logger.LogError(e, "An error occurred while executing GetLeaderboard");
+                return new ObjectResult(new { error = e.Message }) { StatusCode = 500 };
             }
 
         }
@@ -52,19 +49,12 @@ namespace FietsGame.Function
 
             try
             {
-                // Read the entire request body as a string
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-
-                // Deserialize the JSON string into a Person object
                 var player = JsonConvert.DeserializeObject<Player>(requestBody);
-
-                // Check if deserialization was successful
                 if (player == null)
                 {
                     return new BadRequestObjectResult("Invalid person data");
                 }
-
-                // Call the service to add the person to the database
                 var addedPlayer = await _leaderboardService.AddPlayer(player);
                 return new OkObjectResult(addedPlayer);
             }
@@ -79,30 +69,38 @@ namespace FietsGame.Function
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
-
-
-
-        //         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-        //         var data = JsonConvert.DeserializeObject<Player>(requestBody);
-
-        //             if (data == null || string.IsNullOrEmpty(data.Name) || data.Score <= 0)
-        //             {
-        //                 return new BadRequestObjectResult("Invalid player data.");
-        //             }
-
-        //             var leaderboardRepo = new LeaderboardRepository();
-        //         var response = leaderboardRepo.AddPlayer(data);
-
-        //             return new OkObjectResult(response);
-
-        //     }
         [Function("ResetLeaderboard")]
         public IActionResult ResetLeaderboard([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "leaderboard/reset")] HttpRequest req)
         {
-             _leaderboardService.ClearLeaderboard();
+            _leaderboardService.ClearLeaderboard();
 
             return new OkObjectResult("Leaderboard reset.");
         }
+
+        [Function("TestTrigger")]
+        public IActionResult TestTrigger([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "leaderboard/test")] HttpRequest req)
+        {
+            return new OkObjectResult("test");
+        }
+
+
+        public async Task<List<Player>> GetPlayers()
+        {
+            string connectionString = "AccountEndpoint=https://entertainendeietsamestorage.documents.azure.com:443/;AccountKey=loFdA92EqB4aMyfHhAlziuCYz814aTP1oNdzwedArUlJzWLiVdVNDpHkIBwyFXVOzuCPdtlEFUeuACDbaQNUEg==;";
+            CosmosClient cosmosClient = new CosmosClient(connectionString);
+            var container = cosmosClient.GetContainer("FietsGame", "Leaderboard");
+            var query = new QueryDefinition("SELECT * FROM c ORDER BY c.score DESC");
+            var iterator = container.GetItemQueryIterator<Player>(query);
+
+            List<Player> results = new List<Player>();
+            while (iterator.HasMoreResults)
+            {
+                var response = await iterator.ReadNextAsync();
+                results.AddRange(response.ToList());
+            }
+            return results;
+        }
     }
+
 }
 

@@ -1,3 +1,5 @@
+using System.Configuration;
+
 namespace FietsGame.Repositories;
 
 public interface ILeaderboardRepository
@@ -13,9 +15,16 @@ public class LeaderboardRepository : ILeaderboardRepository
 {
     private readonly CosmosClient _cosmosClient;
 
-    public LeaderboardRepository(CosmosClient cosmosClient)
+    
+
+    public LeaderboardRepository()
     {
-        _cosmosClient = cosmosClient;
+        var cosmosDbConnectionString = Environment.GetEnvironmentVariable("CosmosDb");
+        if (string.IsNullOrEmpty(cosmosDbConnectionString))
+        {
+            throw new InvalidOperationException("CosmosDb connection string is not set in environment variables.");
+        }
+        _cosmosClient = new CosmosClient(cosmosDbConnectionString);
     }
 
     public async Task<List<Player>> GetPlayers()
