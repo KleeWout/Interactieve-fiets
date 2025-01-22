@@ -14,7 +14,7 @@ public class ObstacleFloat : MonoBehaviour
     {
         initialPosition = transform.position;
         direction = GetRandomDirection();
-        speed = Random.Range(0.1f, 1.5f); // Set speed to a random value between 0.04 and 2
+        speed = Random.Range(0.1f, 4f); // Set speed to a random value between 0.04 and 2
         originalSpeed = speed; // Store the original speed
     }
 
@@ -49,7 +49,7 @@ public class ObstacleFloat : MonoBehaviour
     {
         speed = 0.02f; // Drop the speed to half
         float elapsedTime = 0f;
-        float duration = 50f; // Duration to regain original speed
+        float duration = 260f; // Duration to regain original speed
 
         yield return new WaitForSeconds(0.2f);
 
