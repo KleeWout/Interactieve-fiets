@@ -18,10 +18,10 @@ namespace FietsGame.Function
         }
 
         [Function("GetLeaderboard")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "leaderboard")] HttpRequest req)
         {
-            var leaderboardRepo = new LeaderboardRepo();
-            var players = leaderboardRepo.GetPersons();
+            var leaderboardRepo = new LeaderboardRepository();
+            var players = leaderboardRepo.GetPlayers();
             var leaderboard = new Leaderboard { Players = players };
 
             return new OkObjectResult(leaderboard);
@@ -29,9 +29,8 @@ namespace FietsGame.Function
 
 
         [Function("AddPerson")]
-        public async Task<IActionResult> AddScore([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "update")] HttpRequest req)
+        public async Task<IActionResult> AddScore([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "leaderboard")] HttpRequest req)
         {
-
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var data = JsonConvert.DeserializeObject<Player>(requestBody);
 
@@ -40,30 +39,19 @@ namespace FietsGame.Function
                 return new BadRequestObjectResult("Invalid player data.");
             }
 
-            var filename = "c:/Users/woutk/Documents/GitHub/Interactieve-fiets/Azure/data/leaderBoard.json";
-            var json = File.ReadAllText(filename);
-            var leaderboard = JsonConvert.DeserializeObject<Leaderboard>(json);
+            var leaderboardRepo = new LeaderboardRepository();
+            var response = leaderboardRepo.AddPlayer(data);
 
-            var existingPlayer = leaderboard.Players.FirstOrDefault(p => p.Name == data.Name);
-            if (existingPlayer != null)
-            {
-                existingPlayer.Score = data.Score;
-            }
-            else
-            {
-                leaderboard.Players.Add(new Player { Name = data.Name, Score = data.Score });
-            }
+            return new OkObjectResult(response);
 
-            leaderboard.Players.Sort((a, b) => b.Score - a.Score);
-            for (int i = 0; i < leaderboard.Players.Count; i++)
-            {
-                leaderboard.Players[i].Position = i + 1;
-            }
+        }
+        [Function("ResetLeaderboard")]
+        public IActionResult ResetLeaderboard([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "leaderboard/reset")] HttpRequest req)
+        {
+            var leaderboardRepo = new LeaderboardRepository();
+            leaderboardRepo.ResetLeaderboard();
 
-            string updatedJson = JsonConvert.SerializeObject(leaderboard, Formatting.Indented);
-            File.WriteAllText(filename, updatedJson);
-
-            return new OkObjectResult(updatedJson);
+            return new OkObjectResult("Leaderboard reset.");
         }
     }
 }
