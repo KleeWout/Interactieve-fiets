@@ -110,6 +110,10 @@ public class GameSelect : MonoBehaviour
             canoeSingleplayer.SetActive(false);
             canoeMultiplayer.SetActive(false);
             ResetPlayer();
+            TerrainGen.currentlyLoadedGameMode = GameMode.Menu;
+            cts?.Cancel();
+            cts = new CancellationTokenSource();
+            terrain.GenerateTerrain(GameMode.MultiPlayer, cts.Token);
             cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0, 2, 0), Quaternion.Euler(-90, 0, 0)));
         }
     }

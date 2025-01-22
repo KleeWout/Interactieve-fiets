@@ -14,6 +14,8 @@ public class TerrainGen : MonoBehaviour
     private TerrainData terrainData1;
     private TerrainData terrainData2;
 
+    public static GameMode currentlyLoadedGameMode;
+
     private Obstacles obstacles;
 
     private int height = 513;
@@ -32,6 +34,10 @@ public class TerrainGen : MonoBehaviour
     public async void GenerateTerrain(GameMode mode, CancellationToken cancellationToken)
     {
         currentGameMode = mode;
+        if(currentlyLoadedGameMode == mode){
+            return;
+        }
+        currentlyLoadedGameMode = mode;
 
         bezierPoints.Clear();
         heights = null;
@@ -98,9 +104,6 @@ public class TerrainGen : MonoBehaviour
         terrainData2 = terrain2.terrainData;
 
         obstacles = GetComponent<Obstacles>();
-        cts?.Cancel();
-        cts = new CancellationTokenSource();
-        GenerateTerrain(GameMode.MultiPlayer, cts.Token);
     }
     private CancellationTokenSource cts;
 
