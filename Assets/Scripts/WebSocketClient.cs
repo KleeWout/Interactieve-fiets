@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using Models.GameModeModel;
 using Models.WebSocketMessage;
 using System.Data.Common;
+using TMPro;
 
 
 
@@ -25,6 +26,8 @@ public class WebSocketClient : MonoBehaviour
     private bool sceneChangeRequested = false;
 
     private GameSelect gameSelect;
+
+    public TMP_Text username;
 
 
     void Awake()
@@ -109,7 +112,7 @@ public class WebSocketClient : MonoBehaviour
                 {
                     string userName = jsonObject["userName"].ToString();
                     GameSelect.userName = userName;
-                    Debug.Log("Username: " + userName);
+                    username.text = "Proficiat, " + userName;
                 }
                 if (jsonObject.ContainsKey("gameMode"))
                 {

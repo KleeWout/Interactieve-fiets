@@ -11,6 +11,7 @@ public class ScoreSystem : MonoBehaviour
     private Transform player;
     public static float score = 0f;
     public TMP_Text scoreText;
+    public TMP_Text scoreEndText;
     private WebSocketClient webSocketClient;
     private bool isReset;
 
@@ -25,6 +26,7 @@ public class ScoreSystem : MonoBehaviour
         if(score == 0f && !isReset){
             previousPlayerPosition = player.position;
             scoreText.text = score.ToString() + "m";
+            scoreEndText.text = score.ToString() + "m";
             isReset = true;
         }
 
@@ -45,6 +47,7 @@ public class ScoreSystem : MonoBehaviour
             isReset = false;
             score += scoreToAdd;
             scoreText.text = score.ToString() + "m";
+            scoreEndText.text = score.ToString() + "m";
             webSocketClient.SendMessageToSocket(new WebSocketMessage { Score = score.ToString() });
         }
     }
