@@ -1,6 +1,6 @@
 "use strict";
 let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea;
-let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName;
+let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName, htmlEndGameScore;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 let clientId;
@@ -27,6 +27,7 @@ ws.onmessage = (event) => {
     const jsonData = JSON.parse(message);
     if (jsonData.Score !== undefined) {
       htmlScoreValue.innerHTML = `${jsonData.Score}m</p>`;
+      htmlEndGameScore.innerHTML = `${jsonData.Score}m</p>`;
     }
   } catch (error) {
     console.error("Error parsing JSON:", error);
@@ -272,6 +273,7 @@ const init = function () {
     htmlStopButton = document.querySelector(".js-stop");
     htmlLeaderboardButton = document.querySelector(".js-leaderboard-btn");
     htmlEndGameName = document.querySelector(".js-endGameName");
+    htmlEndGameScore = document.querySelector(".js-endgame-score");
 
     touchArea = document.querySelector(".c-gamemode__container");
     touchArea.addEventListener("touchstart", handleTouchStart);
