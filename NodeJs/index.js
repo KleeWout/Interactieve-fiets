@@ -11,9 +11,16 @@ const readline = require("readline");
 const os = require("os");
 
 
-app.use("/", express.static(path.resolve(__dirname, "../webpagina")));
+// Serve static files from 'public' directory
+app.use(express.static(path.join(__dirname, '../docs')));
 
 const myServer = app.listen(80); //http server
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});
+
+
 const wss = new WebSocket.Server({ port: 8080 }, () => {
   console.log("server started");
 });
