@@ -207,7 +207,7 @@ public class TerrainGen : MonoBehaviour
             chaseAgent.speed = 0.6f;
         }
         else{
-            chaseAgent.speed = 3.5f;
+            chaseAgent.speed = 5.5f;
         }
     }
 
