@@ -260,7 +260,7 @@ const init = function () {
     console.log("Leaderboard page");
     listenToLeaderBoard();
     // Example function to fetch JSON data from a URL
-    let url = "https://xentertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard";
+    let url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard";
     handleData(url, showLeaderboard);
   } else {
     htmlScoreValue = document.querySelector(".js-score");
