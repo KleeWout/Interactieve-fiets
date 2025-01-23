@@ -44,7 +44,7 @@ namespace FietsGame.Function
 
 
         [Function("AddPerson")]
-        public async Task<IActionResult> AddScore([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "leaderboard")] HttpRequest req)
+        public async Task<IActionResult> AddScore([HttpTrigger(AuthorizationLevel.Function, "post", Route = "leaderboard")] HttpRequest req)
         {
 
             try
@@ -70,18 +70,13 @@ namespace FietsGame.Function
             }
         }
         [Function("ResetLeaderboard")]
-        public IActionResult ResetLeaderboard([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "leaderboard/reset")] HttpRequest req)
+        public IActionResult ResetLeaderboard([HttpTrigger(AuthorizationLevel.Function, "get", Route = "leaderboard/reset")] HttpRequest req)
         {
             _leaderboardService.ClearLeaderboard();
 
             return new OkObjectResult("Leaderboard reset.");
         }
 
-        [Function("TestTrigger")]
-        public IActionResult TestTrigger([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "leaderboard/test")] HttpRequest req)
-        {
-            return new OkObjectResult("test");
-        }
 
 
         public async Task<List<Player>> GetPlayers()
