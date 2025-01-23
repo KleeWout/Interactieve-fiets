@@ -85,8 +85,6 @@ wss.on("connection", function (ws) {
         ws.send(JSON.stringify({connectionStatus: "disconnected"}));
         activeGameCodes = activeGameCodes.filter((code) => code !== getGameCodeFromGameClient(ws));
         gameClients.delete(getGameCodeFromGameClient(ws));
-        console.log("Game client disconnected");
-        console.log(gameClients);
         do {
           gameCode = Math.floor(1000 + Math.random() * 9000);
         } while (activeGameCodes.includes(gameCode));      
@@ -122,6 +120,10 @@ wss.on("connection", function (ws) {
           browser2game.get(ws).send(JSON.stringify({gameState: "start", gameMode: message.gameMode}));
           gameScore.set(browser2game.get(ws), 0);
         }
+        else if (message.gameState === "stop"){
+          gameStatus.set(browser2game.get(ws), "stop");
+          browser2game.get(ws).send(JSON.stringify({gameState: "stop"}));
+        }
       }
     }
     else{
@@ -140,10 +142,9 @@ wss.on("connection", function (ws) {
             // if game was already started, give reconnect instead of connect
             browser2game.get(ws).send(JSON.stringify({connectionStatus: "connected", userName: message.userName, gameMode: message.gameMode}));
   
-            console.log("Browser client joined game with code: ", gameCode);
+            // console.log("Browser client joined game with code: ", gameCode);
             // handle reconnect here (check if game was already started with gameStatus)
             if(gameStatus.get(gameClients.get(gameCode)) == "start"){
-              console.log("gemescore: ", gameScore.get(browser2game.get(ws)));
               ws.send(JSON.stringify({connectionStatus: "reconnect-start", id: message.id, score: gameScore.get(gameClients.get(gameCode))}));
             }
             else{
@@ -152,14 +153,14 @@ wss.on("connection", function (ws) {
           }
         }
         else{
-          console.log("Invalid game code");
+          // console.log("Invalid game code");
           ws.send(JSON.stringify({connectionStatus: "failed", id: message.id}));
         }
       }
       else{
         if (browser2game.has(ws)) {
           browser2game.get(ws).send(JSON.stringify(message));
-          console.log(JSON.stringify(message));
+          // console.log(JSON.stringify(message));
         } else {
           console.log("Browser client not associated with any game");
         }
@@ -176,7 +177,6 @@ wss.on("connection", function (ws) {
       gameClients.delete(getGameCodeFromGameClient(ws));
       console.log("Game client disconnected");
       console.log("Active game codes: ", activeGameCodes);
-      console.log(gameClients);
     }
     else if(browser2game.has(ws)){
       if(gameStatus.get(browser2game.get(ws)) == "start"){
