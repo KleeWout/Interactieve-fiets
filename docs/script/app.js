@@ -1,6 +1,6 @@
 "use strict";
 let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea;
-let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList;
+let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 let clientId;
@@ -126,6 +126,7 @@ const joinGameConnection = async function (gameCode) {
         } else if (response.connectionStatus === "success") {
           document.querySelector(".c-inputname__widthbox").value = name;
           htmlName.value = name;
+          htmlEndGameName.innerHTML = name;
           adjustWidth();
 
           document.querySelector(".c-main").classList.remove("blurred");
@@ -242,7 +243,7 @@ const showLeaderboard = function (jsonObject) {
               </div>
               <p class="c-scoreboard__item--score">${player.score}m</p>
             </li>`;
-            position++;
+    position++;
   }
   htmlLeaderBoardList.innerHTML = output;
 };
@@ -270,6 +271,7 @@ const init = function () {
     htmlStartButton = document.querySelector(".js-start");
     htmlStopButton = document.querySelector(".js-stop");
     htmlLeaderboardButton = document.querySelector(".js-leaderboard-btn");
+    htmlEndGameName = document.querySelector(".js-endGameName");
 
     touchArea = document.querySelector(".c-gamemode__container");
     touchArea.addEventListener("touchstart", handleTouchStart);
