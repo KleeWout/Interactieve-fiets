@@ -4,9 +4,13 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Models.GameModeModel;
 using System;
+using Unity.AI.Navigation;
+using System.Collections;
+using UnityEngine.AI;
 
 public class TerrainGen : MonoBehaviour
 {
+    private NavMeshSurface navMeshSurface;
     private GameMode currentGameMode;
     public GameObject player;
     public Terrain terrain1;
@@ -14,22 +18,32 @@ public class TerrainGen : MonoBehaviour
     private TerrainData terrainData1;
     private TerrainData terrainData2;
 
+    // public static GameMode currentlyLoadedGameMode;
+
+    private Obstacles obstacles;
+
     private int height = 513;
     private int width = 513;
     private float sizeY = 600;
 
     // Bezier
-    public Vector3[] controlPoints;
-    public List<Vector3> bezierPoints = new List<Vector3>();
+    private Vector3[] controlPoints = new Vector3[14];
+    private List<Vector3> bezierPoints = new List<Vector3>();
 
     private int chunkCount = 0;
 
     private float[,] lastHeights;
     Task<float[,]> heights;
 
+    public GameObject chaser;
+    private NavMeshAgent chaseAgent;
+
     public async void GenerateTerrain(GameMode mode, CancellationToken cancellationToken)
     {
         currentGameMode = mode;
+        // if(currentlyLoadedGameMode == mode){
+        //     return;
+        // }
 
         bezierPoints.Clear();
         heights = null;
@@ -38,6 +52,8 @@ public class TerrainGen : MonoBehaviour
         controlPoints = new Vector3[14];
         terrain1.transform.position = new Vector3(-256.5f, -10, -256.5f);
         terrain2.transform.position = new Vector3(-256.5f, -10, 256.5f);
+
+        resetChaser();
 
         try
         {
@@ -49,6 +65,7 @@ public class TerrainGen : MonoBehaviour
                 if (cancellationToken.IsCancellationRequested) return;
                 lastHeights = heights.Result;
                 terrainData1.SetHeights(0, 0, heights.Result);
+                StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.SinglePlayer));
 
                 chunkCount += 1;
                 GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 0);
@@ -57,6 +74,8 @@ public class TerrainGen : MonoBehaviour
                 if (cancellationToken.IsCancellationRequested) return;
                 lastHeights = heights.Result;
                 terrainData2.SetHeights(0, 0, heights.Result);
+                StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.SinglePlayer));
+                BakeNavMesh();
             }
             else if (mode == GameMode.MultiPlayer)
             {
@@ -66,6 +85,7 @@ public class TerrainGen : MonoBehaviour
                 if (cancellationToken.IsCancellationRequested) return;
                 lastHeights = heights.Result;
                 terrainData1.SetHeights(0, 0, heights.Result);
+                StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.MultiPlayer));
 
                 chunkCount += 1;
                 GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 100);
@@ -74,7 +94,10 @@ public class TerrainGen : MonoBehaviour
                 if (cancellationToken.IsCancellationRequested) return;
                 lastHeights = heights.Result;
                 terrainData2.SetHeights(0, 0, heights.Result);
+                StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.MultiPlayer));
+                BakeNavMesh();
             }
+            // currentlyLoadedGameMode = mode;
         }
         catch (OperationCanceledException)
         {
@@ -86,10 +109,22 @@ public class TerrainGen : MonoBehaviour
         }
     }
 
+    private void resetChaser()
+    {
+        chaser.SetActive(false);
+        chaser.transform.position = new Vector3(0, 0, 0);
+    }
+
     void Start()
     {
         terrainData1 = terrain1.terrainData;
         terrainData2 = terrain2.terrainData;
+
+        navMeshSurface = GetComponent<NavMeshSurface>();
+        chaseAgent = chaser.GetComponent<NavMeshAgent>();
+
+        obstacles = GetComponent<Obstacles>();
+        cts = new CancellationTokenSource(); // Initialize cts here
     }
     private CancellationTokenSource cts;
 
@@ -106,10 +141,13 @@ public class TerrainGen : MonoBehaviour
                     newPosition.z += 1026f;
                     terrain2.transform.position = newPosition;
                     GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 0);
-                    var heights = CarveTerrainAsync(cts.Token);
+                    heights = CarveTerrainAsync(cts.Token);
                     await heights;
                     lastHeights = heights.Result;
                     terrainData2.SetHeights(0, 0, heights.Result);
+                    StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.SinglePlayer));
+                    SetChaserPosition(bezierPoints[100]);
+                    BakeNavMesh();
                 }
                 else
                 {
@@ -118,10 +156,13 @@ public class TerrainGen : MonoBehaviour
                     newPosition.z += 1026f;
                     terrain1.transform.position = newPosition;
                     GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 0);
-                    var heights = CarveTerrainAsync(cts.Token);
+                    heights = CarveTerrainAsync(cts.Token);
                     await heights;
                     lastHeights = heights.Result;
                     terrainData1.SetHeights(0, 0, heights.Result);
+                    StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.SinglePlayer));
+                    SetChaserPosition(bezierPoints[100]);
+                    BakeNavMesh();
                 }
             }
             else if (currentGameMode == GameMode.MultiPlayer)
@@ -135,8 +176,12 @@ public class TerrainGen : MonoBehaviour
                     GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 100);
                     var heights = CarveTerrainAsync(cts.Token);
                     await heights;
+                    // StartCoroutine(obstacles.GenerateObstaclesForChunk(heights.Result));
                     lastHeights = heights.Result;
                     terrainData2.SetHeights(0, 0, heights.Result);
+                    StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.MultiPlayer));
+                    SetChaserPosition(bezierPoints[100]);
+                    BakeNavMesh();
                 }
                 else
                 {
@@ -149,8 +194,20 @@ public class TerrainGen : MonoBehaviour
                     await heights;
                     lastHeights = heights.Result;
                     terrainData1.SetHeights(0, 0, heights.Result);
+                    StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.MultiPlayer));
+                    SetChaserPosition(bezierPoints[100]);
+                    BakeNavMesh();
                 }
             }
+        }
+        if(player.transform.position.z > 10f){
+            chaser.SetActive(true);
+        }
+        if(Vector3.Distance(player.transform.position, chaser.transform.position) < 7f){
+            chaseAgent.speed = 0.6f;
+        }
+        else{
+            chaseAgent.speed = 5.5f;
         }
     }
 
@@ -247,15 +304,6 @@ public class TerrainGen : MonoBehaviour
 
         heights = SmoothHeights(heights);
 
-        if (chunkCount != 0)
-        {
-            for (int i = 0; i < 513; i++)
-            {
-                if (cancellationToken.IsCancellationRequested) return null;
-                heights[0, i] = lastHeights[512, i];
-            }
-        }
-
         foreach (var point in bezierPoints)
         {
             if (cancellationToken.IsCancellationRequested) return null;
@@ -271,6 +319,15 @@ public class TerrainGen : MonoBehaviour
                     heights[(int)p.x, (int)p.y] = ((float)random.NextDouble() * (6f - 4f) + 4f) / sizeY;
                     continue;
                 }
+            }
+        }
+
+        if (chunkCount != 0)
+        {
+            for (int i = 0; i < 513; i++)
+            {
+                if (cancellationToken.IsCancellationRequested) return null;
+                heights[0, i] = lastHeights[512, i];
             }
         }
 
@@ -425,5 +482,23 @@ public class TerrainGen : MonoBehaviour
             }
         }
         return smoothedHeights;
+    }
+
+
+    private async void BakeNavMesh()
+    {
+        var navMeshData = navMeshSurface.navMeshData;
+        var sources = new List<UnityEngine.AI.NavMeshBuildSource>();
+        UnityEngine.AI.NavMeshBuilder.CollectSources(navMeshSurface.transform, navMeshSurface.layerMask, navMeshSurface.useGeometry, navMeshSurface.defaultArea, new List<UnityEngine.AI.NavMeshBuildMarkup>(), sources);
+        var bounds = navMeshSurface.navMeshData.sourceBounds;
+
+        await UnityEngine.AI.NavMeshBuilder.UpdateNavMeshDataAsync(navMeshData, navMeshSurface.GetBuildSettings(), sources, bounds);
+    }
+    private void SetChaserPosition(Vector3 point)
+    {
+        if (chaser.transform.position.z < point.z)
+        {
+            chaser.transform.position = new Vector3(chaser.transform.position.x, 0, point.z);
+        }
     }
 }

@@ -16,6 +16,7 @@ public class GameSelect : MonoBehaviour
     public GameObject canoeSingleplayer;
     public GameObject canoeMultiplayer;
     public GameObject playerObject;
+    public HealthManager healthManager;
 
     public GameObject hudCanvas;
     public TMP_Text gameCodeText;
@@ -75,8 +76,6 @@ public class GameSelect : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log("QR code downloaded");
-            Debug.Log(DownloadHandlerTexture.GetContent(request));
             Texture2D qrTexture = DownloadHandlerTexture.GetContent(request);
             qrDisplay.texture = qrTexture;
         }
@@ -110,6 +109,10 @@ public class GameSelect : MonoBehaviour
             canoeSingleplayer.SetActive(false);
             canoeMultiplayer.SetActive(false);
             ResetPlayer();
+            // reset terrain;
+            cts?.Cancel();
+            cts = new CancellationTokenSource();
+            terrain.GenerateTerrain(GameMode.MultiPlayer, cts.Token);
             cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0, 2, 0), Quaternion.Euler(-90, 0, 0)));
         }
     }
@@ -141,15 +144,17 @@ public class GameSelect : MonoBehaviour
         cameraTransform.rotation = targetRotation;
     }
 
-    public void StartGame(GameMode mode)
+    public void StartGame()
     {
         isGameStarted = true;
+        HealthManager.health = 5;
+        healthManager.UpdateHearts();
         hudCanvas.SetActive(true);
-        if (mode == GameMode.SinglePlayer)
+        if (gameMode == GameMode.SinglePlayer)
         {
             cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(3.8f, 5f, 0.15f), Quaternion.Euler(50, -90, 0)));
         }
-        else if (mode == GameMode.MultiPlayer)
+        else if (gameMode == GameMode.MultiPlayer)
         {
             cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0f, 1.25f, -4f), Quaternion.Euler(0, 0, 0)));
         }
@@ -203,9 +208,7 @@ public class GameSelect : MonoBehaviour
 
     void ResetPlayer()
     {
-        Debug.Log("score reset");
         ScoreSystem.score = 0f;
-        Debug.Log("Score reset to: " + ScoreSystem.score);
         Rigidbody playerRb = playerObject.GetComponent<Rigidbody>();
         playerRb.linearVelocity = Vector3.zero;
         playerRb.angularVelocity = Vector3.zero;

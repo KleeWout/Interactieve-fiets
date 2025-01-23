@@ -190,6 +190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 42054470}
   - component: {fileID: 42054469}
+  - component: {fileID: 42054471}
   m_Layer: 0
   m_Name: Terrains
   m_TagString: Untagged
@@ -228,7 +229,6 @@ MonoBehaviour:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
   bezierPoints: []
-  bezierCurve: []
 --- !u!4 &42054470
 Transform:
   m_ObjectHideFlags: 0
@@ -246,6 +246,19 @@ Transform:
   - {fileID: 1217645892}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &42054471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 42054468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c87dee1fac844f36bdb5ba8d7b2fe50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cubePrefab: {fileID: 1499015953}
 --- !u!1001 &191859529
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -354,7 +367,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &235133408
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -840,7 +853,7 @@ GameObject:
   - component: {fileID: 1217645890}
   m_Layer: 0
   m_Name: Terrain2
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 127
@@ -1066,6 +1079,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1499015953 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1627124736632464741, guid: 88d3b54bab1554142b998682624fcaa6,
+    type: 3}
+  m_PrefabInstance: {fileID: 191859529}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1577131800 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c934c4caa80014082beef7cf25eefe3e,
@@ -1125,7 +1144,6 @@ GameObject:
   - component: {fileID: 1609786790}
   - component: {fileID: 1609786789}
   - component: {fileID: 1609786788}
-  - component: {fileID: 1609786792}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1207,21 +1225,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 41085367}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1609786792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1609786787}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31841fab8fab340439e1ec6714d39d85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  terrainGen: {fileID: 42054469}
-  target: {fileID: 235133410}
-  offset: {x: 0, y: 1.25, z: 4}
 --- !u!1 &2084078451
 GameObject:
   m_ObjectHideFlags: 0
@@ -1235,7 +1238,7 @@ GameObject:
   - component: {fileID: 2084078452}
   m_Layer: 0
   m_Name: Terrain1
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -1255,7 +1258,7 @@ TerrainCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
+  m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 2
   m_TerrainData: {fileID: 15600000, guid: 92f0c5b645ee4419c8c013ac44167aab, type: 2}
@@ -1316,6 +1319,74 @@ Transform:
   - {fileID: 249428335}
   m_Father: {fileID: 42054470}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &5045427277829099804
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 536425174397973705, guid: 994f09487a6264f0ba3b1b2cc4733969,
+        type: 3}
+      propertyPath: m_Name
+      value: obstacle
+      objectReference: {fileID: 0}
+    - target: {fileID: 4710547845505321544, guid: 994f09487a6264f0ba3b1b2cc4733969,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4710547845505321544, guid: 994f09487a6264f0ba3b1b2cc4733969,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4710547845505321544, guid: 994f09487a6264f0ba3b1b2cc4733969,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 5.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4710547845505321544, guid: 994f09487a6264f0ba3b1b2cc4733969,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4710547845505321544, guid: 994f09487a6264f0ba3b1b2cc4733969,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4710547845505321544, guid: 994f09487a6264f0ba3b1b2cc4733969,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4710547845505321544, guid: 994f09487a6264f0ba3b1b2cc4733969,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4710547845505321544, guid: 994f09487a6264f0ba3b1b2cc4733969,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4710547845505321544, guid: 994f09487a6264f0ba3b1b2cc4733969,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4710547845505321544, guid: 994f09487a6264f0ba3b1b2cc4733969,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 994f09487a6264f0ba3b1b2cc4733969, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1324,3 +1395,4 @@ SceneRoots:
   - {fileID: 1130940103}
   - {fileID: 42054470}
   - {fileID: 41085367}
+  - {fileID: 5045427277829099804}

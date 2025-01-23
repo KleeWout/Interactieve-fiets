@@ -10,6 +10,8 @@ using Newtonsoft.Json.Linq;
 using Models.GameModeModel;
 using Models.WebSocketMessage;
 using System.Data.Common;
+using TMPro;
+using System.Collections;
 
 
 
@@ -25,6 +27,12 @@ public class WebSocketClient : MonoBehaviour
     private bool sceneChangeRequested = false;
 
     private GameSelect gameSelect;
+
+    public TMP_Text username;
+
+    public GameObject gameOverScreen;
+
+    private bool isReconnected;
 
 
     void Awake()
@@ -71,7 +79,7 @@ public class WebSocketClient : MonoBehaviour
                 }
 
                 string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                Debug.Log($"Received: {message}");
+                // Debug.Log($"Received: {message}");
                 JObject jsonObject = JObject.Parse(message);
 
 
@@ -85,6 +93,7 @@ public class WebSocketClient : MonoBehaviour
                     string connectionStatus = jsonObject["connectionStatus"].ToString();
                     if (connectionStatus == "connected" && !GameSelect.isGameStarted)
                     {
+                        isReconnected = true;
                         if (jsonObject.ContainsKey("gameMode") && jsonObject["gameMode"].ToString() == "multiplayer")
                         {
                             gameSelect.ChangeState(GameMode.MultiPlayer);
@@ -93,16 +102,15 @@ public class WebSocketClient : MonoBehaviour
                         { 
                             gameSelect.ChangeState(GameMode.SinglePlayer);
                         }
-    
-                        Debug.Log("Browser connection established");
                     }
                     else if(connectionStatus == "connected" && GameSelect.isGameStarted){
+                        isReconnected = true;
                         GameSelect.isIdle = false;
                     }
                     else if (connectionStatus == "disconnected")
                     {
-                        gameSelect.ChangeState(GameMode.Menu);
-                        Debug.Log("Browser disconnected");
+                        isReconnected = false;
+                        StartCoroutine(CheckReconnection());
                     }
                     else if(connectionStatus == "idle"){
                         GameSelect.isIdle = true;
@@ -112,19 +120,17 @@ public class WebSocketClient : MonoBehaviour
                 {
                     string userName = jsonObject["userName"].ToString();
                     GameSelect.userName = userName;
-                    Debug.Log("Username: " + userName);
+                    username.text = "Proficiat, " + userName;
                 }
                 if (jsonObject.ContainsKey("gameMode"))
                 {
                     string gameMode = jsonObject["gameMode"].ToString();
                     if (gameMode == "singleplayer")
                     {
-                        Debug.Log("singleplayer");
                         gameSelect.SwitchGameMode(GameMode.SinglePlayer);
                     }
                     else if (gameMode == "multiplayer")
                     {
-                        Debug.Log("multiplayer");
                         gameSelect.SwitchGameMode(GameMode.MultiPlayer);
                     }
                 }
@@ -133,23 +139,23 @@ public class WebSocketClient : MonoBehaviour
                     string gameState = jsonObject["gameState"].ToString();
                     if (gameState == "start")
                     {
-                        Debug.Log("started game");
-                        if(jsonObject["gameMode"].ToString() == "multiplayer"){
-                            Debug.Log("started game multi");
-                            gameSelect.StartGame(GameMode.MultiPlayer);
-                        }
-                        else if(jsonObject["gameMode"].ToString() == "singleplayer"){
-                            Debug.Log("started game singl");
-                            gameSelect.StartGame(GameMode.SinglePlayer);
-                        }
+                        gameSelect.StartGame();
+                        // if(jsonObject["gameMode"].ToString() == "multiplayer"){
+                        //     gameSelect.StartGame(GameMode.MultiPlayer);
+                        // }
+                        // else if(jsonObject["gameMode"].ToString() == "singleplayer"){
+                        //     gameSelect.StartGame(GameMode.SinglePlayer);
+                        // }
                     }
                     else if (gameState == "stop")
                     {
-                        Debug.Log("stop");
+                        gameOverScreen.SetActive(true);
                     }
                     else if (gameState == "restart")
                     {
-                        Debug.Log("restart");
+                        gameOverScreen.SetActive(false);
+                        GameSelect.isGameStarted = false;
+                        GameSelect.isIdle = false;
                     }
 
                 }
@@ -160,6 +166,15 @@ public class WebSocketClient : MonoBehaviour
         {
         }
     }
+
+    private IEnumerator CheckReconnection()
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (!isReconnected)
+        {
+            gameSelect.ChangeState(GameMode.Menu);
+        }
+    }
     
     public async void SendMessageToSocket(WebSocketMessage data)
     {
@@ -168,7 +183,7 @@ public class WebSocketClient : MonoBehaviour
             string json = JsonUtility.ToJson(data);
             var bytes = Encoding.UTF8.GetBytes(json);
             await webSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
-            Debug.Log($"Sent: {json}");
+            // Debug.Log($"Sent: {json}");
         }
         else
         {
@@ -182,7 +197,6 @@ public class WebSocketClient : MonoBehaviour
         if (sceneChangeRequested && sceneLoadRequests.Count > 0)
         {
             string sceneName = sceneLoadRequests.Dequeue();
-            Debug.Log($"Loading scene: {sceneName}");
             SceneManager.LoadScene(sceneName);
             sceneChangeRequested = false;
         }

@@ -1,34 +1,95 @@
+using System.Collections;
 using UnityEngine;
 
 public class ObstacleFloat : MonoBehaviour
 {
-    // -6 tot 2
+    public float speed; // Movement speed
+    private float originalSpeed; // Store the original speed
+    private Animator animator;
 
-    public float minPosition = -6;
-    public float maxPosition = 2;
-
-    private float amplitude;
-    private float shift;
-
-    private float offset;
+    private Vector3 direction;
     private Vector3 initialPosition;
+
+    private Vector3? firstCollisionLeft = null;
+    private Vector3? firstCollisionRight = null;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        offset = Random.Range(0.2f, 2f);
-
         initialPosition = transform.position;
-        amplitude = (maxPosition - minPosition) / 2;
-        shift = (maxPosition + minPosition) / 2;
+        direction = GetRandomDirection();
+        speed = Random.Range(0.5f, 4f); // Set speed to a random value between 0.04 and 2
+        originalSpeed = speed; // Store the original speed
+
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        Vector3 currentPosition = transform.position;
-        currentPosition.x = amplitude * Mathf.Sin(Time.time * offset) + shift;
-        currentPosition.y = initialPosition.y - Mathf.Sin(Time.time * 3.129f + offset) * 0.1f;
-        transform.position = currentPosition;
+        MoveObstacle();
+    }
+
+    private void MoveObstacle()
+    {
+        transform.Translate(direction * speed * Time.deltaTime);
+    }
+
+    private Vector3 GetRandomDirection()
+    {
+        // Randomly choose left or right direction
+        return Random.value > 0.5f ? Vector3.right : Vector3.left;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("Terrain"))
+        {
+            direction = -direction;
+            StopAllCoroutines();
+            StartCoroutine(AdjustSpeed());
+            if (firstCollisionLeft == null && direction.x < 0)
+            {
+                firstCollisionLeft = collision.contacts[0].point;
+            }
+            else if (firstCollisionRight == null && direction.x > 0)
+            {
+                firstCollisionRight = collision.contacts[0].point;
+            }
+
+            if (firstCollisionLeft.HasValue && firstCollisionRight.HasValue)
+            {
+                float distance = Vector3.Distance(firstCollisionLeft.Value, firstCollisionRight.Value);
+                if (distance < 4f)
+                {
+                    gameObject.SetActive(false);
+                }
+            }
+        }
+        else if (collision.collider.CompareTag("Player"))
+        {
+            if (animator != null)
+            {
+                animator.enabled = true;
+            }
+        }
+    }
+    private IEnumerator AdjustSpeed()
+    {
+        speed = 0.02f; // Drop the speed to half
+        float elapsedTime = 0f;
+        float duration = 260f; // Duration to regain original speed
+
+        yield return new WaitForSeconds(0.2f);
+
+        while (elapsedTime < duration)
+        {
+            speed = Mathf.Lerp(speed, originalSpeed, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        speed = originalSpeed; // Ensure the speed is set back to the original speed
     }
 }

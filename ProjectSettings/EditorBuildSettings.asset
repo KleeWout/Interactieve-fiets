@@ -8,14 +8,17 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Demo_Multiplayer.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Singleplayer.unity
     guid: 0ca2d0f2cd8be4de599a101c5cb7f7d7
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Multiplayer.unity
     guid: d68a2661b200b41f4bc05259bb67b4d6
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/main.unity
     guid: 81c1fc39f78a54c92a261e72b4717470
+  - enabled: 1
+    path: Assets/Scenes/EntertainendeFiets.unity
+    guid: 6a6e4683127bb449085b5fab6051398b
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

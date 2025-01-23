@@ -27,8 +27,9 @@ ws.onmessage = (event) => {
   try {
     const jsonData = JSON.parse(message);
     if (jsonData.Score !== undefined) {
-      htmlScoreValue.innerHTML = `${jsonData.Score}m</p>`;
-      htmlEndGameScore.innerHTML = `${jsonData.Score}m</p>`;
+      htmlScoreValue.forEach(element => {
+        element.innerHTML = `${jsonData.Score}m</p>`;
+    });
     }
   } catch (error) {
     console.error("Error parsing JSON:", error);
@@ -66,7 +67,8 @@ const listenToInputs = function () {
     }
   });
   htmlStartButton.addEventListener("click", function () {
-    ws.send(`{"gameState": "start", "gameMode": ${htmlGameMode[0].checked ? `"singleplayer"` : `"multiplayer"`}}`);
+    // ws.send(`{"gameState": "start", "gameMode": ${htmlGameMode[0].checked ? `"singleplayer"` : `"multiplayer"`}}`);
+    ws.send(`{"gameState": "start"}`);
     console.log("Start button clicked");
     document.querySelector(".c-home").classList.add("hide");
     document.querySelector(".c-endgame__fixed").classList.remove("deactivated");
@@ -82,11 +84,8 @@ const listenToInputs = function () {
 
   htmlEndScoreMenuButton = document.querySelector(".js-endscore-menu");
   htmlEndScoreMenuButton.addEventListener("click", function () {
-    console.log("End score menu button clicked");
-    document.querySelector(".c-endgame__fixed").classList.remove("activated");
-    document.querySelector(".c-endgame__fixed").classList.add("deactivated");
-    document.querySelector(".c-boat").classList.remove("deactivated");
-    document.querySelector(".c-home").classList.remove("hide");
+    ws.send('{"gameState": "restart"}');
+    window.location.reload();
   });
   htmlLeaderboardButton.addEventListener("click", function () {
     window.location.href = "/leaderboard";
@@ -140,7 +139,18 @@ const joinGameConnection = async function (gameCode) {
           console.log("Invalid game code");
         } else if (response.connectionStatus === "busy") {
           console.log("Game already has a browser client");
-        } else if (response.connectionStatus === "success") {
+        } else if(response.connectionStatus === "reconnect-start"){
+          document.querySelector(".c-main").classList.remove("blurred");
+          document.querySelector(".c-buttons").classList.remove("blurred");
+          document.querySelector(".c-entry").classList.add("hidden");
+          document.querySelector(".c-home").classList.add("hide");
+          document.querySelector(".c-endgame__fixed").classList.remove("deactivated");
+          document.querySelector(".c-boat").classList.add("activated");
+          htmlScoreValue.forEach(element => {
+            element.innerHTML = `${response.score}m</p>`;
+        });
+        }
+        else if (response.connectionStatus === "success") {
           document.querySelector(".c-inputname__widthbox").value = name;
           htmlName.value = name;
           htmlEndGameName.innerHTML = name;
@@ -304,10 +314,10 @@ const init = function () {
     console.log("Leaderboard page");
     listenToLeaderBoard();
     // Example function to fetch JSON data from a URL
-    let url = "https://xentertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard";
+    let url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard";
     handleData(url, showLeaderboard);
   } else {
-    htmlScoreValue = document.querySelector(".js-score");
+    htmlScoreValue = document.querySelectorAll(".js-score");
     htmlName = document.querySelector(".js-name");
     htmlNameBox = document.querySelector(".c-inputname__widthbox");
     htmlGameMode = document.querySelectorAll('input[name="gameMode"]');
