@@ -11,6 +11,7 @@ using Models.GameModeModel;
 using Models.WebSocketMessage;
 using System.Data.Common;
 using TMPro;
+using System.Collections;
 
 
 
@@ -30,6 +31,8 @@ public class WebSocketClient : MonoBehaviour
     public TMP_Text username;
 
     public GameObject gameOverScreen;
+
+    private bool isReconnected;
 
 
     void Awake()
@@ -90,6 +93,7 @@ public class WebSocketClient : MonoBehaviour
                     string connectionStatus = jsonObject["connectionStatus"].ToString();
                     if (connectionStatus == "connected" && !GameSelect.isGameStarted)
                     {
+                        isReconnected = true;
                         if (jsonObject.ContainsKey("gameMode") && jsonObject["gameMode"].ToString() == "multiplayer")
                         {
                             gameSelect.ChangeState(GameMode.MultiPlayer);
@@ -100,11 +104,13 @@ public class WebSocketClient : MonoBehaviour
                         }
                     }
                     else if(connectionStatus == "connected" && GameSelect.isGameStarted){
+                        isReconnected = true;
                         GameSelect.isIdle = false;
                     }
                     else if (connectionStatus == "disconnected")
                     {
-                        gameSelect.ChangeState(GameMode.Menu);
+                        isReconnected = false;
+                        StartCoroutine(CheckReconnection());
                     }
                     else if(connectionStatus == "idle"){
                         GameSelect.isIdle = true;
@@ -158,6 +164,15 @@ public class WebSocketClient : MonoBehaviour
         }
         catch (Exception)
         {
+        }
+    }
+
+    private IEnumerator CheckReconnection()
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (!isReconnected)
+        {
+            gameSelect.ChangeState(GameMode.Menu);
         }
     }
     

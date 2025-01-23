@@ -138,12 +138,8 @@ wss.on("connection", function (ws) {
         }
         else if(message.gameState === "restart"){
           if(game2browser.has(browser2game.get(ws))){
-            console.log("ik heb het");
+            browser2game.get(ws).send(JSON.stringify({gameState: "restart"}));
           }
-          else{
-            console.log("ik heb het niet");
-          }
-          browser2game.get(ws).send(JSON.stringify({gameState: "restart"}));
         }
       }
     }

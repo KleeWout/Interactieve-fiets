@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!54 &20283345
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -188,7 +188,7 @@ MonoBehaviour:
   tiltSmoothing: 8
   steeringSpeed: 85
   thrustSpeed: 5
-  inputType: 0
+  inputType: 1
 --- !u!114 &20283348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3296,7 +3296,7 @@ MonoBehaviour:
   tiltSmoothing: 8
   steeringSpeed: 85
   thrustSpeed: 5
-  inputType: 0
+  inputType: 1
 --- !u!114 &1480849960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3578,6 +3578,7 @@ GameObject:
   - component: {fileID: 1562793647}
   - component: {fileID: 1562793646}
   - component: {fileID: 1562793648}
+  - component: {fileID: 1562793649}
   m_Layer: 0
   m_Name: GameSelect
   m_TagString: Untagged
@@ -3637,6 +3638,18 @@ MonoBehaviour:
   serverAddress: localhost:8080
   username: {fileID: 1227170435}
   gameOverScreen: {fileID: 1231747532}
+--- !u!114 &1562793649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1562793645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e9500b23640748e38401ecc33aa44c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1568818823
 PrefabInstance:
   m_ObjectHideFlags: 0
