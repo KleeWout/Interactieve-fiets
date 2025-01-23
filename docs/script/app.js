@@ -1,5 +1,5 @@
 "use strict";
-let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea;
+let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea, touchAreaHelp, htmlHelpScreens;
 let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName, htmlEndGameScore;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
@@ -211,22 +211,51 @@ const handleTouchMove = (event) => {
   touchEndY = event.touches[0].clientY;
 };
 
-const handleTouchEnd = () => {
+const handleTouchEnd = (area) => {
   const deltaX = touchEndX - touchStartX;
   const deltaY = touchEndY - touchStartY;
 
-  if (Math.abs(deltaX) > Math.abs(deltaY)) {
-    if (deltaX > 0) {
-      if (htmlGameMode[1].checked) {
-        htmlGameMode[0].checked = true;
-        htmlGameMode[0].dispatchEvent(new Event("change"));
-      }
-    } else {
-      if (htmlGameMode[0].checked) {
-        htmlGameMode[1].checked = true;
-        htmlGameMode[0].dispatchEvent(new Event("change"));
+  if(area === "touchAreaGameMode"){
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX > 0) {
+        if (htmlGameMode[1].checked) {
+          htmlGameMode[0].checked = true;
+          htmlGameMode[0].dispatchEvent(new Event("change"));
+        }
+      } else {
+        if (htmlGameMode[0].checked) {
+          htmlGameMode[1].checked = true;
+          htmlGameMode[0].dispatchEvent(new Event("change"));
+        }
       }
     }
+  }
+
+  else if (area === "touchAreaHelp"){
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX > 0) {
+        if(htmlHelpScreens[0].checked){
+          return
+        }
+        for(let i = 0; i < htmlHelpScreens.length; i++){
+          if(htmlHelpScreens[i].checked){
+            htmlHelpScreens[i-1].checked = true;
+          }
+        }
+      } else {
+        if(htmlHelpScreens[htmlHelpScreens.length-1].checked){
+          return
+        }
+        for(let i = 0; i < htmlHelpScreens.length; i++){
+          console.log(i);
+          if(htmlHelpScreens[i].checked){
+            htmlHelpScreens[i+1].checked = true;
+            break;
+          }
+        }
+      }
+    }
+
   }
 };
 
@@ -274,11 +303,18 @@ const init = function () {
     htmlLeaderboardButton = document.querySelector(".js-leaderboard-btn");
     htmlEndGameName = document.querySelector(".js-endGameName");
     htmlEndGameScore = document.querySelector(".js-endgame-score");
+    htmlHelpScreens = document.querySelectorAll('input[name="help"]')
 
     touchArea = document.querySelector(".c-gamemode__container");
     touchArea.addEventListener("touchstart", handleTouchStart);
     touchArea.addEventListener("touchmove", handleTouchMove);
-    touchArea.addEventListener("touchend", handleTouchEnd);
+    touchArea.addEventListener("touchend", (event) => handleTouchEnd('touchAreaGameMode'));
+
+
+    touchAreaHelp = document.querySelector(".c-help__slider");
+    touchAreaHelp.addEventListener("touchstart", handleTouchStart);
+    touchAreaHelp.addEventListener("touchmove", handleTouchMove);
+    touchAreaHelp.addEventListener("touchend", (event) => handleTouchEnd('touchAreaHelp'));
 
     listenToInputs();
   }
