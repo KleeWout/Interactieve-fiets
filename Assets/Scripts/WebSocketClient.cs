@@ -29,6 +29,8 @@ public class WebSocketClient : MonoBehaviour
 
     public TMP_Text username;
 
+    public GameObject gameOverScreen;
+
 
     void Awake()
     {
@@ -141,11 +143,13 @@ public class WebSocketClient : MonoBehaviour
                     }
                     else if (gameState == "stop")
                     {
-                        Debug.Log("stop");
+                        gameOverScreen.SetActive(true);
                     }
                     else if (gameState == "restart")
                     {
-                        Debug.Log("restart");
+                        gameOverScreen.SetActive(false);
+                        GameSelect.isGameStarted = false;
+                        GameSelect.isIdle = false;
                     }
 
                 }

@@ -103,6 +103,9 @@ wss.on("connection", function (ws) {
         gameClients.set(gameCode, ws);
         console.log("Active game codes: ", activeGameCodes);
 
+        browser2game.delete(game2browser.get(ws));
+        game2browser.delete(ws);
+
         ws.send(JSON.stringify({ gameCode }));
       }
       // else if(message.ReNewConnection === true){
@@ -132,6 +135,15 @@ wss.on("connection", function (ws) {
         else if (message.gameState === "stop"){
           gameStatus.set(browser2game.get(ws), "stop");
           browser2game.get(ws).send(JSON.stringify({gameState: "stop"}));
+        }
+        else if(message.gameState === "restart"){
+          if(game2browser.has(browser2game.get(ws))){
+            console.log("ik heb het");
+          }
+          else{
+            console.log("ik heb het niet");
+          }
+          browser2game.get(ws).send(JSON.stringify({gameState: "restart"}));
         }
       }
     }

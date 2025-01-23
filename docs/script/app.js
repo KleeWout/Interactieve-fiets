@@ -81,11 +81,8 @@ const listenToInputs = function () {
 
   htmlEndScoreMenuButton = document.querySelector(".js-endscore-menu");
   htmlEndScoreMenuButton.addEventListener("click", function () {
-    console.log("End score menu button clicked");
-    document.querySelector(".c-endgame__fixed").classList.remove("activated");
-    document.querySelector(".c-endgame__fixed").classList.add("deactivated");
-    document.querySelector(".c-boat").classList.remove("deactivated");
-    document.querySelector(".c-home").classList.remove("hide");
+    ws.send('{"gameState": "restart"}');
+    window.location.reload();
   });
   htmlLeaderboardButton.addEventListener("click", function () {
     window.location.href = "/docs/leaderboard";
