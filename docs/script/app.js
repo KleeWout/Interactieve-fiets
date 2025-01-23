@@ -247,7 +247,6 @@ const handleTouchEnd = (area) => {
           return
         }
         for(let i = 0; i < htmlHelpScreens.length; i++){
-          console.log(i);
           if(htmlHelpScreens[i].checked){
             htmlHelpScreens[i+1].checked = true;
             break;
