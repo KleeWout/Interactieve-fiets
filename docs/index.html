@@ -16,7 +16,7 @@
         <path d="M1.66921 5.04C0.869211 4.7 0.529212 3.71 1.00921 2.99C1.97921 1.55 3.59921 0.5 5.73921 0.5C8.08921 0.5 9.69921 1.57 10.5192 2.91C11.2192 4.06 11.6292 6.21 10.5492 7.81C9.34921 9.58 8.19921 10.12 7.57921 11.26C7.42921 11.53 7.33921 11.75 7.27921 12.2C7.18921 12.93 6.58921 13.5 5.84921 13.5C4.97921 13.5 4.26921 12.75 4.36921 11.88C4.42921 11.37 4.54921 10.84 4.82921 10.34C5.59921 8.95 7.07921 8.13 7.93921 6.9C8.84921 5.61 8.33921 3.2 5.75921 3.2C4.58921 3.2 3.82921 3.81 3.35921 4.54C3.00921 5.11 2.27921 5.29 1.66921 5.04ZM7.74921 17.5C7.74921 18.6 6.84921 19.5 5.74921 19.5C4.64921 19.5 3.74921 18.6 3.74921 17.5C3.74921 16.4 4.64921 15.5 5.74921 15.5C6.84921 15.5 7.74921 16.4 7.74921 17.5Z" fill="#FDF9EE" />
       </svg>
     </button>
-    <div class="c-entry">
+    <div class="c-entry hidden">
       <div class="c-entry__container">
         <h1 class="c-entry__titel">Spelcode</h1>
         <p class="c-entry__text">Voer de code in die op het scherm wordt weergegeven om een spel te starten</p>
@@ -30,7 +30,7 @@
     </div>
     <div class="c-home">
       <!-- blurred -->
-      <div class="c-main blurred">
+      <div class="c-main">
         <div class="c-namecontainer">
           <p class="c-inputname__widthbox">KanoKonijn</p>
           <input class="c-namecontainer__input js-name" type="text" value="KanoKonijn" maxlength="18" />
@@ -46,7 +46,7 @@
             <div class="c-gamemode__item c-gamemode__item__singleplayer">
               <label for="Singleplayer">
                 <p>Singleplayer</p>
-                <img class="c-gamemode__img c-gamemode__img--singleplayer" src="Images/multiplayerimg.png" alt="singleplayer" width="280" height="280" />
+                <img class="c-gamemode__img c-gamemode__img--singleplayer" src="Images/singleplayer.png" alt="singleplayer" width="280" height="280" />
               </label>
             </div>
             <div class="c-gamemode__item c-gamemode__item__multiplayer">
@@ -65,7 +65,7 @@
         </div>
       </div>
       <!-- blurred -->
-      <div class="c-buttons blurred">
+      <div class="c-buttons">
         <button class="c-button c-button__icon c-button__icon--trophy js-leaderboard-btn">
           <svg class="c-icon c-icon--trophy" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M19 5H17V4C17 3.45 16.55 3 16 3H8C7.45 3 7 3.45 7 4V5H5C3.9 5 3 5.9 3 7V8C3 10.55 4.92 12.63 7.39 12.94C8.02 14.44 9.37 15.57 11 15.9V19H8C7.45 19 7 19.45 7 20C7 20.55 7.45 21 8 21H16C16.55 21 17 20.55 17 20C17 19.45 16.55 19 16 19H13V15.9C14.63 15.57 15.98 14.44 16.61 12.94C19.08 12.63 21 10.55 21 8V7C21 5.9 20.1 5 19 5ZM5 8V7H7V10.82C5.84 10.4 5 9.3 5 8ZM19 8C19 9.3 18.16 10.4 17 10.82V7H19V8Z" fill="#FDF9EE" />
@@ -147,6 +147,48 @@
             </ul>
           </div>
           <div class="c-endgame__button"><button class="c-button__start js-endscore-menu">Menu</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="c-help__fixed">
+      <div class="c-help">
+        <div class="c-help__header"><p>Help</p></div>
+
+        <div class="c-help__img--container">
+          <img class="c-gamemode__img c-help__img c-help__img--multiplayer" src="Images/multiplayerimg.png" alt="multiplayer" width="280" height="280" />
+          <img class="c-gamemode__img c-help__img c-help__img--singleplayer" src="Images/singleplayer.png" alt="singleplayer" width="280" height="280" />
+        </div>
+        <div><p class="c-help__desc">Werk samen in team om je kano zo ver mogelijk over de rivier te sturen.</p></div>
+
+        <div class="c-help__slider">
+          <div class="c-help__container js-help__container">
+            <div class="c-help__item c-help__item__help1">
+              <div class="c-help__item--img"><img src="Images/help1.png" alt="" /></div>
+              <p class="c-help__item--info">Je bestuurd elk een kant van de boot</p>
+            </div>
+            <div class="c-help__item c-help__item__help2">
+              <div class="c-help__item--img"><img src="Images/help1.png" alt="" /></div>
+              <p class="c-help__item--info">Probeer de drijvende boomstronken te vermijden zodat je geen schade doet aan je kano!</p>
+            </div>
+            <div class="c-help__item c-help__item__help3">
+              <div class="c-help__item--img"><img src="Images/help1.png" alt="" /></div>
+              <p class="c-help__item--info">Probeer de drijvende boomstronken te vermijden zodat je geen schade doet aan je kano!</p>
+            </div>
+            <div class="c-help__item c-help__item__help4">
+              <div class="c-help__item--img"><img src="Images/help1.png" alt="" /></div>
+              <p class="c-help__item--info">Probeer de drijvende boomstronken te vermijden zodat je geen schade doet aan je kano!</p>
+            </div>
+          </div>
+          <div class="c-help__select">
+            <input type="radio" id="help1" name="help" value="help1" checked />
+            <label for="help1"> </label>
+            <input type="radio" id="help2" name="help" value="help2" />
+            <label for="help2"> </label>
+            <input type="radio" id="help3" name="help" value="help3" />
+            <label for="help3"> </label>
+            <input type="radio" id="help4" name="help" value="help4" />
+            <label for="help4"> </label>
+          </div>
         </div>
       </div>
     </div>

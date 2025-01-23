@@ -86,14 +86,14 @@ const listenToInputs = function () {
     document.querySelector(".c-home").classList.remove("hide");
   });
   htmlLeaderboardButton.addEventListener("click", function () {
-    window.location.href = "/docs/leaderboard";
+    window.location.href = "/leaderboard";
   });
 };
 
 const listenToLeaderBoard = function () {
   htmlLeaderboardButton = document.querySelector(".js-leaderboard__return");
   htmlLeaderboardButton.addEventListener("click", function () {
-    window.location.href = "../index.html";
+    window.location.href = "/index.html";
   });
 };
 
