@@ -6,6 +6,7 @@ using Models.GameModeModel;
 using System;
 using Unity.AI.Navigation;
 using System.Collections;
+using UnityEngine.AI;
 
 public class TerrainGen : MonoBehaviour
 {
@@ -26,13 +27,16 @@ public class TerrainGen : MonoBehaviour
     private float sizeY = 600;
 
     // Bezier
-    public Vector3[] controlPoints;
-    public List<Vector3> bezierPoints = new List<Vector3>();
+    private Vector3[] controlPoints = new Vector3[14];
+    private List<Vector3> bezierPoints = new List<Vector3>();
 
     private int chunkCount = 0;
 
     private float[,] lastHeights;
     Task<float[,]> heights;
+
+    public GameObject chaser;
+    private NavMeshAgent chaseAgent;
 
     public async void GenerateTerrain(GameMode mode, CancellationToken cancellationToken)
     {
@@ -48,6 +52,8 @@ public class TerrainGen : MonoBehaviour
         controlPoints = new Vector3[14];
         terrain1.transform.position = new Vector3(-256.5f, -10, -256.5f);
         terrain2.transform.position = new Vector3(-256.5f, -10, 256.5f);
+
+        resetChaser();
 
         try
         {
@@ -103,12 +109,19 @@ public class TerrainGen : MonoBehaviour
         }
     }
 
+    private void resetChaser()
+    {
+        chaser.SetActive(false);
+        chaser.transform.position = new Vector3(0, 0, 0);
+    }
+
     void Start()
     {
         terrainData1 = terrain1.terrainData;
         terrainData2 = terrain2.terrainData;
 
         navMeshSurface = GetComponent<NavMeshSurface>();
+        chaseAgent = chaser.GetComponent<NavMeshAgent>();
 
         obstacles = GetComponent<Obstacles>();
         cts = new CancellationTokenSource(); // Initialize cts here
@@ -133,6 +146,7 @@ public class TerrainGen : MonoBehaviour
                     lastHeights = heights.Result;
                     terrainData2.SetHeights(0, 0, heights.Result);
                     StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.SinglePlayer));
+                    SetChaserPosition(bezierPoints[100]);
                     BakeNavMesh();
                 }
                 else
@@ -147,6 +161,7 @@ public class TerrainGen : MonoBehaviour
                     lastHeights = heights.Result;
                     terrainData1.SetHeights(0, 0, heights.Result);
                     StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.SinglePlayer));
+                    SetChaserPosition(bezierPoints[100]);
                     BakeNavMesh();
                 }
             }
@@ -165,6 +180,7 @@ public class TerrainGen : MonoBehaviour
                     lastHeights = heights.Result;
                     terrainData2.SetHeights(0, 0, heights.Result);
                     StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.MultiPlayer));
+                    SetChaserPosition(bezierPoints[100]);
                     BakeNavMesh();
                 }
                 else
@@ -179,9 +195,19 @@ public class TerrainGen : MonoBehaviour
                     lastHeights = heights.Result;
                     terrainData1.SetHeights(0, 0, heights.Result);
                     StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.MultiPlayer));
+                    SetChaserPosition(bezierPoints[100]);
                     BakeNavMesh();
                 }
             }
+        }
+        if(player.transform.position.z > 10f){
+            chaser.SetActive(true);
+        }
+        if(Vector3.Distance(player.transform.position, chaser.transform.position) < 7f){
+            chaseAgent.speed = 0.6f;
+        }
+        else{
+            chaseAgent.speed = 3.5f;
         }
     }
 
@@ -458,14 +484,8 @@ public class TerrainGen : MonoBehaviour
         return smoothedHeights;
     }
 
-    // void BakeNavMesh()
-    // {
-    //     // navMeshSurface.layerMask = LayerMask.GetMask("Walkable");
-    //     // navMeshSurface.agentTypeID = 0; // Default agent type
-    //     // navMeshSurface.UpdateNavMeshAsync();
-    //     UnityEngine.AI.NavMeshBuilder.UpdateNavMeshDataAsync(navMeshSurface.navMeshData);
-    // }
-    public async void BakeNavMesh()
+
+    private async void BakeNavMesh()
     {
         var navMeshData = navMeshSurface.navMeshData;
         var sources = new List<UnityEngine.AI.NavMeshBuildSource>();
@@ -473,5 +493,12 @@ public class TerrainGen : MonoBehaviour
         var bounds = navMeshSurface.navMeshData.sourceBounds;
 
         await UnityEngine.AI.NavMeshBuilder.UpdateNavMeshDataAsync(navMeshData, navMeshSurface.GetBuildSettings(), sources, bounds);
+    }
+    private void SetChaserPosition(Vector3 point)
+    {
+        if (chaser.transform.position.z < point.z)
+        {
+            chaser.transform.position = new Vector3(chaser.transform.position.x, 0, point.z);
+        }
     }
 }
