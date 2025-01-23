@@ -49,7 +49,7 @@ function getIPAddress() {
 
 app.get('/generateQR', async (req, res) => {
   try {
-    const url = req.query.url || `http://${getIPAddress()}:5501/NodeJs/webpagina/Index.html`;
+    const url = req.query.url || `http://${getIPAddress()}:3000`;
     const code = req.query.code || 'none';
     const qrCodeImage = await QRCode.toDataURL(`${url}?code=${code}`, {
       color: {

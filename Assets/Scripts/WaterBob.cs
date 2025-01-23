@@ -3,7 +3,7 @@
 public class WaterBob : MonoBehaviour
 {
     
-    public static bool isSunk;
+    public bool isSunk;
 
     [SerializeField]
     float height = 0.1f;
