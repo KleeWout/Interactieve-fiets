@@ -26,7 +26,9 @@ ws.onmessage = (event) => {
   try {
     const jsonData = JSON.parse(message);
     if (jsonData.Score !== undefined) {
-      htmlScoreValue.innerHTML = `${jsonData.Score}m</p>`;
+      htmlScoreValue.forEach(element => {
+        element.innerHTML = `${jsonData.Score}m</p>`;
+    });
     }
   } catch (error) {
     console.error("Error parsing JSON:", error);
@@ -130,7 +132,9 @@ const joinGameConnection = async function (gameCode) {
           document.querySelector(".c-home").classList.add("hide");
           document.querySelector(".c-endgame__fixed").classList.remove("deactivated");
           document.querySelector(".c-boat").classList.add("activated");
-          htmlScoreValue.innerHTML = `${response.score}m</p>`;
+          htmlScoreValue.forEach(element => {
+            element.innerHTML = `${response.score}m</p>`;
+        });
         }
         else if (response.connectionStatus === "success") {
           document.querySelector(".c-inputname__widthbox").value = name;
@@ -272,7 +276,7 @@ const init = function () {
     let url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard";
     handleData(url, showLeaderboard);
   } else {
-    htmlScoreValue = document.querySelector(".js-score");
+    htmlScoreValue = document.querySelectorAll(".js-score");
     htmlName = document.querySelector(".js-name");
     htmlNameBox = document.querySelector(".c-inputname__widthbox");
     htmlGameMode = document.querySelectorAll('input[name="gameMode"]');

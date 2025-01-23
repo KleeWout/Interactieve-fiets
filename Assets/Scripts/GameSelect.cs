@@ -75,8 +75,6 @@ public class GameSelect : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-            Debug.Log("QR code downloaded");
-            Debug.Log(DownloadHandlerTexture.GetContent(request));
             Texture2D qrTexture = DownloadHandlerTexture.GetContent(request);
             qrDisplay.texture = qrTexture;
         }
@@ -207,9 +205,7 @@ public class GameSelect : MonoBehaviour
 
     void ResetPlayer()
     {
-        Debug.Log("score reset");
         ScoreSystem.score = 0f;
-        Debug.Log("Score reset to: " + ScoreSystem.score);
         Rigidbody playerRb = playerObject.GetComponent<Rigidbody>();
         playerRb.linearVelocity = Vector3.zero;
         playerRb.angularVelocity = Vector3.zero;

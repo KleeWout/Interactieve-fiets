@@ -93,8 +93,6 @@ public class WebSocketClient : MonoBehaviour
                         { 
                             gameSelect.ChangeState(GameMode.SinglePlayer);
                         }
-    
-                        Debug.Log("Browser connection established");
                     }
                     else if(connectionStatus == "connected" && GameSelect.isGameStarted){
                         GameSelect.isIdle = false;
@@ -102,7 +100,6 @@ public class WebSocketClient : MonoBehaviour
                     else if (connectionStatus == "disconnected")
                     {
                         gameSelect.ChangeState(GameMode.Menu);
-                        Debug.Log("Browser disconnected");
                     }
                     else if(connectionStatus == "idle"){
                         GameSelect.isIdle = true;
@@ -119,12 +116,10 @@ public class WebSocketClient : MonoBehaviour
                     string gameMode = jsonObject["gameMode"].ToString();
                     if (gameMode == "singleplayer")
                     {
-                        Debug.Log("singleplayer");
                         gameSelect.SwitchGameMode(GameMode.SinglePlayer);
                     }
                     else if (gameMode == "multiplayer")
                     {
-                        Debug.Log("multiplayer");
                         gameSelect.SwitchGameMode(GameMode.MultiPlayer);
                     }
                 }
@@ -133,13 +128,10 @@ public class WebSocketClient : MonoBehaviour
                     string gameState = jsonObject["gameState"].ToString();
                     if (gameState == "start")
                     {
-                        Debug.Log("started game");
                         if(jsonObject["gameMode"].ToString() == "multiplayer"){
-                            Debug.Log("started game multi");
                             gameSelect.StartGame(GameMode.MultiPlayer);
                         }
                         else if(jsonObject["gameMode"].ToString() == "singleplayer"){
-                            Debug.Log("started game singl");
                             gameSelect.StartGame(GameMode.SinglePlayer);
                         }
                     }
@@ -182,7 +174,6 @@ public class WebSocketClient : MonoBehaviour
         if (sceneChangeRequested && sceneLoadRequests.Count > 0)
         {
             string sceneName = sceneLoadRequests.Dequeue();
-            Debug.Log($"Loading scene: {sceneName}");
             SceneManager.LoadScene(sceneName);
             sceneChangeRequested = false;
         }

@@ -96,7 +96,6 @@ public class CanoeMovement : MonoBehaviour
                 if (zeroInputStartTime < 0)
                 {
                     zeroInputStartTime = Time.time;
-                    Debug.Log(2);
                 }
                 else if (Time.time - zeroInputStartTime >= timeOutTime)
                 {
