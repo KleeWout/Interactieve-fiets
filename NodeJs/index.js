@@ -1,3 +1,7 @@
+// todo
+// clear gamescore
+// clear gamestatus
+
 const WebSocket = require("ws");
 const express = require("express");
 const QRCode = require('qrcode');
@@ -22,6 +26,7 @@ let game2browser = new Map();
 let browser2game = new Map();
 
 let gameStatus = new Map();
+let gameScore = new Map();
 
 function getIPAddress() {
   const interfaces = os.networkInterfaces();
@@ -100,6 +105,9 @@ wss.on("connection", function (ws) {
         const strippedMessage = { ...message };
         delete strippedMessage.IsGameClient;
         delete strippedMessage.NewConnection;
+        if(strippedMessage.Score){
+          gameScore.set(ws, strippedMessage.Score);
+        }
         game2browser.get(ws).send(JSON.stringify(strippedMessage));
       }
       else{
@@ -112,6 +120,7 @@ wss.on("connection", function (ws) {
         if(message.gameState === "start"){
           gameStatus.set(browser2game.get(ws), "start");
           browser2game.get(ws).send(JSON.stringify({gameState: "start", gameMode: message.gameMode}));
+          gameScore.set(browser2game.get(ws), 0);
         }
       }
     }
@@ -132,7 +141,14 @@ wss.on("connection", function (ws) {
             browser2game.get(ws).send(JSON.stringify({connectionStatus: "connected", userName: message.userName, gameMode: message.gameMode}));
   
             console.log("Browser client joined game with code: ", gameCode);
-            ws.send(JSON.stringify({connectionStatus: "success", id: message.id}));
+            // handle reconnect here (check if game was already started with gameStatus)
+            if(gameStatus.get(gameClients.get(gameCode)) == "start"){
+              console.log("gemescore: ", gameScore.get(browser2game.get(ws)));
+              ws.send(JSON.stringify({connectionStatus: "reconnect-start", id: message.id, score: gameScore.get(gameClients.get(gameCode))}));
+            }
+            else{
+              ws.send(JSON.stringify({connectionStatus: "success", id: message.id}));
+            }
           }
         }
         else{

@@ -123,7 +123,16 @@ const joinGameConnection = async function (gameCode) {
           console.log("Invalid game code");
         } else if (response.connectionStatus === "busy") {
           console.log("Game already has a browser client");
-        } else if (response.connectionStatus === "success") {
+        } else if(response.connectionStatus === "reconnect-start"){
+          document.querySelector(".c-main").classList.remove("blurred");
+          document.querySelector(".c-buttons").classList.remove("blurred");
+          document.querySelector(".c-entry").classList.add("hidden");
+          document.querySelector(".c-home").classList.add("hide");
+          document.querySelector(".c-endgame__fixed").classList.remove("deactivated");
+          document.querySelector(".c-boat").classList.add("activated");
+          htmlScoreValue.innerHTML = `${response.score}m</p>`;
+        }
+        else if (response.connectionStatus === "success") {
           document.querySelector(".c-inputname__widthbox").value = name;
           htmlName.value = name;
           adjustWidth();
