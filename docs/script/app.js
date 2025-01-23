@@ -1,6 +1,8 @@
 "use strict";
 let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea, touchAreaHelp, htmlHelpScreens;
 let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName, htmlEndGameScore;
+let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea;
+let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName, htmlEndGameScore, htmlHelpButton, htmlHelpReturnButton;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 let clientId;
@@ -87,6 +89,15 @@ const listenToInputs = function () {
   });
   htmlLeaderboardButton.addEventListener("click", function () {
     window.location.href = "/leaderboard";
+  });
+
+  htmlHelpButton.addEventListener("click", function () {
+    document.querySelector(".c-help__fixed").classList.add("activated");
+  });
+
+  htmlHelpReturnButton.addEventListener("click", function () {
+    document.querySelector(".c-help__fixed").classList.remove("activated");
+
   });
 };
 
@@ -281,6 +292,7 @@ const adjustWidth = function () {
   const inputValue = htmlName.value;
   htmlNameBox.textContent = inputValue; // Set the widthBox text to the input value
   htmlName.style.width = htmlNameBox.offsetWidth + 1 + "px"; // Set the input width to the widthBox width
+  console.log(htmlNameBox.offsetWidth);
 };
 
 const init = function () {
@@ -303,6 +315,8 @@ const init = function () {
     htmlEndGameName = document.querySelector(".js-endGameName");
     htmlEndGameScore = document.querySelector(".js-endgame-score");
     htmlHelpScreens = document.querySelectorAll('input[name="help"]')
+    htmlHelpButton = document.querySelector(".js-help-btn");
+    htmlHelpReturnButton = document.querySelector(".js-help-page-return");
 
     touchArea = document.querySelector(".c-gamemode__container");
     touchArea.addEventListener("touchstart", handleTouchStart);
