@@ -128,12 +128,13 @@ public class WebSocketClient : MonoBehaviour
                     string gameState = jsonObject["gameState"].ToString();
                     if (gameState == "start")
                     {
-                        if(jsonObject["gameMode"].ToString() == "multiplayer"){
-                            gameSelect.StartGame(GameMode.MultiPlayer);
-                        }
-                        else if(jsonObject["gameMode"].ToString() == "singleplayer"){
-                            gameSelect.StartGame(GameMode.SinglePlayer);
-                        }
+                        gameSelect.StartGame();
+                        // if(jsonObject["gameMode"].ToString() == "multiplayer"){
+                        //     gameSelect.StartGame(GameMode.MultiPlayer);
+                        // }
+                        // else if(jsonObject["gameMode"].ToString() == "singleplayer"){
+                        //     gameSelect.StartGame(GameMode.SinglePlayer);
+                        // }
                     }
                     else if (gameState == "stop")
                     {

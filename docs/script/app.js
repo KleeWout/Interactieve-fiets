@@ -64,7 +64,8 @@ const listenToInputs = function () {
     }
   });
   htmlStartButton.addEventListener("click", function () {
-    ws.send(`{"gameState": "start", "gameMode": ${htmlGameMode[0].checked ? `"singleplayer"` : `"multiplayer"`}}`);
+    // ws.send(`{"gameState": "start", "gameMode": ${htmlGameMode[0].checked ? `"singleplayer"` : `"multiplayer"`}}`);
+    ws.send(`{"gameState": "start"}`);
     console.log("Start button clicked");
     document.querySelector(".c-home").classList.add("hide");
     document.querySelector(".c-endgame__fixed").classList.remove("deactivated");

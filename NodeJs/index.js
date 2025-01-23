@@ -85,6 +85,8 @@ wss.on("connection", function (ws) {
         ws.send(JSON.stringify({connectionStatus: "disconnected"}));
         activeGameCodes = activeGameCodes.filter((code) => code !== getGameCodeFromGameClient(ws));
         gameClients.delete(getGameCodeFromGameClient(ws));
+        gameScore.delete(ws);
+        gameStatus.delete(ws);
         do {
           gameCode = Math.floor(1000 + Math.random() * 9000);
         } while (activeGameCodes.includes(gameCode));      

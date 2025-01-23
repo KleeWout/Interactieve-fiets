@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class HealthManager : MonoBehaviour
 {
-    private int health = 5;
+    public static int health = 5;
 
     public Image[] hearts;
     public Sprite fullHeart;
@@ -32,7 +32,7 @@ public class HealthManager : MonoBehaviour
             UpdateHearts();
         }
     }
-    void UpdateHearts()
+    public void UpdateHearts()
     {
         foreach (Image img in hearts)
         {
