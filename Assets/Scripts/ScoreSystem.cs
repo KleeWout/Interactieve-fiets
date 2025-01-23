@@ -42,7 +42,7 @@ public class ScoreSystem : MonoBehaviour
             distanceSinceLastScore -= distance_for_1_point;
         }
 
-        if (scoreToAdd > 0)
+        if (scoreToAdd > 0 && GameSelect.isGameStarted)
         {
             isReset = false;
             score += scoreToAdd;

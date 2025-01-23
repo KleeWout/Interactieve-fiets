@@ -12,6 +12,7 @@ public class GameOverScreen : MonoBehaviour
 
     public void OnEnable()
     {
+        GameSelect.isGameStarted = false;
         StartCoroutine(CountdownTest());
     }
 
