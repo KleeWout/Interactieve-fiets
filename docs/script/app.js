@@ -1,8 +1,7 @@
 "use strict";
 let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea, touchAreaHelp, htmlHelpScreens;
-let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName, htmlEndGameScore;
-let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea;
 let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName, htmlEndGameScore, htmlHelpButton, htmlHelpReturnButton;
+let htmlPencilButton;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 let clientId;
@@ -42,6 +41,8 @@ ws.onerror = (error) => {
 
 const listenToInputs = function () {
   console.log("Listening to inputs");
+  htmlName.addEventListener("click", function () {
+    htmlName.select();});
   htmlName.addEventListener("input", function () {
     ws.send('{"userName": "' + htmlName.value + '"}');
   });
@@ -97,7 +98,11 @@ const listenToInputs = function () {
 
   htmlHelpReturnButton.addEventListener("click", function () {
     document.querySelector(".c-help__fixed").classList.remove("activated");
+  });
 
+  htmlPencilButton.addEventListener("click", function () {
+    htmlName.focus();
+    htmlName.select();
   });
 };
 
@@ -226,7 +231,7 @@ const handleTouchEnd = (area) => {
   const deltaX = touchEndX - touchStartX;
   const deltaY = touchEndY - touchStartY;
 
-  if(area === "touchAreaGameMode"){
+  if (area === "touchAreaGameMode") {
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
       if (deltaX > 0) {
         if (htmlGameMode[1].checked) {
@@ -240,32 +245,29 @@ const handleTouchEnd = (area) => {
         }
       }
     }
-  }
-
-  else if (area === "touchAreaHelp"){
+  } else if (area === "touchAreaHelp") {
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
       if (deltaX > 0) {
-        if(htmlHelpScreens[0].checked){
-          return
+        if (htmlHelpScreens[0].checked) {
+          return;
         }
-        for(let i = 0; i < htmlHelpScreens.length; i++){
-          if(htmlHelpScreens[i].checked){
-            htmlHelpScreens[i-1].checked = true;
+        for (let i = 0; i < htmlHelpScreens.length; i++) {
+          if (htmlHelpScreens[i].checked) {
+            htmlHelpScreens[i - 1].checked = true;
           }
         }
       } else {
-        if(htmlHelpScreens[htmlHelpScreens.length-1].checked){
-          return
+        if (htmlHelpScreens[htmlHelpScreens.length - 1].checked) {
+          return;
         }
-        for(let i = 0; i < htmlHelpScreens.length; i++){
-          if(htmlHelpScreens[i].checked){
-            htmlHelpScreens[i+1].checked = true;
+        for (let i = 0; i < htmlHelpScreens.length; i++) {
+          if (htmlHelpScreens[i].checked) {
+            htmlHelpScreens[i + 1].checked = true;
             break;
           }
         }
       }
     }
-
   }
 };
 
@@ -314,20 +316,20 @@ const init = function () {
     htmlLeaderboardButton = document.querySelector(".js-leaderboard-btn");
     htmlEndGameName = document.querySelector(".js-endGameName");
     htmlEndGameScore = document.querySelector(".js-endgame-score");
-    htmlHelpScreens = document.querySelectorAll('input[name="help"]')
+    htmlHelpScreens = document.querySelectorAll('input[name="help"]');
     htmlHelpButton = document.querySelector(".js-help-btn");
     htmlHelpReturnButton = document.querySelector(".js-help-page-return");
+    htmlPencilButton = document.querySelector(".js-pencil");
 
     touchArea = document.querySelector(".c-gamemode__container");
     touchArea.addEventListener("touchstart", handleTouchStart);
     touchArea.addEventListener("touchmove", handleTouchMove);
-    touchArea.addEventListener("touchend", (event) => handleTouchEnd('touchAreaGameMode'));
-
+    touchArea.addEventListener("touchend", (event) => handleTouchEnd("touchAreaGameMode"));
 
     touchAreaHelp = document.querySelector(".c-help__slider");
     touchAreaHelp.addEventListener("touchstart", handleTouchStart);
     touchAreaHelp.addEventListener("touchmove", handleTouchMove);
-    touchAreaHelp.addEventListener("touchend", (event) => handleTouchEnd('touchAreaHelp'));
+    touchAreaHelp.addEventListener("touchend", (event) => handleTouchEnd("touchAreaHelp"));
 
     listenToInputs();
   }
