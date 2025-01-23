@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2064712897760761834}
   - component: {fileID: 8830169117456242069}
   - component: {fileID: 1598859385941725896}
+  - component: {fileID: 6853013178722420209}
   m_Layer: 0
   m_Name: Log4
   m_TagString: Untagged
@@ -168,3 +169,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   height: 0.05
   period: 4
+--- !u!208 &6853013178722420209
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5241010291418038128}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.010000001, y: 0.0050000004, z: 0.0050000004}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
