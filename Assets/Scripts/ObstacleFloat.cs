@@ -10,12 +10,16 @@ public class ObstacleFloat : MonoBehaviour
     private Vector3 direction;
     private Vector3 initialPosition;
 
+    private Vector3? firstCollisionLeft = null;
+    private Vector3? firstCollisionRight = null;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         initialPosition = transform.position;
         direction = GetRandomDirection();
-        speed = Random.Range(0.1f, 4f); // Set speed to a random value between 0.04 and 2
+        speed = Random.Range(0.5f, 4f); // Set speed to a random value between 0.04 and 2
         originalSpeed = speed; // Store the original speed
 
         animator = GetComponent<Animator>();
@@ -43,13 +47,29 @@ public class ObstacleFloat : MonoBehaviour
         if (collision.collider.CompareTag("Terrain"))
         {
             direction = -direction;
-            // StopCoroutine(AdjustSpeed());
             StopAllCoroutines();
             StartCoroutine(AdjustSpeed());
+            if (firstCollisionLeft == null && direction.x < 0)
+            {
+                firstCollisionLeft = collision.contacts[0].point;
+            }
+            else if (firstCollisionRight == null && direction.x > 0)
+            {
+                firstCollisionRight = collision.contacts[0].point;
+            }
+
+            if (firstCollisionLeft.HasValue && firstCollisionRight.HasValue)
+            {
+                float distance = Vector3.Distance(firstCollisionLeft.Value, firstCollisionRight.Value);
+                if (distance < 4f)
+                {
+                    gameObject.SetActive(false);
+                }
+            }
         }
         else if (collision.collider.CompareTag("Player"))
         {
-            if(animator != null)
+            if (animator != null)
             {
                 animator.enabled = true;
             }

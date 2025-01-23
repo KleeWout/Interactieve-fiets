@@ -55,7 +55,7 @@ public class Obstacles : MonoBehaviour
             }
             if (point.z >= row && point.z < (chunk * 513) + 256.5f)
             {
-                if (random.Next(1, 21) == 1)
+                if (random.Next(1, 21) == 1 && mode == GameMode.MultiPlayer)
                 {
                     randomObstacle = 4;
                 }
