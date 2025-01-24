@@ -75,7 +75,7 @@ public class SerialController : MonoBehaviour
         thread = new Thread(new ThreadStart(serialThread.RunForever));
         thread.Start();
         string expectedMessage = "v0.2";
-        DateTime timeout = DateTime.Now.AddSeconds(2);
+        DateTime timeout = DateTime.Now.AddSeconds(5);
         serialThread.SendMessage("getversion");
 
         while (DateTime.Now < timeout)
