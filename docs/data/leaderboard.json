@@ -40,7 +40,12 @@
     "position": 8
   },
   {
-    "position": 9,
+    "name": "SkipperSaar",
+    "score": 5,
+    "position": 9
+  },
+  {
+    "position": 10,
     "name": "HansjePansjeKevertje",
     "score": -2
   }

@@ -13,6 +13,10 @@ public class GameOverScreen : MonoBehaviour
     public static bool isGameOver = false;
     private static string url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard?code=Q8dqx9qcNI8yuXDZOCWP05B8pC7fZED6ymj4S5RHVFMPAzFuOZqv8w==";
 
+    public string localUrl = "http://localhost:3000/api/addleaderboard";
+
+    public bool sendLocal = true;
+
 
 
     public void OnEnable()
@@ -20,7 +24,17 @@ public class GameOverScreen : MonoBehaviour
         GameSelect.isGameStarted = false;
         StartCoroutine(CountdownTest());
         int score = (int)ScoreSystem.score;
+
+        if (sendLocal)
+        {
+            StartCoroutine(UploadScoreLocal(GameSelect.userName, score));
+        }
+        else
+        {
+            StartCoroutine(UploadScore(GameSelect.userName, score));
+        }
         StartCoroutine(UploadScore(GameSelect.userName, score));
+        StartCoroutine(UploadScoreLocal(GameSelect.userName, score));
         WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { GameOver = "true", Score = ScoreSystem.score.ToString() });
 
     }
@@ -48,6 +62,24 @@ public class GameOverScreen : MonoBehaviour
         Debug.Log("Sending score from post score");
         string body = "{ \"name\": \"" + name + "\", \"score\": " + score + " }";
         using (UnityWebRequest www = UnityWebRequest.Post(url, body, "application/json"))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(www.error);
+            }
+            else
+            {
+                Debug.Log("Form upload complete!");
+            }
+        }
+    }
+
+    public IEnumerator UploadScoreLocal(string name, int score)
+    {
+        string body = "{ \"name\": \"" + name + "\", \"score\": " + score + " }";
+        using (UnityWebRequest www = UnityWebRequest.Post(localUrl, body, "application/json"))
         {
             yield return www.SendWebRequest();
 
