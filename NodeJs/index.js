@@ -4,27 +4,99 @@
 
 const WebSocket = require("ws");
 const express = require("express");
-const QRCode = require('qrcode');
+const QRCode = require("qrcode");
 const app = express();
 const path = require("path");
 const readline = require("readline");
 const os = require("os");
+var fs =  require('fs'); // file system module
 
 
 // Serve static files from 'public' directory
-app.use(express.static(path.join(__dirname, '../docs')));
+app.use(express.static(path.join(__dirname, "../docs")));
+app.use(express.json());
 
 const myServer = app.listen(80); //http server
 const port = 3000;
 app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+  console.log(`Webserver is running at http://localhost:${port}`);
 });
 
+app.get("/status", (request, response) => {
+  const status = {
+    status: "running",
+  };
+  response.send(status);
+});
+
+
+app.get('/getleaderboard', function (req, res) {
+  fs.readFile(path.join(__dirname, "../docs/data/leaderboard.json"), 'utf8', function (err, data) {
+    if (err) {
+      console.error("Error reading leaderboard file:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+    res.end(data);
+  });
+});
+
+
+//add player to leaderboard
+app.post('/addleaderboard', (req, res) => {
+  const newPlayer = req.body;
+
+  if (!newPlayer.name || typeof newPlayer.score !== 'number') {
+    res.status(400).send("Invalid player data");
+    return;
+  }
+
+  fs.readFile(path.join(__dirname, "../docs/data/leaderboard.json"), 'utf8', (err, data) => {
+    if (err) {
+      console.error("Error reading leaderboard file:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+
+    let leaderboard;
+    try {
+      leaderboard = JSON.parse(data);
+    } catch (err) {
+      console.error("Error parsing leaderboard file:", err);
+      res.status(500).send("Internal Server Error");
+      return;
+    }
+
+    const existingPlayerIndex = leaderboard.players.findIndex(player => player.name === newPlayer.name);
+
+    if (existingPlayerIndex !== -1) {
+      if (newPlayer.score > leaderboard.players[existingPlayerIndex].score) {
+        leaderboard.players[existingPlayerIndex].score = newPlayer.score;
+      }
+    } else {
+      leaderboard.players.push(newPlayer);
+    }
+
+    leaderboard.players.sort((a, b) => b.score - a.score);
+    leaderboard.players.forEach((player, index) => {
+      player.position = index + 1;
+    });
+
+    fs.writeFile(path.join(__dirname, "../docs/data/leaderboard.json"), JSON.stringify(leaderboard, null, 2), 'utf8', (err) => {
+      if (err) {
+        console.error("Error writing leaderboard file:", err);
+        res.status(500).send("Internal Server Error");
+        return;
+      }
+
+      res.status(201).send("Player added/updated successfully");
+    });
+  });
+});
 
 const wss = new WebSocket.Server({ port: 8080 }, () => {
-  console.log("server started");
+  console.log("websocket server started");
 });
-
 
 let gameClients = new Map();
 let activeGameCodes = [];
@@ -39,42 +111,40 @@ function getIPAddress() {
   const interfaces = os.networkInterfaces();
   for (const name of Object.keys(interfaces)) {
     for (const iface of interfaces[name]) {
-      if (iface.family === 'IPv4' && !iface.internal) {
+      if (iface.family === "IPv4" && !iface.internal) {
         return iface.address;
       }
     }
   }
-  return '127.0.0.1';
+  return "127.0.0.1";
 }
 
-app.get('/generateQR', async (req, res) => {
+app.get("/generateQR", async (req, res) => {
   try {
     const url = req.query.url || `http://${getIPAddress()}:3000`;
-    const code = req.query.code || 'none';
+    const code = req.query.code || "none";
     const qrCodeImage = await QRCode.toDataURL(`${url}?code=${code}`, {
       color: {
         dark: "#261516",
-        light: "#0000"
+        light: "#0000",
       },
-      margin: 2
+      margin: 2,
     });
 
-    const imgBuffer = Buffer.from(qrCodeImage.split(",")[1], 'base64');
+    const imgBuffer = Buffer.from(qrCodeImage.split(",")[1], "base64");
     res.writeHead(200, {
-      'Content-Type': 'image/png',
-      'Content-Length': imgBuffer.length
+      "Content-Type": "image/png",
+      "Content-Length": imgBuffer.length,
     });
     res.end(imgBuffer);
   } catch (err) {
-    console.error('Error generating QR code:', err);
-    res.status(500).send('Internal Server Error');
+    console.error("Error generating QR code:", err);
+    res.status(500).send("Internal Server Error");
   }
 });
 
 wss.on("connection", function (ws) {
-
   ws.on("message", function (msg) {
-
     // serialize incoming message
     let message;
     try {
@@ -86,17 +156,16 @@ wss.on("connection", function (ws) {
 
     // check for game clients a stuur game code om spel te starten
     if (message.IsGameClient === true) {
-
-      if(message.NewConnection === true){
+      if (message.NewConnection === true) {
         // generate game code number
-        ws.send(JSON.stringify({connectionStatus: "disconnected"}));
+        ws.send(JSON.stringify({ connectionStatus: "disconnected" }));
         activeGameCodes = activeGameCodes.filter((code) => code !== getGameCodeFromGameClient(ws));
         gameClients.delete(getGameCodeFromGameClient(ws));
         gameScore.delete(ws);
         gameStatus.delete(ws);
         do {
           gameCode = Math.floor(1000 + Math.random() * 9000);
-        } while (activeGameCodes.includes(gameCode));      
+        } while (activeGameCodes.includes(gameCode));
         gameCode = gameCode.toString();
         activeGameCodes.push(gameCode);
 
@@ -111,72 +180,61 @@ wss.on("connection", function (ws) {
       // else if(message.ReNewConnection === true){
 
       // }
-      else if (game2browser.has(ws)){
+      else if (game2browser.has(ws)) {
         const strippedMessage = { ...message };
         delete strippedMessage.IsGameClient;
         delete strippedMessage.NewConnection;
-        console.log(message)
-        if(strippedMessage.Score){
+        console.log(message);
+        if (strippedMessage.Score) {
           gameScore.set(ws, strippedMessage.Score);
         }
         game2browser.get(ws).send(JSON.stringify(strippedMessage));
-      }
-  
-      else{
+      } else {
         console.log("Game client not associated with any browser client");
       }
-
-    }
-    else if (message.gameState) {
+    } else if (message.gameState) {
       if (browser2game.has(ws)) {
-        if(message.gameState === "start"){
+        if (message.gameState === "start") {
           gameStatus.set(browser2game.get(ws), "start");
-          browser2game.get(ws).send(JSON.stringify({gameState: "start", gameMode: message.gameMode}));
+          browser2game.get(ws).send(JSON.stringify({ gameState: "start", gameMode: message.gameMode }));
           gameScore.set(browser2game.get(ws), 0);
-        }
-        else if (message.gameState === "stop"){
+        } else if (message.gameState === "stop") {
           gameStatus.set(browser2game.get(ws), "stop");
-          browser2game.get(ws).send(JSON.stringify({gameState: "stop"}));
-        }
-        else if(message.gameState === "restart"){
-          if(game2browser.has(browser2game.get(ws))){
-            browser2game.get(ws).send(JSON.stringify({gameState: "restart"}));
+          browser2game.get(ws).send(JSON.stringify({ gameState: "stop" }));
+        } else if (message.gameState === "restart") {
+          if (game2browser.has(browser2game.get(ws))) {
+            browser2game.get(ws).send(JSON.stringify({ gameState: "restart" }));
           }
         }
       }
-    }
-    else{
+    } else {
       // Handle browser client joining a game
-      if (message.hasOwnProperty('gameCode')){
+      if (message.hasOwnProperty("gameCode")) {
         const gameCode = message.gameCode;
         if (activeGameCodes.includes(gameCode)) {
-          if(game2browser.has(gameClients.get(gameCode))){
+          if (game2browser.has(gameClients.get(gameCode))) {
             console.log("Browser client already connected to game");
-            ws.send(JSON.stringify({connectionStatus: "busy", id: message.id}));
-          }
-          else{
+            ws.send(JSON.stringify({ connectionStatus: "busy", id: message.id }));
+          } else {
             game2browser.set(gameClients.get(gameCode), ws);
             browser2game.set(ws, gameClients.get(gameCode));
-            // make a reconnect option 
+            // make a reconnect option
             // if game was already started, give reconnect instead of connect
-            browser2game.get(ws).send(JSON.stringify({connectionStatus: "connected", userName: message.userName, gameMode: message.gameMode}));
-  
+            browser2game.get(ws).send(JSON.stringify({ connectionStatus: "connected", userName: message.userName, gameMode: message.gameMode }));
+
             // console.log("Browser client joined game with code: ", gameCode);
             // handle reconnect here (check if game was already started with gameStatus)
-            if(gameStatus.get(gameClients.get(gameCode)) == "start"){
-              ws.send(JSON.stringify({connectionStatus: "reconnect-start", id: message.id, score: gameScore.get(gameClients.get(gameCode))}));
-            }
-            else{
-              ws.send(JSON.stringify({connectionStatus: "success", id: message.id}));
+            if (gameStatus.get(gameClients.get(gameCode)) == "start") {
+              ws.send(JSON.stringify({ connectionStatus: "reconnect-start", id: message.id, score: gameScore.get(gameClients.get(gameCode)) }));
+            } else {
+              ws.send(JSON.stringify({ connectionStatus: "success", id: message.id }));
             }
           }
-        }
-        else{
+        } else {
           // console.log("Invalid game code");
-          ws.send(JSON.stringify({connectionStatus: "failed", id: message.id}));
+          ws.send(JSON.stringify({ connectionStatus: "failed", id: message.id }));
         }
-      }
-      else{
+      } else {
         if (browser2game.has(ws)) {
           browser2game.get(ws).send(JSON.stringify(message));
           // console.log(JSON.stringify(message));
@@ -185,9 +243,6 @@ wss.on("connection", function (ws) {
         }
       }
     }
-
-
-
   });
 
   ws.on("close", function () {
@@ -196,20 +251,17 @@ wss.on("connection", function (ws) {
       gameClients.delete(getGameCodeFromGameClient(ws));
       console.log("Game client disconnected");
       console.log("Active game codes: ", activeGameCodes);
-    }
-    else if(browser2game.has(ws)){
-      if(gameStatus.get(browser2game.get(ws)) == "start"){
-        browser2game.get(ws).send(JSON.stringify({connectionStatus: "idle"}));
-      }
-      else{
-        browser2game.get(ws).send(JSON.stringify({connectionStatus: "disconnected"}));
+    } else if (browser2game.has(ws)) {
+      if (gameStatus.get(browser2game.get(ws)) == "start") {
+        browser2game.get(ws).send(JSON.stringify({ connectionStatus: "idle" }));
+      } else {
+        browser2game.get(ws).send(JSON.stringify({ connectionStatus: "disconnected" }));
       }
       game2browser.delete(browser2game.get(ws));
       browser2game.delete(ws);
       console.log("Browser client disconnected");
     }
   });
-
 });
 
 function getGameCodeFromGameClient(ws) {
@@ -236,14 +288,12 @@ myServer.on("upgrade", async function upgrade(request, socket, head) {
 });
 
 wss.on("listening", () => {
-  console.log("server is listening on port 8080");
+  console.log("WebSocket server is listening on port 8080");
 });
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
-
-
 
 rl.on("line", (input) => {
   wss.clients.forEach((client) => {
