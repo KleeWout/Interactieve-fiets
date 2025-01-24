@@ -3,6 +3,7 @@ using System.Threading;
 using System;
 using System.IO.Ports;
 using TMPro;
+using System.Collections;
 
 public class SerialController : MonoBehaviour
 {
@@ -34,65 +35,62 @@ public class SerialController : MonoBehaviour
     // ------------------------------------------------------------------------
     void OnEnable()
     {
-        GetAvailablePorts();
-        if(deviceFound){
+        StartCoroutine(TryConnect());
+    }
+
+    IEnumerator TryConnect()
+    {
+        yield return StartCoroutine(GetAvailablePorts());
+        if (deviceFound)
+        {
             serialThread.SendMessage("start");
         }
-        else{
+        else
+        {
             Invoke("OnEnable", 2);
             Debug.Log("No device found, trying again...");
         }
     }
-    void GetAvailablePorts()
+
+    IEnumerator GetAvailablePorts()
     {
         string[] ports = SerialPort.GetPortNames();
         foreach (string port in ports)
         {
             if (port.Contains("ttyUSB") || port.Contains("tty.usb") || port.Contains("cu.usb") || port.Contains("COM"))
             {
-                if (PerformHandshake(port)){
-                    Debug.Log($"Handshake succesfull with {port}");
-                    deviceFound = true;
+                yield return StartCoroutine(PerformHandshake(port));
+                if (deviceFound)
+                {
+                    Debug.Log($"Handshake successful with {port}");
                     break;
                 }
             }
-        }       
+        }
     }
 
-
-
-    bool PerformHandshake(string portName)
+    IEnumerator PerformHandshake(string portName)
     {
-        serialThread = new SerialThreadLines(portName,
-                                        baudRate,
-                                        reconnectionDelay,
-                                        maxUnreadMessages);
+        serialThread = new SerialThreadLines(portName, baudRate, reconnectionDelay, maxUnreadMessages);
         thread = new Thread(new ThreadStart(serialThread.RunForever));
         thread.Start();
-        string expectedMessage = "v0.2"; // The specific string to match
-        DateTime timeout = DateTime.Now.AddSeconds(2); // Timeout after 10 seconds
+        string expectedMessage = "v0.2";
+        DateTime timeout = DateTime.Now.AddSeconds(2);
 
         while (DateTime.Now < timeout)
         {
             string message = (string)serialThread.ReadMessage();
-            if (message != null)
+            if (message != null && message.Trim() == expectedMessage)
             {
-                if (message.Trim() == expectedMessage)
-                {
-                    return true; // Handshake successful
-                }
+                deviceFound = true;
+                yield break;
             }
-            Thread.Sleep(100); // Wait for a short period before checking again
+            yield return new WaitForSeconds(0.1f);
         }
         Disconnect();
-        return false; // Handshake timed out
+        deviceFound = false;
     }
 
-
-    // ------------------------------------------------------------------------
-    // Invoked whenever the SerialController gameobject is deactivated.
-    // It stops and destroys the thread that was reading from the serial device.
-    // ------------------------------------------------------------------------
     void OnDisable()
     {
         Disconnect();
