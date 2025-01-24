@@ -186,8 +186,8 @@ MonoBehaviour:
   wobbleSmoothing: 2
   maxTiltAngle: 20
   tiltSmoothing: 8
-  steeringSpeed: 85
-  thrustSpeed: 5
+  steeringSpeed: 40
+  thrustSpeed: 3
   inputType: 2
 --- !u!114 &20283348
 MonoBehaviour:
@@ -3295,7 +3295,7 @@ MonoBehaviour:
   maxTiltAngle: 20
   tiltSmoothing: 8
   steeringSpeed: 85
-  thrustSpeed: 5
+  thrustSpeed: 3
   inputType: 2
 --- !u!114 &1480849960
 MonoBehaviour:
