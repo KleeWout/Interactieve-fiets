@@ -1,6 +1,7 @@
 "use strict";
-let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea;
-let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList;
+let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea, touchAreaHelp, htmlHelpScreens;
+let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName, htmlEndGameScore, htmlHelpButton, htmlHelpReturnButton;
+let htmlPencilButton;
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 let clientId;
@@ -41,6 +42,8 @@ ws.onerror = (error) => {
 
 const listenToInputs = function () {
   console.log("Listening to inputs");
+  htmlName.addEventListener("click", function () {
+    htmlName.select();});
   htmlName.addEventListener("input", function () {
     ws.send('{"userName": "' + htmlName.value + '"}');
   });
@@ -64,7 +67,8 @@ const listenToInputs = function () {
     }
   });
   htmlStartButton.addEventListener("click", function () {
-    ws.send(`{"gameState": "start", "gameMode": ${htmlGameMode[0].checked ? `"singleplayer"` : `"multiplayer"`}}`);
+    // ws.send(`{"gameState": "start", "gameMode": ${htmlGameMode[0].checked ? `"singleplayer"` : `"multiplayer"`}}`);
+    ws.send(`{"gameState": "start"}`);
     console.log("Start button clicked");
     document.querySelector(".c-home").classList.add("hide");
     document.querySelector(".c-endgame__fixed").classList.remove("deactivated");
@@ -80,21 +84,31 @@ const listenToInputs = function () {
 
   htmlEndScoreMenuButton = document.querySelector(".js-endscore-menu");
   htmlEndScoreMenuButton.addEventListener("click", function () {
-    console.log("End score menu button clicked");
-    document.querySelector(".c-endgame__fixed").classList.remove("activated");
-    document.querySelector(".c-endgame__fixed").classList.add("deactivated");
-    document.querySelector(".c-boat").classList.remove("deactivated");
-    document.querySelector(".c-home").classList.remove("hide");
+    ws.send('{"gameState": "restart"}');
+    window.location.reload();
   });
   htmlLeaderboardButton.addEventListener("click", function () {
-    window.location.href = "/docs/leaderboard";
+    window.location.href = "/leaderboard";
+  });
+
+  htmlHelpButton.addEventListener("click", function () {
+    document.querySelector(".c-help__fixed").classList.add("activated");
+  });
+
+  htmlHelpReturnButton.addEventListener("click", function () {
+    document.querySelector(".c-help__fixed").classList.remove("activated");
+  });
+
+  htmlPencilButton.addEventListener("click", function () {
+    htmlName.focus();
+    htmlName.select();
   });
 };
 
 const listenToLeaderBoard = function () {
   htmlLeaderboardButton = document.querySelector(".js-leaderboard__return");
   htmlLeaderboardButton.addEventListener("click", function () {
-    window.location.href = "../index.html";
+    window.location.href = "/index.html";
   });
 };
 
@@ -139,6 +153,7 @@ const joinGameConnection = async function (gameCode) {
         else if (response.connectionStatus === "success") {
           document.querySelector(".c-inputname__widthbox").value = name;
           htmlName.value = name;
+          htmlEndGameName.innerHTML = name;
           adjustWidth();
 
           document.querySelector(".c-main").classList.remove("blurred");
@@ -222,20 +237,45 @@ const handleTouchMove = (event) => {
   touchEndY = event.touches[0].clientY;
 };
 
-const handleTouchEnd = () => {
+const handleTouchEnd = (area) => {
   const deltaX = touchEndX - touchStartX;
   const deltaY = touchEndY - touchStartY;
 
-  if (Math.abs(deltaX) > Math.abs(deltaY)) {
-    if (deltaX > 0) {
-      if (htmlGameMode[1].checked) {
-        htmlGameMode[0].checked = true;
-        htmlGameMode[0].dispatchEvent(new Event("change"));
+  if (area === "touchAreaGameMode") {
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX > 0) {
+        if (htmlGameMode[1].checked) {
+          htmlGameMode[0].checked = true;
+          htmlGameMode[0].dispatchEvent(new Event("change"));
+        }
+      } else {
+        if (htmlGameMode[0].checked) {
+          htmlGameMode[1].checked = true;
+          htmlGameMode[0].dispatchEvent(new Event("change"));
+        }
       }
-    } else {
-      if (htmlGameMode[0].checked) {
-        htmlGameMode[1].checked = true;
-        htmlGameMode[0].dispatchEvent(new Event("change"));
+    }
+  } else if (area === "touchAreaHelp") {
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX > 0) {
+        if (htmlHelpScreens[0].checked) {
+          return;
+        }
+        for (let i = 0; i < htmlHelpScreens.length; i++) {
+          if (htmlHelpScreens[i].checked) {
+            htmlHelpScreens[i - 1].checked = true;
+          }
+        }
+      } else {
+        if (htmlHelpScreens[htmlHelpScreens.length - 1].checked) {
+          return;
+        }
+        for (let i = 0; i < htmlHelpScreens.length; i++) {
+          if (htmlHelpScreens[i].checked) {
+            htmlHelpScreens[i + 1].checked = true;
+            break;
+          }
+        }
       }
     }
   }
@@ -255,7 +295,7 @@ const showLeaderboard = function (jsonObject) {
               </div>
               <p class="c-scoreboard__item--score">${player.score}m</p>
             </li>`;
-            position++;
+    position++;
   }
   htmlLeaderBoardList.innerHTML = output;
 };
@@ -264,6 +304,7 @@ const adjustWidth = function () {
   const inputValue = htmlName.value;
   htmlNameBox.textContent = inputValue; // Set the widthBox text to the input value
   htmlName.style.width = htmlNameBox.offsetWidth + 1 + "px"; // Set the input width to the widthBox width
+  console.log(htmlNameBox.offsetWidth);
 };
 
 const init = function () {
@@ -283,11 +324,22 @@ const init = function () {
     htmlStartButton = document.querySelector(".js-start");
     htmlStopButton = document.querySelector(".js-stop");
     htmlLeaderboardButton = document.querySelector(".js-leaderboard-btn");
+    htmlEndGameName = document.querySelector(".js-endGameName");
+    htmlEndGameScore = document.querySelector(".js-endgame-score");
+    htmlHelpScreens = document.querySelectorAll('input[name="help"]');
+    htmlHelpButton = document.querySelector(".js-help-btn");
+    htmlHelpReturnButton = document.querySelector(".js-help-page-return");
+    htmlPencilButton = document.querySelector(".js-pencil");
 
     touchArea = document.querySelector(".c-gamemode__container");
     touchArea.addEventListener("touchstart", handleTouchStart);
     touchArea.addEventListener("touchmove", handleTouchMove);
-    touchArea.addEventListener("touchend", handleTouchEnd);
+    touchArea.addEventListener("touchend", (event) => handleTouchEnd("touchAreaGameMode"));
+
+    touchAreaHelp = document.querySelector(".c-help__slider");
+    touchAreaHelp.addEventListener("touchstart", handleTouchStart);
+    touchAreaHelp.addEventListener("touchmove", handleTouchMove);
+    touchAreaHelp.addEventListener("touchend", (event) => handleTouchEnd("touchAreaHelp"));
 
     listenToInputs();
   }

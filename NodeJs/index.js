@@ -11,9 +11,16 @@ const readline = require("readline");
 const os = require("os");
 
 
-app.use("/", express.static(path.resolve(__dirname, "../webpagina")));
+// Serve static files from 'public' directory
+app.use(express.static(path.join(__dirname, '../docs')));
 
 const myServer = app.listen(80); //http server
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});
+
+
 const wss = new WebSocket.Server({ port: 8080 }, () => {
   console.log("server started");
 });
@@ -42,7 +49,7 @@ function getIPAddress() {
 
 app.get('/generateQR', async (req, res) => {
   try {
-    const url = req.query.url || `http://${getIPAddress()}:5501/NodeJs/webpagina/Index.html`;
+    const url = req.query.url || `http://${getIPAddress()}:3000`;
     const code = req.query.code || 'none';
     const qrCodeImage = await QRCode.toDataURL(`${url}?code=${code}`, {
       color: {
@@ -85,6 +92,8 @@ wss.on("connection", function (ws) {
         ws.send(JSON.stringify({connectionStatus: "disconnected"}));
         activeGameCodes = activeGameCodes.filter((code) => code !== getGameCodeFromGameClient(ws));
         gameClients.delete(getGameCodeFromGameClient(ws));
+        gameScore.delete(ws);
+        gameStatus.delete(ws);
         do {
           gameCode = Math.floor(1000 + Math.random() * 9000);
         } while (activeGameCodes.includes(gameCode));      
@@ -93,6 +102,9 @@ wss.on("connection", function (ws) {
 
         gameClients.set(gameCode, ws);
         console.log("Active game codes: ", activeGameCodes);
+
+        browser2game.delete(game2browser.get(ws));
+        game2browser.delete(ws);
 
         ws.send(JSON.stringify({ gameCode }));
       }
@@ -123,6 +135,11 @@ wss.on("connection", function (ws) {
         else if (message.gameState === "stop"){
           gameStatus.set(browser2game.get(ws), "stop");
           browser2game.get(ws).send(JSON.stringify({gameState: "stop"}));
+        }
+        else if(message.gameState === "restart"){
+          if(game2browser.has(browser2game.get(ws))){
+            browser2game.get(ws).send(JSON.stringify({gameState: "restart"}));
+          }
         }
       }
     }
