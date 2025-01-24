@@ -27,9 +27,17 @@ ws.onmessage = (event) => {
   try {
     const jsonData = JSON.parse(message);
     if (jsonData.Score !== undefined) {
-      htmlScoreValue.forEach(element => {
+      htmlScoreValue.forEach((element) => {
         element.innerHTML = `${jsonData.Score}m</p>`;
-    });
+      });
+    }
+    if (jsonData.GameOver !== undefined) {
+      if (jsonData.GameOver == "true") {
+        console.log("Game over"); 
+        document.querySelector(".c-boat").classList.remove("activated");
+        document.querySelector(".c-boat").classList.add("deactivated");
+        document.querySelector(".c-endgame__fixed").classList.add("activated");
+      }
     }
   } catch (error) {
     console.error("Error parsing JSON:", error);
@@ -43,7 +51,8 @@ ws.onerror = (error) => {
 const listenToInputs = function () {
   console.log("Listening to inputs");
   htmlName.addEventListener("click", function () {
-    htmlName.select();});
+    htmlName.select();
+  });
   htmlName.addEventListener("input", function () {
     ws.send('{"userName": "' + htmlName.value + '"}');
   });
@@ -139,18 +148,17 @@ const joinGameConnection = async function (gameCode) {
           console.log("Invalid game code");
         } else if (response.connectionStatus === "busy") {
           console.log("Game already has a browser client");
-        } else if(response.connectionStatus === "reconnect-start"){
+        } else if (response.connectionStatus === "reconnect-start") {
           document.querySelector(".c-main").classList.remove("blurred");
           document.querySelector(".c-buttons").classList.remove("blurred");
           document.querySelector(".c-entry").classList.add("hidden");
           document.querySelector(".c-home").classList.add("hide");
           document.querySelector(".c-endgame__fixed").classList.remove("deactivated");
           document.querySelector(".c-boat").classList.add("activated");
-          htmlScoreValue.forEach(element => {
+          htmlScoreValue.forEach((element) => {
             element.innerHTML = `${response.score}m</p>`;
-        });
-        }
-        else if (response.connectionStatus === "success") {
+          });
+        } else if (response.connectionStatus === "success") {
           document.querySelector(".c-inputname__widthbox").value = name;
           htmlName.value = name;
           htmlEndGameName.innerHTML = name;
