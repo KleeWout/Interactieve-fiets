@@ -1,8 +1,8 @@
-#define REED_PIN_L_M 12
-#define REED_PIN_L_S 14
+#define REED_PIN_L_M 25
+#define REED_PIN_L_S 33
 
-#define REED_PIN_R_M 25
-#define REED_PIN_R_S 33
+#define REED_PIN_R_M 14
+#define REED_PIN_R_S 12
 
 bool isActive = false;
 
@@ -118,7 +118,6 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(REED_PIN_R_S), handleRevolutionRightSecond, RISING);
 
   delay(200);
-  Serial.println("v0.2");
 }
 
 void loop() {
@@ -133,29 +132,59 @@ void loop() {
       lastRevolutionRightMain = 0;
       lastRevolutionRightSecond = 0;
       previousRevolutionRightMain = 0;
+      revolutionsPerSecondLeft = 0;
+      revolutionsPerSecondRight = 0;
       isActive = true;
       delay(500);
     } else if (incomingMessage.equals("stop")) {
       isActive = false;
     }
-  }
-  if(isActive){
-    // Left calculations
-    if (!leftReverse && millis() > lastRevolutionLeftMain + (lastRevolutionLeftMain - previousRevolutionLeftMain) && lastRevolutionLeftMain != 0) {
-      revolutionsPerSecondLeft = (1000.0 / (millis() - lastRevolutionLeftMain)) / 2;
+    else if (incomingMessage.equals("getversion")){
+      Serial.println("v0.2");
     }
-    if (leftReverse && millis() > lastRevolutionLeftMain + (lastRevolutionLeftMain - previousRevolutionLeftMain) && lastRevolutionLeftMain != 0) {
-      revolutionsPerSecondLeft = (-(1000.0 / (millis() - lastRevolutionLeftMain)) / 2) / 3;
+  }
+
+  if (isActive) {
+    unsigned long currentTime = millis();
+
+    // Left calculations
+    if (lastRevolutionLeftMain != 0) {
+      unsigned long expectedIntervalLeft = 1000 / revolutionsPerSecondLeft; // Expected time for one revolution
+      unsigned long timeSinceLastRevolutionLeft = currentTime - lastRevolutionLeftMain;
+
+      if (timeSinceLastRevolutionLeft > expectedIntervalLeft) {
+        // Dynamically scale the decay rate based on time elapsed
+        float decayFactor = 0.01 * (timeSinceLastRevolutionLeft - expectedIntervalLeft); // Increase decay with elapsed time
+        revolutionsPerSecondLeft -= decayFactor;
+
+        // Clamp to 0
+        if (revolutionsPerSecondLeft < 0) revolutionsPerSecondLeft = 0;
+      }
     }
 
     // Right calculations
-    if (!rightReverse && millis() > lastRevolutionRightMain + (lastRevolutionRightMain - previousRevolutionRightMain) && lastRevolutionRightMain != 0) {
-      revolutionsPerSecondRight = (1000.0 / (millis() - lastRevolutionRightMain)) / 2;
+    if (lastRevolutionRightMain != 0) {
+      unsigned long expectedIntervalRight = 1000 / revolutionsPerSecondRight; // Expected time for one revolution
+      unsigned long timeSinceLastRevolutionRight = currentTime - lastRevolutionRightMain;
+
+      if (timeSinceLastRevolutionRight > expectedIntervalRight) {
+        // Dynamically scale the decay rate based on time elapsed
+        float decayFactor = 0.01 * (timeSinceLastRevolutionRight - expectedIntervalRight); // Increase decay with elapsed time
+        revolutionsPerSecondRight -= decayFactor;
+
+        // Clamp to 0
+        if (revolutionsPerSecondRight < 0) revolutionsPerSecondRight = 0;
+      }
     }
-    if (rightReverse && millis() > lastRevolutionRightMain + (lastRevolutionRightMain - previousRevolutionRightMain) && lastRevolutionRightMain != 0) {
-      revolutionsPerSecondRight = (-(1000.0 / (millis() - lastRevolutionRightMain)) / 2) / 3;
+
+    // Print results
+    if(revolutionsPerSecondLeft > 3){
+      revolutionsPerSecondLeft = 3;
     }
-    Serial.println(String(revolutionsPerSecondLeft) +","+ String(revolutionsPerSecondRight));
+    if(revolutionsPerSecondRight > 3){
+      revolutionsPerSecondRight = 3;
+    }
+    Serial.println(String(revolutionsPerSecondLeft) + "," + String(revolutionsPerSecondRight));
   }
   delay(100);
 }
