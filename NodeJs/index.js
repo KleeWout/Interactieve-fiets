@@ -9,12 +9,14 @@ const app = express();
 const path = require("path");
 const readline = require("readline");
 const os = require("os");
-var fs =  require('fs'); // file system module
-
+var fs = require("fs"); // file system module
+const cors = require("cors");
 
 // Serve static files from 'public' directory
 app.use(express.static(path.join(__dirname, "../docs")));
 app.use(express.json());
+app.use(cors());
+
 
 const myServer = app.listen(80); //http server
 const port = 3000;
@@ -29,29 +31,27 @@ app.get("/status", (request, response) => {
   response.send(status);
 });
 
-
-app.get('/getleaderboard', function (req, res) {
-  fs.readFile(path.join(__dirname, "../docs/data/leaderboard.json"), 'utf8', function (err, data) {
+app.get("/api/getleaderboard", function (req, res) {
+  fs.readFile(path.join(__dirname, "../docs/data/leaderboard.json"), "utf8", function (err, data) {
     if (err) {
       console.error("Error reading leaderboard file:", err);
       res.status(500).send("Internal Server Error");
       return;
     }
-    res.end(data);
+    res.send(data);
   });
 });
 
-
 //add player to leaderboard
-app.post('/addleaderboard', (req, res) => {
+app.post("/api/addleaderboard", (req, res) => {
   const newPlayer = req.body;
 
-  if (!newPlayer.name || typeof newPlayer.score !== 'number') {
+  if (!newPlayer.name || typeof newPlayer.score !== "number") {
     res.status(400).send("Invalid player data");
     return;
   }
 
-  fs.readFile(path.join(__dirname, "../docs/data/leaderboard.json"), 'utf8', (err, data) => {
+  fs.readFile(path.join(__dirname, "../docs/data/leaderboard.json"), "utf8", (err, data) => {
     if (err) {
       console.error("Error reading leaderboard file:", err);
       res.status(500).send("Internal Server Error");
@@ -67,22 +67,22 @@ app.post('/addleaderboard', (req, res) => {
       return;
     }
 
-    const existingPlayerIndex = leaderboard.players.findIndex(player => player.name === newPlayer.name);
+    const existingPlayerIndex = leaderboard.findIndex((player) => player.name === newPlayer.name);
 
     if (existingPlayerIndex !== -1) {
-      if (newPlayer.score > leaderboard.players[existingPlayerIndex].score) {
-        leaderboard.players[existingPlayerIndex].score = newPlayer.score;
+      if (newPlayer.score > leaderboard[existingPlayerIndex].score) {
+        leaderboard[existingPlayerIndex].score = newPlayer.score;
       }
     } else {
-      leaderboard.players.push(newPlayer);
+      leaderboard.push(newPlayer);
     }
 
-    leaderboard.players.sort((a, b) => b.score - a.score);
-    leaderboard.players.forEach((player, index) => {
+    leaderboard.sort((a, b) => b.score - a.score);
+    leaderboard.forEach((player, index) => {
       player.position = index + 1;
     });
 
-    fs.writeFile(path.join(__dirname, "../docs/data/leaderboard.json"), JSON.stringify(leaderboard, null, 2), 'utf8', (err) => {
+    fs.writeFile(path.join(__dirname, "../docs/data/leaderboard.json"), JSON.stringify(leaderboard, null, 2), "utf8", (err) => {
       if (err) {
         console.error("Error writing leaderboard file:", err);
         res.status(500).send("Internal Server Error");

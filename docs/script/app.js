@@ -33,7 +33,7 @@ ws.onmessage = (event) => {
     }
     if (jsonData.GameOver !== undefined) {
       if (jsonData.GameOver == "true") {
-        console.log("Game over"); 
+        console.log("Game over");
         document.querySelector(".c-boat").classList.remove("activated");
         document.querySelector(".c-boat").classList.add("deactivated");
         document.querySelector(".c-endgame__fixed").classList.add("activated");
@@ -322,7 +322,8 @@ const init = function () {
     console.log("Leaderboard page");
     listenToLeaderBoard();
     // Example function to fetch JSON data from a URL
-    let url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard";
+    // let url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard";
+    let url = `http://127.0.0.1:3000/api/getleaderboard`;
     handleData(url, showLeaderboard);
   } else {
     htmlScoreValue = document.querySelectorAll(".js-score");

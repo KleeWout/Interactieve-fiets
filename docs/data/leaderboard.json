@@ -1,44 +1,47 @@
-{
-  "players": [
-    {
-      "name": "KankerKeun",
-      "score": 6970,
-      "position": 1
-    },
-    {
-      "position": 2,
-      "name": "KanoKonijn",
-      "score": 1500
-    },
-    {
-      "position": 3,
-      "name": "KOBE",
-      "score": 1233
-    },
-    {
-      "position": 4,
-      "name": "Player4",
-      "score": 1100
-    },
-    {
-      "position": 5,
-      "name": "TurboPolyp",
-      "score": 1000
-    },
-    {
-      "position": 6,
-      "name": "PlayerOne",
-      "score": 200
-    },
-    {
-      "position": 7,
-      "name": "Wout",
-      "score": 123
-    },
-    {
-      "position": 8,
-      "name": "HansjePansjeKevertje",
-      "score": -2
-    }
-  ]
-}
+[
+  {
+    "name": "KankerKeun",
+    "score": 6970,
+    "position": 1
+  },
+  {
+    "position": 2,
+    "name": "KanoKonijn",
+    "score": 1500
+  },
+  {
+    "position": 3,
+    "name": "KOBE",
+    "score": 1233
+  },
+  {
+    "position": 4,
+    "name": "Player4",
+    "score": 1100
+  },
+  {
+    "position": 5,
+    "name": "TurboPolyp",
+    "score": 1000
+  },
+  {
+    "position": 6,
+    "name": "PlayerOne",
+    "score": 200
+  },
+  {
+    "position": 7,
+    "name": "Wout",
+    "score": 123
+  },
+  {
+    "name": "TeringKeun",
+    "score": 54,
+    "position": 8
+  },
+  {
+    "position": 9,
+    "name": "HansjePansjeKevertje",
+    "score": -2
+  }
+]
