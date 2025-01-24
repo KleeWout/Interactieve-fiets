@@ -98,12 +98,13 @@ public class WebSocketClient : MonoBehaviour
                         {
                             gameSelect.ChangeState(GameMode.MultiPlayer);
                         }
-                        else if(jsonObject.ContainsKey("gameMode") && jsonObject["gameMode"].ToString() == "singleplayer")
-                        { 
+                        else if (jsonObject.ContainsKey("gameMode") && jsonObject["gameMode"].ToString() == "singleplayer")
+                        {
                             gameSelect.ChangeState(GameMode.SinglePlayer);
                         }
                     }
-                    else if(connectionStatus == "connected" && GameSelect.isGameStarted){
+                    else if (connectionStatus == "connected" && GameSelect.isGameStarted)
+                    {
                         isReconnected = true;
                         GameSelect.isIdle = false;
                     }
@@ -112,7 +113,8 @@ public class WebSocketClient : MonoBehaviour
                         isReconnected = false;
                         StartCoroutine(CheckReconnection());
                     }
-                    else if(connectionStatus == "idle"){
+                    else if (connectionStatus == "idle")
+                    {
                         GameSelect.isIdle = true;
                     }
                 }
@@ -175,7 +177,7 @@ public class WebSocketClient : MonoBehaviour
             gameSelect.ChangeState(GameMode.Menu);
         }
     }
-    
+
     public async void SendMessageToSocket(WebSocketMessage data)
     {
         if (webSocket.State == WebSocketState.Open)
@@ -183,7 +185,7 @@ public class WebSocketClient : MonoBehaviour
             string json = JsonUtility.ToJson(data);
             var bytes = Encoding.UTF8.GetBytes(json);
             await webSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
-            // Debug.Log($"Sent: {json}");
+            Debug.Log($"Sent: {json}");
         }
         else
         {

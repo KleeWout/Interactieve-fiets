@@ -98,7 +98,7 @@ public class SerialController : MonoBehaviour
 
     void Disconnect()
     {
-        serialThread.SendMessage("stop");
+        // serialThread.SendMessage("stop");
         // If there is a user-defined tear-down function, execute it before
         // closing the underlying COM port.
         if (userDefinedTearDownFunction != null)
@@ -129,7 +129,8 @@ public class SerialController : MonoBehaviour
     // ------------------------------------------------------------------------
     void Update()
     {
-        if(deviceFound){
+        if (deviceFound)
+        {
             // If the user prefers to poll the messages instead of receiving them
             // via SendMessage, then the message listener should be null.
             if (messageListener == null)

@@ -8,7 +8,7 @@ namespace Models.WebSocketMessage
         public bool IsGameClient = true;
         public bool NewConnection = false;
         public string? Score;
-        public bool? GameOver;
+        public string? GameOver;
 
     }
 }

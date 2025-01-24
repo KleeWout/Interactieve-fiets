@@ -115,11 +115,13 @@ wss.on("connection", function (ws) {
         const strippedMessage = { ...message };
         delete strippedMessage.IsGameClient;
         delete strippedMessage.NewConnection;
+        console.log(message)
         if(strippedMessage.Score){
           gameScore.set(ws, strippedMessage.Score);
         }
         game2browser.get(ws).send(JSON.stringify(strippedMessage));
       }
+  
       else{
         console.log("Game client not associated with any browser client");
       }
