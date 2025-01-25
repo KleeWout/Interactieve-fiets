@@ -1,10 +1,13 @@
 "use strict";
 let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea, touchAreaHelp, htmlHelpScreens;
 let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName, htmlEndGameScore, htmlHelpButton, htmlHelpReturnButton;
-let htmlPencilButton;
+let htmlPencilButton, htmlEndGameList;
+let GameName = "";
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 let clientId;
+// let url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard";
+let LeaderboardUrl = `http://127.0.0.1:3000/api/getleaderboard`;
 
 const urlParams = new URLSearchParams(window.location.search);
 const code = urlParams.get("code");
@@ -37,6 +40,7 @@ ws.onmessage = (event) => {
         document.querySelector(".c-boat").classList.remove("activated");
         document.querySelector(".c-boat").classList.add("deactivated");
         document.querySelector(".c-endgame__fixed").classList.add("activated");
+        handleData(LeaderboardUrl, showEndScoreBoard);
       }
     }
   } catch (error) {
@@ -78,6 +82,7 @@ const listenToInputs = function () {
   htmlStartButton.addEventListener("click", function () {
     // ws.send(`{"gameState": "start", "gameMode": ${htmlGameMode[0].checked ? `"singleplayer"` : `"multiplayer"`}}`);
     ws.send(`{"gameState": "start"}`);
+    GameName = htmlName.value;
     console.log("Start button clicked");
     document.querySelector(".c-home").classList.add("hide");
     document.querySelector(".c-endgame__fixed").classList.remove("deactivated");
@@ -89,6 +94,7 @@ const listenToInputs = function () {
     document.querySelector(".c-boat").classList.remove("activated");
     document.querySelector(".c-boat").classList.add("deactivated");
     document.querySelector(".c-endgame__fixed").classList.add("activated");
+    handleData(LeaderboardUrl, showEndScoreBoard);
   });
 
   htmlEndScoreMenuButton = document.querySelector(".js-endscore-menu");
@@ -308,6 +314,33 @@ const showLeaderboard = function (jsonObject) {
   htmlLeaderBoardList.innerHTML = output;
 };
 
+const showEndScoreBoard = function (jsonObject) {
+  htmlEndGameList = document.querySelector(".js-endGameNameList");
+  let name = htmlName.value;
+  htmlEndGameName.innerHTML = GameName;
+  let output = "";
+  const playerIndex = jsonObject.findIndex((player) => player.name === name);
+  if (playerIndex !== -1) {
+    const start = Math.max(0, playerIndex - 2);
+    const end = Math.min(jsonObject.length, start + 5);
+    const visiblePlayers = jsonObject.slice(start, end);
+
+    visiblePlayers.forEach((player, index) => {
+      output += `<li class="c-scoreboard__item ${player.name === name ? "c-active-score" : ""}">
+          <div class="c-scoreboard__item--name">
+            <p>${start + index + 1}</p>
+            <p>${player.name}</p>
+          </div>
+          <p class="c-scoreboard__item--score">${player.score}m</p>
+            </li>`;
+    });
+
+    htmlEndGameList.innerHTML = output;
+  } else {
+    console.error("Player not found in leaderboard");
+  }
+};
+
 const adjustWidth = function () {
   const inputValue = htmlName.value;
   htmlNameBox.textContent = inputValue; // Set the widthBox text to the input value
@@ -322,9 +355,8 @@ const init = function () {
     console.log("Leaderboard page");
     listenToLeaderBoard();
     // Example function to fetch JSON data from a URL
-    // let url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard";
-    let url = `http://127.0.0.1:3000/api/getleaderboard`;
-    handleData(url, showLeaderboard);
+
+    handleData(LeaderboardUrl, showLeaderboard);
   } else {
     htmlScoreValue = document.querySelectorAll(".js-score");
     htmlName = document.querySelector(".js-name");
@@ -334,11 +366,11 @@ const init = function () {
     htmlStopButton = document.querySelector(".js-stop");
     htmlLeaderboardButton = document.querySelector(".js-leaderboard-btn");
     htmlEndGameName = document.querySelector(".js-endGameName");
-    htmlEndGameScore = document.querySelector(".js-endgame-score");
     htmlHelpScreens = document.querySelectorAll('input[name="help"]');
     htmlHelpButton = document.querySelector(".js-help-btn");
     htmlHelpReturnButton = document.querySelector(".js-help-page-return");
     htmlPencilButton = document.querySelector(".js-pencil");
+    htmlEndGameList = document.querySelector(".js-endGameNameList");
 
     touchArea = document.querySelector(".c-gamemode__container");
     touchArea.addEventListener("touchstart", handleTouchStart);
