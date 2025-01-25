@@ -136,6 +136,7 @@ public class TerrainGen : MonoBehaviour
             {
                 if (chunkCount % 2 == 0)
                 {
+                    SetChaserPosition(bezierPoints[100]);
                     chunkCount += 1;
                     Vector3 newPosition = terrain2.transform.position;
                     newPosition.z += 1026f;
@@ -146,11 +147,11 @@ public class TerrainGen : MonoBehaviour
                     lastHeights = heights.Result;
                     terrainData2.SetHeights(0, 0, heights.Result);
                     StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.SinglePlayer));
-                    SetChaserPosition(bezierPoints[100]);
                     BakeNavMesh();
                 }
                 else
                 {
+                    SetChaserPosition(bezierPoints[100]);
                     chunkCount += 1;
                     Vector3 newPosition = terrain1.transform.position;
                     newPosition.z += 1026f;
@@ -161,7 +162,6 @@ public class TerrainGen : MonoBehaviour
                     lastHeights = heights.Result;
                     terrainData1.SetHeights(0, 0, heights.Result);
                     StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.SinglePlayer));
-                    SetChaserPosition(bezierPoints[100]);
                     BakeNavMesh();
                 }
             }
@@ -169,6 +169,7 @@ public class TerrainGen : MonoBehaviour
             {
                 if (chunkCount % 2 == 0)
                 {
+                    SetChaserPosition(bezierPoints[100]);
                     chunkCount += 1;
                     Vector3 newPosition = terrain2.transform.position;
                     newPosition.z += 1026f;
@@ -176,15 +177,14 @@ public class TerrainGen : MonoBehaviour
                     GenerateRandomBezierCurve(false, new Vector2(bezierPoints[bezierPoints.Count - 1].x, bezierPoints[bezierPoints.Count - 1].z), 100);
                     var heights = CarveTerrainAsync(cts.Token);
                     await heights;
-                    // StartCoroutine(obstacles.GenerateObstaclesForChunk(heights.Result));
                     lastHeights = heights.Result;
                     terrainData2.SetHeights(0, 0, heights.Result);
                     StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.MultiPlayer));
-                    SetChaserPosition(bezierPoints[100]);
                     BakeNavMesh();
                 }
                 else
                 {
+                    SetChaserPosition(bezierPoints[100]);
                     chunkCount += 1;
                     Vector3 newPosition = terrain1.transform.position;
                     newPosition.z += 1026f;
@@ -195,7 +195,6 @@ public class TerrainGen : MonoBehaviour
                     lastHeights = heights.Result;
                     terrainData1.SetHeights(0, 0, heights.Result);
                     StartCoroutine(obstacles.GenerateObstaclesForChunk(bezierPoints, chunkCount, GameMode.MultiPlayer));
-                    SetChaserPosition(bezierPoints[100]);
                     BakeNavMesh();
                 }
             }
@@ -485,20 +484,50 @@ public class TerrainGen : MonoBehaviour
     }
 
 
-    private async void BakeNavMesh()
-    {
-        var navMeshData = navMeshSurface.navMeshData;
-        var sources = new List<UnityEngine.AI.NavMeshBuildSource>();
-        UnityEngine.AI.NavMeshBuilder.CollectSources(navMeshSurface.transform, navMeshSurface.layerMask, navMeshSurface.useGeometry, navMeshSurface.defaultArea, new List<UnityEngine.AI.NavMeshBuildMarkup>(), sources);
-        var bounds = navMeshSurface.navMeshData.sourceBounds;
+//     private async void BakeNavMesh()
+//     {
+//         var navMeshData = navMeshSurface.navMeshData;
+//         var buildSettings = navMeshSurface.GetBuildSettings();
+//         var sources = new List<UnityEngine.AI.NavMeshBuildSource>();
+//         UnityEngine.AI.NavMeshBuilder.CollectSources(navMeshSurface.transform, navMeshSurface.layerMask, navMeshSurface.useGeometry, navMeshSurface.defaultArea, new List<UnityEngine.AI.NavMeshBuildMarkup>(), sources);
+//         var bounds = navMeshSurface.navMeshData.sourceBounds;
+//         if(chunkCount > 1){
+//             bounds.center += new Vector3(0, 0, 513);
+//         }
+//         else{
+//             bounds.center = new Vector3(0, 0, 256.5f);
+//         }
+//         await Task.Run(async () =>
+// {
+//             await UnityEngine.AI.NavMeshBuilder.UpdateNavMeshDataAsync(navMeshData, buildSettings, sources, bounds);
+//         });
 
-        await UnityEngine.AI.NavMeshBuilder.UpdateNavMeshDataAsync(navMeshData, navMeshSurface.GetBuildSettings(), sources, bounds);
+//         // await UnityEngine.AI.NavMeshBuilder.UpdateNavMeshDataAsync(navMeshData, navMeshSurface.GetBuildSettings(), sources, bounds);
+
+//     }
+private async void BakeNavMesh()
+{
+    var navMeshData = navMeshSurface.navMeshData;
+    var buildSettings = navMeshSurface.GetBuildSettings();
+    var sources = new List<UnityEngine.AI.NavMeshBuildSource>();
+    UnityEngine.AI.NavMeshBuilder.CollectSources(navMeshSurface.transform, navMeshSurface.layerMask, navMeshSurface.useGeometry, navMeshSurface.defaultArea, new List<UnityEngine.AI.NavMeshBuildMarkup>(), sources);
+    var bounds = navMeshSurface.navMeshData.sourceBounds;
+    if (chunkCount > 1)
+    {
+        bounds.center += new Vector3(0, 0, 513);
     }
+    else
+    {
+        bounds.center = new Vector3(0, 0, 256.5f);
+    }
+    await UnityEngine.AI.NavMeshBuilder.UpdateNavMeshDataAsync(navMeshData, buildSettings, sources, bounds);
+}
     private void SetChaserPosition(Vector3 point)
     {
         if (chaser.transform.position.z < point.z)
         {
-            chaser.transform.position = new Vector3(chaser.transform.position.x, 0, point.z);
+            Debug.Log("setting pos: " + point.z);
+            chaseAgent.Warp(new Vector3(point.x, 0, point.z));
         }
     }
 }
