@@ -510,7 +510,7 @@ public class TerrainGen : MonoBehaviour
 //         // await UnityEngine.AI.NavMeshBuilder.UpdateNavMeshDataAsync(navMeshData, navMeshSurface.GetBuildSettings(), sources, bounds);
 
 //     }
-private async void BakeNavMesh()
+private void BakeNavMesh()
 {
     var navMeshData = navMeshSurface.navMeshData;
     var buildSettings = navMeshSurface.GetBuildSettings();
@@ -525,7 +525,7 @@ private async void BakeNavMesh()
     {
         bounds.center = new Vector3(0, 0, 256.5f);
     }
-    await UnityEngine.AI.NavMeshBuilder.UpdateNavMeshDataAsync(navMeshData, buildSettings, sources, bounds);
+    UnityEngine.AI.NavMeshBuilder.UpdateNavMeshData(navMeshData, buildSettings, sources, bounds);
 }
     private void SetChaserPosition(Vector3 point)
     {
