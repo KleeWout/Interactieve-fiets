@@ -10,6 +10,7 @@ public class HealthManager : MonoBehaviour
     public GameObject canoeSingleplayer;
 
     public Material[] materials;
+    public Material outsideMaterial;
 
     public Image[] hearts;
     public Sprite fullHeart;
@@ -31,6 +32,8 @@ public class HealthManager : MonoBehaviour
         else
             PlayHeartBounceAnimation();
             UpdateHearts();
+
+        StartCoroutine(FlashMaterials());
     }
 
     public IEnumerator WaitAndShowGameOverScreen()
@@ -85,5 +88,26 @@ public class HealthManager : MonoBehaviour
     void PlayHeartBounceAnimation()
     {
         heartAnimators[health].SetTrigger("Bounce");
+    }
+    private IEnumerator FlashMaterials()
+    {
+        var colorChange = materials[0].color;
+        var startColor = outsideMaterial.color;
+        outsideMaterial.color = colorChange;
+        yield return new WaitForSeconds(0.25f);
+        outsideMaterial.color = startColor;
+        yield return new WaitForSeconds(0.25f);
+        outsideMaterial.color = colorChange;
+        yield return new WaitForSeconds(0.25f);
+        outsideMaterial.color = startColor;
+        yield return new WaitForSeconds(0.25f);
+        outsideMaterial.color = colorChange;
+        yield return new WaitForSeconds(0.25f);
+        outsideMaterial.color = startColor;
+        yield return new WaitForSeconds(0.25f);
+        outsideMaterial.color = colorChange;
+        yield return new WaitForSeconds(0.25f);
+        outsideMaterial.color = startColor;
+        yield return new WaitForSeconds(0.25f);
     }
 }

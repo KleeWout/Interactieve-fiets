@@ -486,6 +486,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 815dbe019e71f47279643ba2369b9099, type: 2}
   - {fileID: 2100000, guid: 3e2a00d161057422bac850f1bd3783a4, type: 2}
   - {fileID: 2100000, guid: 146477883ee2b45178690cb1483cbcf9, type: 2}
+  outsideMaterial: {fileID: 2100000, guid: 54c4c1eae71d1493fa83ec5d202e7597, type: 2}
   hearts:
   - {fileID: 756857326}
   - {fileID: 1884443379}
