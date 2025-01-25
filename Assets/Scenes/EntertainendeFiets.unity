@@ -2083,6 +2083,7 @@ MonoBehaviour:
   terrain1: {fileID: 92773933}
   terrain2: {fileID: 365135923}
   chaser: {fileID: 1898485341}
+  health: {fileID: 39061755}
 --- !u!4 &618671471
 Transform:
   m_ObjectHideFlags: 0
@@ -3220,6 +3221,8 @@ MonoBehaviour:
   countdown: {fileID: 288976128}
   countdownTime: 10
   gameSelect: {fileID: 1562793646}
+  localUrl: http://localhost:3000/api/addleaderboard
+  sendLocal: 1
 --- !u!1 &1450918143
 GameObject:
   m_ObjectHideFlags: 0

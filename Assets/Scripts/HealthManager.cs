@@ -33,7 +33,7 @@ public class HealthManager : MonoBehaviour
             UpdateHearts();
     }
 
-    IEnumerator WaitAndShowGameOverScreen()
+    public IEnumerator WaitAndShowGameOverScreen()
     {
         foreach(Material material in materials)
         {

@@ -38,6 +38,8 @@ public class TerrainGen : MonoBehaviour
     public GameObject chaser;
     private NavMeshAgent chaseAgent;
 
+    public HealthManager health;
+
     public async void GenerateTerrain(GameMode mode, CancellationToken cancellationToken)
     {
         currentGameMode = mode;
@@ -202,7 +204,10 @@ public class TerrainGen : MonoBehaviour
         if(player.transform.position.z > 10f){
             chaser.SetActive(true);
         }
-        if(Vector3.Distance(player.transform.position, chaser.transform.position) < 7f){
+        if(Vector3.Distance(player.transform.position, chaser.transform.position) < 1.5f && chaser.activeSelf){
+            StartCoroutine(health.WaitAndShowGameOverScreen());
+        }
+        else if(Vector3.Distance(player.transform.position, chaser.transform.position) < 7f){
             chaseAgent.speed = 0.6f;
         }
         else{
