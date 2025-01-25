@@ -42,6 +42,12 @@ ws.onmessage = (event) => {
         document.querySelector(".c-endgame__fixed").classList.add("activated");
         handleData(LeaderboardUrl, showEndScoreBoard);
       }
+      else if(jsonData.GameOver == "restart"){
+        console.log("Game restart");
+        document.querySelector(".c-boat").classList.remove("deactivated");
+        document.querySelector(".c-boat").classList.add("activated");
+        document.querySelector(".c-endgame__fixed").classList.remove("activated");
+      }
     }
   } catch (error) {
     console.error("Error parsing JSON:", error);
@@ -99,7 +105,7 @@ const listenToInputs = function () {
 
   htmlEndScoreMenuButton = document.querySelector(".js-endscore-menu");
   htmlEndScoreMenuButton.addEventListener("click", function () {
-    ws.send('{"gameState": "restart"}');
+    ws.send('{"gameState": "reset_view"}');
     window.location.reload();
   });
   htmlLeaderboardButton.addEventListener("click", function () {
@@ -164,7 +170,22 @@ const joinGameConnection = async function (gameCode) {
           htmlScoreValue.forEach((element) => {
             element.innerHTML = `${response.score}m</p>`;
           });
-        } else if (response.connectionStatus === "success") {
+        } else if (response.connectionStatus === "reconnect-gameover") {
+          document.querySelector(".c-main").classList.remove("blurred");
+          document.querySelector(".c-buttons").classList.remove("blurred");
+          document.querySelector(".c-entry").classList.add("hidden");
+          document.querySelector(".c-home").classList.add("hide");
+          document.querySelector(".c-endgame__fixed").classList.remove("deactivated");
+          // document.querySelector(".c-boat").classList.add("activated")
+          htmlScoreValue.forEach((element) => {
+            element.innerHTML = `${response.score}m</p>`;
+          });
+          // document.querySelector(".c-boat").classList.remove("activated");
+          // document.querySelector(".c-boat").classList.add("deactivated");
+          document.querySelector(".c-endgame__fixed").classList.add("activated");
+          handleData(LeaderboardUrl, showEndScoreBoard);
+        } 
+        else if (response.connectionStatus === "success") {
           document.querySelector(".c-inputname__widthbox").value = name;
           htmlName.value = name;
           htmlEndGameName.innerHTML = name;

@@ -44,6 +44,7 @@ app.get("/api/getleaderboard", function (req, res) {
 
 //add player to leaderboard
 app.post("/api/addleaderboard", (req, res) => {
+  console.log("received request");
   const newPlayer = req.body;
 
   if (!newPlayer.name || typeof newPlayer.score !== "number") {
@@ -184,9 +185,17 @@ wss.on("connection", function (ws) {
         const strippedMessage = { ...message };
         delete strippedMessage.IsGameClient;
         delete strippedMessage.NewConnection;
-        console.log(message);
+        // console.log(message);
         if (strippedMessage.Score) {
           gameScore.set(ws, strippedMessage.Score);
+        }
+        if(strippedMessage.GameOver == 'true'){
+          console.log("Game over");
+          gameStatus.set(ws, "gameover");
+        }
+        else if(strippedMessage.GameOver == 'restart'){
+          gameStatus.set(ws, "start");
+          game2browser.get(ws).send(JSON.stringify({ gameState: "start", gameMode: strippedMessage.gameMode }));
         }
         game2browser.get(ws).send(JSON.stringify(strippedMessage));
       } else {
@@ -201,9 +210,12 @@ wss.on("connection", function (ws) {
         } else if (message.gameState === "stop") {
           gameStatus.set(browser2game.get(ws), "stop");
           browser2game.get(ws).send(JSON.stringify({ gameState: "stop" }));
-        } else if (message.gameState === "restart") {
+          console.log("Game stopped");
+        } else if (message.gameState === "reset_view") {
           if (game2browser.has(browser2game.get(ws))) {
-            browser2game.get(ws).send(JSON.stringify({ gameState: "restart" }));
+            gameStatus.set(browser2game.get(ws), "stop");
+            browser2game.get(ws).send(JSON.stringify({ gameState: "reset_view" }));
+            console.log("Game restarted");
           }
         }
       }
@@ -218,15 +230,23 @@ wss.on("connection", function (ws) {
           } else {
             game2browser.set(gameClients.get(gameCode), ws);
             browser2game.set(ws, gameClients.get(gameCode));
-            // make a reconnect option
-            // if game was already started, give reconnect instead of connect
-            browser2game.get(ws).send(JSON.stringify({ connectionStatus: "connected", userName: message.userName, gameMode: message.gameMode }));
+ 
+            if(gameStatus.get(gameClients.get(gameCode)) == "gameover"){
+              browser2game.get(ws).send(JSON.stringify({ connectionStatus: "reconnected", userName: message.userName}));
+            }
+            else{
+              browser2game.get(ws).send(JSON.stringify({ connectionStatus: "connected", userName: message.userName, gameMode: message.gameMode }));
+            }
 
             // console.log("Browser client joined game with code: ", gameCode);
             // handle reconnect here (check if game was already started with gameStatus)
             if (gameStatus.get(gameClients.get(gameCode)) == "start") {
               ws.send(JSON.stringify({ connectionStatus: "reconnect-start", id: message.id, score: gameScore.get(gameClients.get(gameCode)) }));
-            } else {
+            } else if(gameStatus.get(gameClients.get(gameCode)) == "gameover"){
+              // reconnect-gameover
+              ws.send(JSON.stringify({ connectionStatus: "reconnect-gameover", id: message.id, score: gameScore.get(gameClients.get(gameCode)) }));
+            }
+            else {
               ws.send(JSON.stringify({ connectionStatus: "success", id: message.id }));
             }
           }
@@ -255,7 +275,11 @@ wss.on("connection", function (ws) {
       if (gameStatus.get(browser2game.get(ws)) == "start") {
         browser2game.get(ws).send(JSON.stringify({ connectionStatus: "idle" }));
       } else {
+        // if(gameStatus.get(browser2game.get(ws)) != "gameover"){
+        //   browser2game.get(ws).send(JSON.stringify({ connectionStatus: "disconnected" }));
+        // }
         browser2game.get(ws).send(JSON.stringify({ connectionStatus: "disconnected" }));
+
       }
       game2browser.delete(browser2game.get(ws));
       browser2game.delete(ws);

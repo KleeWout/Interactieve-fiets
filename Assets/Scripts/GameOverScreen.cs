@@ -3,26 +3,36 @@ using TMPro;
 using System.Collections;
 using Models.WebSocketMessage;
 using UnityEngine.Networking;
+using System.Threading;
 public class GameOverScreen : MonoBehaviour
 {
     public TMP_Text countdown;
+    public TMP_Text scoreEndText;
     public int countdownTime = 10;
     public GameSelect gameSelect;
-
+    public GameObject chaser;
+    public ScoreSystem scoreSystem;
     public static bool isGameOver = false;
     private static string url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard?code=Q8dqx9qcNI8yuXDZOCWP05B8pC7fZED6ymj4S5RHVFMPAzFuOZqv8w==";
 
-    public string localUrl = "http://localhost:3000/api/addleaderboard";
+    private string localUrl = "http://localhost:3000/api/addleaderboard";
 
     public bool sendLocal = true;
+
+    private CancellationTokenSource cts;
+    public TerrainGen terrain;
 
 
 
     public void OnEnable()
     {
         GameSelect.isGameStarted = false;
-        StartCoroutine(CountdownTest());
         int score = (int)ScoreSystem.score;
+        scoreEndText.text = score.ToString() + "m";
+        chaser.SetActive(false);
+        WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { GameOver = "true", Score = score.ToString() });
+        StartCoroutine(CountdownTest());
+
 
         if (sendLocal)
         {
@@ -32,14 +42,18 @@ public class GameOverScreen : MonoBehaviour
         {
             StartCoroutine(UploadScore(GameSelect.userName, score));
         }
-        StartCoroutine(UploadScore(GameSelect.userName, score));
-        StartCoroutine(UploadScoreLocal(GameSelect.userName, score));
-        WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { GameOver = "true", Score = ScoreSystem.score.ToString() });
-
     }
 
     public IEnumerator CountdownTest()
     {
+        gameSelect.ResetPlayer();
+        gameSelect.StartGame();
+        GameSelect.isGameStarted = false;
+
+        cts?.Cancel();
+        cts = new CancellationTokenSource();
+        terrain.GenerateTerrain(GameSelect.gameMode, cts.Token);
+
         for (int i = countdownTime; i >= 1; i--)
         {
             countdown.text = $"Terug naar beginscherm in {i} ...";
@@ -47,11 +61,13 @@ public class GameOverScreen : MonoBehaviour
         }
         countdown.text = $"Terug naar beginscherm in {0} ...";
 
-        WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { NewConnection = true });
-        GameSelect.isGameStarted = false;
-        GameSelect.isIdle = false;
+        // WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { NewConnection = true });
+        // GameSelect.isGameStarted = false;
+        // GameSelect.isIdle = false;
 
         gameObject.SetActive(false);
+        GameSelect.isGameStarted = true;
+        WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { GameOver = "restart", Score = "0" });
         countdown.text = $"Terug naar beginscherm in 10...";
 
     }
@@ -63,15 +79,6 @@ public class GameOverScreen : MonoBehaviour
         using (UnityWebRequest www = UnityWebRequest.Post(url, body, "application/json"))
         {
             yield return www.SendWebRequest();
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError(www.error);
-            }
-            else
-            {
-                Debug.Log("Form upload complete!");
-            }
         }
     }
 
@@ -81,15 +88,6 @@ public class GameOverScreen : MonoBehaviour
         using (UnityWebRequest www = UnityWebRequest.Post(localUrl, body, "application/json"))
         {
             yield return www.SendWebRequest();
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError(www.error);
-            }
-            else
-            {
-                Debug.Log("Form upload complete!");
-            }
         }
     }
 

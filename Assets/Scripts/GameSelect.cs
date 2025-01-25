@@ -12,11 +12,12 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class GameSelect : MonoBehaviour
 {
-    public GameMode gameMode;
+    public static GameMode gameMode;
     public GameObject canoeSingleplayer;
     public GameObject canoeMultiplayer;
     public GameObject playerObject;
     public HealthManager healthManager;
+    public ScoreSystem scoreSystem;
 
     public GameObject hudCanvas;
     public TMP_Text gameCodeText;
@@ -95,11 +96,13 @@ public class GameSelect : MonoBehaviour
         }
         if (mode == GameMode.SinglePlayer)
         {
+            hudCanvas.SetActive(false);
             StartCoroutine(RotateAndSwitch(singleplayerAnimator, canoeMultiplayer, canoeSingleplayer));
             cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(2f, 1.25f, 0.15f), Quaternion.Euler(25, -90, 0)));
         }
         else if (mode == GameMode.MultiPlayer)
         {
+            hudCanvas.SetActive(false);
             StartCoroutine(RotateAndSwitch(multiplayerAnimator, canoeSingleplayer, canoeMultiplayer));
             cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0f, 1.25f, -2.5f), Quaternion.Euler(25, 0, 0)));
         }
@@ -206,9 +209,11 @@ public class GameSelect : MonoBehaviour
     }
 
 
-    void ResetPlayer()
+    public void ResetPlayer()
     {
-        ScoreSystem.score = 0f;
+        // ScoreSystem.score = 0;
+        // scoreSystem.ResetScore();
+        scoreSystem.ResetScore();
         Rigidbody playerRb = playerObject.GetComponent<Rigidbody>();
         playerRb.linearVelocity = Vector3.zero;
         playerRb.angularVelocity = Vector3.zero;

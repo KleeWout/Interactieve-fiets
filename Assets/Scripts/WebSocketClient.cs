@@ -79,7 +79,7 @@ public class WebSocketClient : MonoBehaviour
                 }
 
                 string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                // Debug.Log($"Received: {message}");
+                Debug.Log($"Received: {message}");
                 JObject jsonObject = JObject.Parse(message);
 
 
@@ -102,6 +102,9 @@ public class WebSocketClient : MonoBehaviour
                         {
                             gameSelect.ChangeState(GameMode.SinglePlayer);
                         }
+                    }
+                    else if(connectionStatus == "reconnected"){
+                        isReconnected = true;
                     }
                     else if (connectionStatus == "connected" && GameSelect.isGameStarted)
                     {
@@ -153,7 +156,7 @@ public class WebSocketClient : MonoBehaviour
                     {
                         gameOverScreen.SetActive(true);
                     }
-                    else if (gameState == "restart")
+                    else if (gameState == "reset_view")
                     {
                         gameOverScreen.SetActive(false);
                         GameSelect.isGameStarted = false;
@@ -185,7 +188,7 @@ public class WebSocketClient : MonoBehaviour
             string json = JsonUtility.ToJson(data);
             var bytes = Encoding.UTF8.GetBytes(json);
             await webSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
-            Debug.Log($"Sent: {json}");
+            // Debug.Log($"Sent: {json}");
         }
         else
         {

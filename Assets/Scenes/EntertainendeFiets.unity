@@ -467,7 +467,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 608084286}
-  scoreEndText: {fileID: 1450918145}
 --- !u!114 &39061755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1497,7 +1496,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11442534, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11442534, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
       propertyPath: messageListener
@@ -3220,10 +3219,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   countdown: {fileID: 288976128}
+  scoreEndText: {fileID: 1450918145}
   countdownTime: 10
   gameSelect: {fileID: 1562793646}
-  localUrl: http://localhost:3000/api/addleaderboard
+  chaser: {fileID: 1898485341}
+  scoreSystem: {fileID: 39061754}
   sendLocal: 1
+  terrain: {fileID: 618671470}
 --- !u!1 &1450918143
 GameObject:
   m_ObjectHideFlags: 0
@@ -3731,11 +3733,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9975d2752467d40d4beed0512e606e2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameMode: 0
   canoeSingleplayer: {fileID: 1480849956}
   canoeMultiplayer: {fileID: 20283344}
   playerObject: {fileID: 39061749}
   healthManager: {fileID: 39061755}
+  scoreSystem: {fileID: 39061754}
   hudCanvas: {fileID: 1012608946}
   gameCodeText: {fileID: 2116319052}
   qrDisplay: {fileID: 1513953792}

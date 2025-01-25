@@ -40,32 +40,297 @@
     "position": 8
   },
   {
-    "name": "SkipperSaar",
-    "score": 5,
+    "name": "AquaAap",
+    "score": 47,
     "position": 9
+  },
+  {
+    "name": "SkipperSnelle",
+    "score": 37,
+    "position": 10
+  },
+  {
+    "name": "KrachtKraker",
+    "score": 36,
+    "position": 11
+  },
+  {
+    "name": "FietsFlits",
+    "score": 25,
+    "position": 12
+  },
+  {
+    "name": "TurboToon",
+    "score": 23,
+    "position": 13
+  },
+  {
+    "name": "Roeiramp",
+    "score": 21,
+    "position": 14
+  },
+  {
+    "name": "SchuitSchelm",
+    "score": 21,
+    "position": 15
+  },
+  {
+    "name": "WaterWandelaar",
+    "score": 16,
+    "position": 16
+  },
+  {
+    "name": "WoutStinkttttt",
+    "score": 12,
+    "position": 17
+  },
+  {
+    "name": "KrachtKapitein",
+    "score": 12,
+    "position": 18
+  },
+  {
+    "name": "SloepjeSylvia",
+    "score": 12,
+    "position": 19
+  },
+  {
+    "name": "BaggerBoot",
+    "score": 11,
+    "position": 20
+  },
+  {
+    "name": "VlotVlogger",
+    "score": 11,
+    "position": 21
+  },
+  {
+    "name": "DieselDrijver",
+    "score": 11,
+    "position": 22
+  },
+  {
+    "name": "DrijfDodo",
+    "score": 11,
+    "position": 23
+  },
+  {
+    "name": "RoeiRaketje",
+    "score": 11,
+    "position": 24
+  },
+  {
+    "name": "VluggeViking",
+    "score": 11,
+    "position": 25
+  },
+  {
+    "name": "FietsFighter",
+    "score": 11,
+    "position": 26
+  },
+  {
+    "name": "WaterWaaghals",
+    "score": 11,
+    "position": 27
+  },
+  {
+    "name": "KlompKapitein",
+    "score": 11,
+    "position": 28
+  },
+  {
+    "name": "RiemRakkerRick",
+    "score": 11,
+    "position": 29
+  },
+  {
+    "name": "KapiteinKaag",
+    "score": 11,
+    "position": 30
+  },
+  {
+    "name": "KraakKapitein",
+    "score": 11,
+    "position": 31
+  },
+  {
+    "name": "SlipStreamSara",
+    "score": 11,
+    "position": 32
+  },
+  {
+    "name": "WaterWeirdo",
+    "score": 11,
+    "position": 33
+  },
+  {
+    "name": "SlipstreamSjaak",
+    "score": 11,
+    "position": 34
+  },
+  {
+    "name": "DitIsKobe",
+    "score": 11,
+    "position": 35
+  },
+  {
+    "name": "HaringHorizon",
+    "score": 11,
+    "position": 36
+  },
+  {
+    "name": "VlotskeVera",
+    "score": 10,
+    "position": 37
+  },
+  {
+    "name": "BootjeBob",
+    "score": 10,
+    "position": 38
+  },
+  {
+    "name": "Kaaskanoër",
+    "score": 10,
+    "position": 39
+  },
+  {
+    "name": "WaterWiebelt",
+    "score": 10,
+    "position": 40
+  },
+  {
+    "name": "SkipperSaar",
+    "score": 10,
+    "position": 41
+  },
+  {
+    "name": "WaddenWolf",
+    "score": 10,
+    "position": 42
+  },
+  {
+    "name": "PedaalPiratenbaas",
+    "score": 10,
+    "position": 43
+  },
+  {
+    "name": "VlotViktor",
+    "score": 10,
+    "position": 44
+  },
+  {
+    "name": "AquaAvonturier",
+    "score": 10,
+    "position": 45
+  },
+  {
+    "name": "KlompKanoër",
+    "score": 10,
+    "position": 46
+  },
+  {
+    "name": "PeddelPiraat",
+    "score": 10,
+    "position": 47
+  },
+  {
+    "name": "FietsFiasco",
+    "score": 10,
+    "position": 48
+  },
+  {
+    "name": "RoeiRembrandt",
+    "score": 10,
+    "position": 49
+  },
+  {
+    "name": "BoeiBink",
+    "score": 10,
+    "position": 50
+  },
+  {
+    "name": "VechtViking",
+    "score": 8,
+    "position": 51
+  },
+  {
+    "name": "ZwemZilver",
+    "score": 7,
+    "position": 52
+  },
+  {
+    "name": "SnelleSloep",
+    "score": 6,
+    "position": 53
+  },
+  {
+    "name": "RoeisloepRens",
+    "score": 6,
+    "position": 54
+  },
+  {
+    "name": "RoeispaanRenzo",
+    "score": 4,
+    "position": 55
   },
   {
     "name": "ScheepsSjakie",
     "score": 3,
-    "position": 10
+    "position": 56
+  },
+  {
+    "name": "TrapTurboTom",
+    "score": 3,
+    "position": 57
+  },
+  {
+    "name": "SnelSchuitje",
+    "score": 1,
+    "position": 58
   },
   {
     "name": "GolvenGrappenmaker",
     "score": 0,
-    "position": 11
+    "position": 59
   },
   {
     "name": "MolenMeneer",
     "score": 0,
-    "position": 12
+    "position": 60
   },
   {
     "name": "kankerkeun",
     "score": 0,
-    "position": 13
+    "position": 61
   },
   {
-    "position": 14,
+    "name": "TurboTrapfiets",
+    "score": 0,
+    "position": 62
+  },
+  {
+    "name": "BriesBootje",
+    "score": 0,
+    "position": 63
+  },
+  {
+    "name": "GrachtenGlijder",
+    "score": 0,
+    "position": 64
+  },
+  {
+    "name": "PeilPiraat",
+    "score": 0,
+    "position": 65
+  },
+  {
+    "name": "PeilPeddelaar",
+    "score": 0,
+    "position": 66
+  },
+  {
+    "position": 67,
     "name": "HansjePansjeKevertje",
     "score": -2
   }
