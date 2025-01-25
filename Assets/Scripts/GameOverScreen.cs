@@ -3,7 +3,6 @@ using TMPro;
 using System.Collections;
 using Models.WebSocketMessage;
 using UnityEngine.Networking;
-using System.Collections;
 public class GameOverScreen : MonoBehaviour
 {
     public TMP_Text countdown;
