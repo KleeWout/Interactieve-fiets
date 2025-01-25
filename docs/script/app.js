@@ -218,7 +218,7 @@ const changeUserName = function (name) {
 const getRandomName = async function () {
   const urlParams = new URLSearchParams(window.location.search);
 
-  if(urlParams.has("name")){
+  if(urlParams.has("name") && urlParams.get("name").length <= 18 && !/\s/.test(urlParams.get("name"))){
     console.log("Name found in URL");
     return urlParams.get("name");
   }
