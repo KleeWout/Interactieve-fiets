@@ -30,10 +30,6 @@ public class GameOverScreen : MonoBehaviour
         int score = (int)ScoreSystem.score;
         scoreEndText.text = score.ToString() + "m";
         chaser.SetActive(false);
-        WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { GameOver = "true", Score = score.ToString() });
-        StartCoroutine(CountdownTest());
-
-
         if (sendLocal)
         {
             StartCoroutine(UploadScoreLocal(GameSelect.userName, score));
@@ -42,6 +38,7 @@ public class GameOverScreen : MonoBehaviour
         {
             StartCoroutine(UploadScore(GameSelect.userName, score));
         }
+        StartCoroutine(CountdownTest());
     }
 
     public IEnumerator CountdownTest()
@@ -89,6 +86,7 @@ public class GameOverScreen : MonoBehaviour
         {
             yield return www.SendWebRequest();
         }
+        WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { GameOver = "true", Score = score.ToString() });
     }
 
 

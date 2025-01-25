@@ -69,6 +69,7 @@ const listenToInputs = function () {
     const url = new URL(window.location);
     url.searchParams.set("name", htmlName.value);
     window.history.pushState({}, "", url);
+    GameName = htmlName.value;
   });
   htmlGameMode.forEach((radio) => {
     radio.addEventListener("change", () => {
@@ -219,7 +220,7 @@ const getRandomName = async function () {
   const urlParams = new URLSearchParams(window.location.search);
 
   if(urlParams.has("name") && urlParams.get("name").length <= 18 && !/\s/.test(urlParams.get("name"))){
-    console.log("Name found in URL");
+    GameName = urlParams.get("name");
     return urlParams.get("name");
   }
   else{
@@ -354,17 +355,16 @@ const showLeaderboard = function (jsonObject) {
 
 const showEndScoreBoard = function (jsonObject) {
   htmlEndGameList = document.querySelector(".js-endGameNameList");
-  let name = htmlName.value;
   htmlEndGameName.innerHTML = GameName;
   let output = "";
-  const playerIndex = jsonObject.findIndex((player) => player.name === name);
+  const playerIndex = jsonObject.findIndex((player) => player.name === GameName);
   if (playerIndex !== -1) {
     const start = Math.max(0, playerIndex - 2);
     const end = Math.min(jsonObject.length, start + 5);
     const visiblePlayers = jsonObject.slice(start, end);
 
     visiblePlayers.forEach((player, index) => {
-      output += `<li class="c-scoreboard__item ${player.name === name ? "c-active-score" : ""}">
+      output += `<li class="c-scoreboard__item ${player.name === GameName ? "c-active-score" : ""}">
           <div class="c-scoreboard__item--name">
             <p>${start + index + 1}</p>
             <p>${player.name}</p>
