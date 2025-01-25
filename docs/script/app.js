@@ -1,4 +1,5 @@
 "use strict";
+
 let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea, touchAreaHelp, htmlHelpScreens;
 let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName, htmlEndGameScore, htmlHelpButton, htmlHelpReturnButton;
 let htmlPencilButton, htmlEndGameList;
@@ -65,6 +66,9 @@ const listenToInputs = function () {
   });
   htmlName.addEventListener("input", function () {
     ws.send('{"userName": "' + htmlName.value + '"}');
+    const url = new URL(window.location);
+    url.searchParams.set("name", htmlName.value);
+    window.history.pushState({}, "", url);
   });
   htmlGameMode.forEach((radio) => {
     radio.addEventListener("change", () => {
@@ -212,15 +216,28 @@ const changeUserName = function (name) {
 };
 
 const getRandomName = async function () {
-  try {
-    const response = await fetch("script/names.json");
-    const data = await response.json();
-    const names = data.names;
-    const randomIndex = Math.floor(Math.random() * names.length);
-    return names[randomIndex];
-  } catch (error) {
-    console.error("Error fetching names:", error);
-    return "PeddelPiraat";
+  const urlParams = new URLSearchParams(window.location.search);
+
+  if(urlParams.has("name")){
+    console.log("Name found in URL");
+    return urlParams.get("name");
+  }
+  else{
+    try {
+      const response = await fetch("script/names.json");
+      const data = await response.json();
+      const names = data.names;
+      const randomIndex = Math.floor(Math.random() * names.length);
+      const name = names[randomIndex];
+      const url = new URL(window.location);
+      urlParams.set("name", name);
+      window.history.pushState({}, "", `${window.location.pathname}?${urlParams.toString()}`);
+
+      return name;
+    } catch (error) {
+      console.error("Error fetching names:", error);
+      return "PeddelPiraat";
+    }
   }
 };
 
@@ -366,7 +383,6 @@ const adjustWidth = function () {
   const inputValue = htmlName.value;
   htmlNameBox.textContent = inputValue; // Set the widthBox text to the input value
   htmlName.style.width = htmlNameBox.offsetWidth + 1 + "px"; // Set the input width to the widthBox width
-  console.log(htmlNameBox.offsetWidth);
 };
 
 const init = function () {
