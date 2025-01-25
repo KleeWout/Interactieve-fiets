@@ -149,16 +149,19 @@ public class GameSelect : MonoBehaviour
 
     public void StartGame()
     {
+        playerObject.transform.rotation = Quaternion.identity;
         isGameStarted = true;
         HealthManager.health = 5;
         healthManager.UpdateHearts();
         hudCanvas.SetActive(true);
         if (gameMode == GameMode.SinglePlayer)
         {
+            canoeSingleplayer.SetActive(true);
             cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(3.8f, 5f, 0.15f), Quaternion.Euler(50, -90, 0)));
         }
         else if (gameMode == GameMode.MultiPlayer)
         {
+            canoeMultiplayer.SetActive(true);
             cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0f, 1.25f, -4f), Quaternion.Euler(0, 0, 0)));
         }
     }
@@ -211,15 +214,28 @@ public class GameSelect : MonoBehaviour
 
     public void ResetPlayer()
     {
-        // ScoreSystem.score = 0;
-        // scoreSystem.ResetScore();
+        canoeMultiplayer.SetActive(false);
+        canoeSingleplayer.SetActive(false);
         scoreSystem.ResetScore();
+
+        playerObject.transform.position = Vector3.zero;
+        playerObject.transform.rotation = Quaternion.identity;
+
         Rigidbody playerRb = playerObject.GetComponent<Rigidbody>();
         playerRb.linearVelocity = Vector3.zero;
         playerRb.angularVelocity = Vector3.zero;
 
-        playerObject.transform.position = Vector3.zero;
-        playerObject.transform.rotation = Quaternion.identity;
+
+    //         scoreSystem.ResetScore();
+    // Rigidbody playerRb = playerObject.GetComponent<Rigidbody>();
+    // playerRb.linearVelocity = Vector3.zero;
+    // playerRb.angularVelocity = Vector3.zero;
+
+    // playerObject.transform.position = Vector3.zero;
+    // playerObject.transform.rotation = Quaternion.identity;
+
+    // // Reset the local rotation of the camera
+    // cameraTransform.localRotation = Quaternion.identity;
 
     }
 }
