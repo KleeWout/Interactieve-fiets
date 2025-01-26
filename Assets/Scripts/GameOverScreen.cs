@@ -21,6 +21,8 @@ public class GameOverScreen : MonoBehaviour
 
     private CancellationTokenSource cts;
     public TerrainGen terrain;
+    private Coroutine uploadScoreCoroutine;
+    private Coroutine countdownCoroutine;
 
 
 
@@ -30,15 +32,33 @@ public class GameOverScreen : MonoBehaviour
         int score = (int)ScoreSystem.score;
         scoreEndText.text = score.ToString() + "m";
         chaser.SetActive(false);
+
+        if (uploadScoreCoroutine != null)
+        {
+            StopCoroutine(uploadScoreCoroutine);
+        }
+
         if (sendLocal)
         {
-            StartCoroutine(UploadScoreLocal(GameSelect.userName, score));
+            uploadScoreCoroutine = StartCoroutine(UploadScoreLocal(GameSelect.userName, score));
         }
         else
         {
-            StartCoroutine(UploadScore(GameSelect.userName, score));
+            uploadScoreCoroutine = StartCoroutine(UploadScore(GameSelect.userName, score));
         }
-        StartCoroutine(CountdownTest());
+
+        if (countdownCoroutine != null)
+        {
+            StopCoroutine(countdownCoroutine);
+        }
+        countdownCoroutine = StartCoroutine(CountdownTest());
+
+        if(GameSelect.gameMode == Models.GameModeModel.GameMode.SinglePlayer){
+            gameSelect.LoadSinglePlayer();
+        }
+        else if(GameSelect.gameMode == Models.GameModeModel.GameMode.MultiPlayer){
+            gameSelect.LoadMultiPlayer();
+        }
     }
 
     public IEnumerator CountdownTest()
@@ -47,20 +67,12 @@ public class GameOverScreen : MonoBehaviour
         gameSelect.StartGame();
         GameSelect.isGameStarted = false;
 
-        cts?.Cancel();
-        cts = new CancellationTokenSource();
-        terrain.GenerateTerrain(GameSelect.gameMode, cts.Token);
-
         for (int i = countdownTime; i >= 1; i--)
         {
             countdown.text = $"Terug naar beginscherm in {i} ...";
             yield return new WaitForSeconds(1);
         }
         countdown.text = $"Terug naar beginscherm in {0} ...";
-
-        // WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { NewConnection = true });
-        // GameSelect.isGameStarted = false;
-        // GameSelect.isIdle = false;
 
         gameObject.SetActive(false);
         GameSelect.isGameStarted = true;
