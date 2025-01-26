@@ -149,7 +149,7 @@ button {
   align-items: center;
   gap: 3.25rem;
   width: 100%;
-  z-index: 9999; /* high z-index to cover other elements */
+  z-index: 8888; /* high z-index to cover other elements */
   height: 100%;
 }
 .c-entry__container {
@@ -725,6 +725,7 @@ button {
 .c-help__fixed.activated {
   transform: translateY(0%);
   transition: transform 0.4s ease-in-out, visibility 0s linear;
+  z-index: 9999;
 }
 
 .c-help {
