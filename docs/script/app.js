@@ -423,7 +423,6 @@ const init = function () {
 
     document.addEventListener('visibilitychange', function() {
       if (document.visibilityState === 'visible') {
-          console.log("trigger");
           window.location.reload();
       }
   });
