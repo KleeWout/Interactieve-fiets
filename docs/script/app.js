@@ -421,9 +421,12 @@ const init = function () {
 
     listenToInputs();
 
-    // window.addEventListener('focus', function(event) {
-    //   window.location.reload();
-    // });
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible') {
+          console.log("trigger");
+          window.location.reload();
+      }
+  });
   }
 };
 
