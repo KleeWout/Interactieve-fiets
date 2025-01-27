@@ -150,11 +150,16 @@ wss.on("connection", function (ws) {
     let message;
     try {
       message = JSON.parse(msg.toString());
+      if (message.exit === true) {
+        console.error("exiting:");
+        ws.send(JSON.stringify({ exit: "true" }));
+      }
+
+        
     } catch (e) {
       console.error("Invalid JSON received:", msg.toString());
       return;
     }
-
     // check for game clients a stuur game code om spel te starten
     if (message.IsGameClient === true) {
       if (message.NewConnection === true) {

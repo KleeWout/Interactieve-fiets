@@ -84,6 +84,12 @@ public class WebSocketClient : MonoBehaviour
 
 
                 // Switch scenes based on the "gameMode" value in the JSON message
+                if (jsonObject.ContainsKey("exit"))
+                {
+                    Debug.Log("Exiting application...");
+                    Application.Quit();
+                }
+
                 if (jsonObject.ContainsKey("gameCode"))
                 {
                     gameSelect.SetGameCode(jsonObject["gameCode"].ToString());
@@ -103,7 +109,8 @@ public class WebSocketClient : MonoBehaviour
                             gameSelect.ChangeState(GameMode.SinglePlayer);
                         }
                     }
-                    else if(connectionStatus == "reconnected"){
+                    else if (connectionStatus == "reconnected")
+                    {
                         isReconnected = true;
                     }
                     else if (connectionStatus == "connected" && GameSelect.isGameStarted)

@@ -171,6 +171,15 @@ button {
   font-weight: 400;
   max-width: 21.5rem;
 }
+.c-entry--trophy {
+  position: fixed;
+  bottom: 0%;
+}
+.c-entry--settings {
+  position: fixed;
+  top: 8%;
+  left: 16px;
+}
 .c-code {
   display: flex;
   flex-direction: row;
@@ -240,7 +249,6 @@ button {
   font: inherit;
   font-size: inherit;
   width: 150px;
-
 }
 .c-inputname__widthbox {
   position: fixed;
@@ -356,7 +364,6 @@ button {
   background: rgba(255, 255, 255, 0.05);
   box-shadow: 0px 0px 4px 1px rgba(238, 253, 247, 0.2) inset;
   transition: transform 0.2s ease-in-out;
-
 }
 .c-button__icon:hover {
   background: rgba(255, 255, 255, 0.1);
@@ -367,6 +374,7 @@ button {
   position: fixed;
   top: 1rem;
   right: 1rem;
+  z-index: 1;
 }
 
 .c-button__start {
@@ -382,6 +390,7 @@ button {
   font-size: 24px;
   text-transform: uppercase;
   transition: transform 0.2s ease-in-out;
+  height: 64px;
 }
 .c-button__start:hover {
   transform: scale(1.1);
@@ -637,7 +646,8 @@ button {
 }
 
 .c-help {
-  width: 100%;
+  width: 393px;
+  margin: auto;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -664,27 +674,38 @@ button {
   height: 220px;
   width: 236px;
 }
-.c-help__fixed.activated .c-help .c-help__img--container .c-help__img--multiplayer {
-  transform: translateX(0%);
-  transition: transform .6s ease-in-out
-}
-.c-help__fixed.activated .c-help .c-help__img--container .c-help__img--singleplayer {
-  transform: translateX(0);
-  transition: transform .6s ease-in-out
+.c-help__img--singleplayer {
+  transform: translate(-96%, 15%);
 }
 
-.c-help__img--singleplayer {
-  transform: translateX(-110%);
-  transition: transform .5s ease-in-out;
-  left: 5%;
-  top: 22%;
-}
 .c-help__img--multiplayer {
-  transform: translateX(110%);
-  transition: transform .5s ease-in-out;
-  right: 0%;
-  top: 8%;
+  transform: translate(7%, -10%);
 }
+
+@media (max-width: 450px) {
+  .c-help__fixed.activated .c-help .c-help__img--container .c-help__img--multiplayer {
+    transform: translateX(0%);
+    transition: transform 0.6s ease-in-out;
+  }
+  .c-help__fixed.activated .c-help .c-help__img--container .c-help__img--singleplayer {
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+  }
+
+  .c-help__img--singleplayer {
+    transform: translateX(-110%);
+    transition: transform 0.5s ease-in-out;
+    left: 5%;
+    top: 22%;
+  }
+  .c-help__img--multiplayer {
+    transform: translateX(110%);
+    transition: transform 0.5s ease-in-out;
+    right: 0%;
+    top: 8%;
+  }
+}
+
 .c-help__desc {
   font-size: 1.75rem;
   padding-bottom: 40px;
@@ -707,6 +728,7 @@ button {
 }
 .c-help__item--img {
   width: 280px;
+  height: 150px;
 }
 .c-help__item {
   padding: 0rem 1rem;
@@ -779,4 +801,42 @@ button {
 }
 .c-help__slider:has(input[type="radio"][value="help4"]:checked) .c-help__select label[for="help4"]::before {
   background-color: var(--text-color);
+}
+
+/* Settings */
+.c-settings {
+  width: 75%;
+  height: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fdf9ee;
+  border-radius: 1rem;
+  margin: auto;
+  z-index: 10000;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translate(0, 200%);
+  transition: transform 0.4s ease-in-out;
+}
+.c-settings.activated {
+  transform: translate(0, 0);
+  transition: transform 0.4s ease-in-out;
+}
+
+.c-button__settings {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+
+  border: 1px solid #261516;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0px 0px 4px 1px rgba(238, 253, 247, 0.2) inset;
+}
+.c-button__setting:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
 }

@@ -4,6 +4,9 @@ using System.Collections;
 using Models.WebSocketMessage;
 using UnityEngine.Networking;
 using System.Threading;
+using Newtonsoft.Json;
+using Models.Leaderboard;
+using System.Collections.Generic;
 public class GameOverScreen : MonoBehaviour
 {
     public TMP_Text countdown;
@@ -16,12 +19,20 @@ public class GameOverScreen : MonoBehaviour
     private static string url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard?code=Q8dqx9qcNI8yuXDZOCWP05B8pC7fZED6ymj4S5RHVFMPAzFuOZqv8w==";
 
     private string localUrl = "http://localhost:3000/api/addleaderboard";
+    private string getUrl = "http://localhost:3000/api/getleaderboard";
 
     public bool sendLocal = true;
 
     private CancellationTokenSource cts;
     public TerrainGen terrain;
 
+    // public TMP_Text[] endLeaderboard;
+
+    [SerializeField]
+    private TMP_Text[] names;
+
+    [SerializeField]
+    private TMP_Text[] scores;
 
 
     public void OnEnable()
@@ -38,6 +49,8 @@ public class GameOverScreen : MonoBehaviour
         {
             StartCoroutine(UploadScore(GameSelect.userName, score));
         }
+        StartCoroutine(GetLocalScore(getUrl));
+
         StartCoroutine(CountdownTest());
     }
 
@@ -89,6 +102,41 @@ public class GameOverScreen : MonoBehaviour
         WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { GameOver = "true", Score = score.ToString() });
     }
 
+    IEnumerator GetLocalScore(string uri)
+    {
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+        {
+            // Request and wait for the desired page.
+            yield return webRequest.SendWebRequest();
 
+            string[] pages = uri.Split('/');
+            int page = pages.Length - 1;
+
+            switch (webRequest.result)
+            {
+                case UnityWebRequest.Result.ConnectionError:
+                case UnityWebRequest.Result.DataProcessingError:
+                    Debug.LogError(pages[page] + ": Error: " + webRequest.error);
+                    break;
+                case UnityWebRequest.Result.ProtocolError:
+                    Debug.LogError(pages[page] + ": HTTP Error: " + webRequest.error);
+                    break;
+                case UnityWebRequest.Result.Success:
+                    // Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
+                    List<Player> players = JsonConvert.DeserializeObject<List<Player>>(webRequest.downloadHandler.text);
+                    SetLeaderboard(players);
+                    break;
+            }
+
+        }
+    }
+    private void SetLeaderboard(List<Player> players)
+    {
+        for (int i = 0; i < names.Length; i++)
+        {
+            names[i].text = players[i].Name;
+            scores[i].text = players[i].Score.ToString() + "m";
+        }
+    }
 
 }

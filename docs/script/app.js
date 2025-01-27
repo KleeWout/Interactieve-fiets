@@ -2,7 +2,7 @@
 
 let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea, touchAreaHelp, htmlHelpScreens;
 let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName, htmlEndGameScore, htmlHelpButton, htmlHelpReturnButton;
-let htmlPencilButton, htmlEndGameList;
+let htmlPencilButton, htmlEndGameList, htmlSettingsButton, htmlSettingsCloseButton, htmlAfsluitButton;
 let GameName = "";
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
@@ -42,8 +42,7 @@ ws.onmessage = (event) => {
         document.querySelector(".c-boat").classList.add("deactivated");
         document.querySelector(".c-endgame__fixed").classList.add("activated");
         handleData(LeaderboardUrl, showEndScoreBoard);
-      }
-      else if(jsonData.GameOver == "restart"){
+      } else if (jsonData.GameOver == "restart") {
         console.log("Game restart");
         document.querySelector(".c-boat").classList.remove("deactivated");
         document.querySelector(".c-boat").classList.add("activated");
@@ -129,6 +128,18 @@ const listenToInputs = function () {
     htmlName.focus();
     htmlName.select();
   });
+
+  htmlSettingsButton.addEventListener("click", function () {
+    document.querySelector(".c-settings").classList.add("activated");
+  });
+
+  htmlSettingsCloseButton.addEventListener("click", function () {
+    document.querySelector(".c-settings").classList.remove("activated");
+  });
+
+  htmlAfsluitButton.addEventListener("click", function () {
+    ws.send('{"exit": "true"}');
+  });
 };
 
 const listenToLeaderBoard = function () {
@@ -167,6 +178,7 @@ const joinGameConnection = async function (gameCode) {
           console.log("Game already has a browser client");
         } else if (response.connectionStatus === "reconnect-start") {
           document.querySelector(".c-main").classList.remove("blurred");
+          document.querySelector(".c-button__icon--help").classList.remove("blurred");
           document.querySelector(".c-buttons").classList.remove("blurred");
           document.querySelector(".c-entry").classList.add("hidden");
           document.querySelector(".c-home").classList.add("hide");
@@ -177,6 +189,8 @@ const joinGameConnection = async function (gameCode) {
           });
         } else if (response.connectionStatus === "reconnect-gameover") {
           document.querySelector(".c-main").classList.remove("blurred");
+          document.querySelector(".c-button__icon--help").classList.remove("blurred");
+
           document.querySelector(".c-buttons").classList.remove("blurred");
           document.querySelector(".c-entry").classList.add("hidden");
           document.querySelector(".c-home").classList.add("hide");
@@ -189,14 +203,15 @@ const joinGameConnection = async function (gameCode) {
           // document.querySelector(".c-boat").classList.add("deactivated");
           document.querySelector(".c-endgame__fixed").classList.add("activated");
           handleData(LeaderboardUrl, showEndScoreBoard);
-        } 
-        else if (response.connectionStatus === "success") {
+        } else if (response.connectionStatus === "success") {
           document.querySelector(".c-inputname__widthbox").value = name;
           htmlName.value = name;
           htmlEndGameName.innerHTML = name;
           adjustWidth();
 
           document.querySelector(".c-main").classList.remove("blurred");
+          document.querySelector(".c-button__icon--help").classList.remove("blurred");
+
           document.querySelector(".c-buttons").classList.remove("blurred");
           document.querySelector(".c-entry").classList.add("hidden");
 
@@ -219,11 +234,10 @@ const changeUserName = function (name) {
 const getRandomName = async function () {
   const urlParams = new URLSearchParams(window.location.search);
 
-  if(urlParams.has("name") && urlParams.get("name").length <= 18 && !/\s/.test(urlParams.get("name"))){
+  if (urlParams.has("name") && urlParams.get("name").length <= 18 && !/\s/.test(urlParams.get("name"))) {
     GameName = urlParams.get("name");
     return urlParams.get("name");
-  }
-  else{
+  } else {
     try {
       const response = await fetch("script/names.json");
       const data = await response.json();
@@ -408,6 +422,9 @@ const init = function () {
     htmlHelpReturnButton = document.querySelector(".js-help-page-return");
     htmlPencilButton = document.querySelector(".js-pencil");
     htmlEndGameList = document.querySelector(".js-endGameNameList");
+    htmlSettingsButton = document.querySelector(".js-settings-btn");
+    htmlSettingsCloseButton = document.querySelector(".js-close-settings");
+    htmlAfsluitButton = document.querySelector(".js-afsluit");
 
     touchArea = document.querySelector(".c-gamemode__container");
     touchArea.addEventListener("touchstart", handleTouchStart);
