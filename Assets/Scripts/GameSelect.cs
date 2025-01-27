@@ -40,6 +40,7 @@ public class GameSelect : MonoBehaviour
     public static bool isGameStarted;
     public static bool isIdle = false;
 
+    public TMP_Text ipAddress;
 
     void Start()
     {
@@ -66,6 +67,7 @@ public class GameSelect : MonoBehaviour
     public void SetGameCode(string code)
     {
         StartCoroutine(GetQrImageFromApi(code));
+        StartCoroutine(GetWebLink());
         gameCodeText.text = code;
         gameCode = code;
     }
@@ -83,6 +85,22 @@ public class GameSelect : MonoBehaviour
         else
         {
             Debug.LogError("Failed to download QR code: " + request.error);
+        }
+    }
+    IEnumerator GetWebLink(){
+        string url = "http://localhost:80/api/getipaddress";
+        UnityWebRequest request = UnityWebRequest.Get(url);
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            string ip = request.downloadHandler.text;
+            ipAddress.text = "http://" + ip;
+            // Debug.Log("IP: " + ip);
+        }
+        else
+        {
+            Debug.LogError("Failed to get IP: " + request.error);
         }
     }
 

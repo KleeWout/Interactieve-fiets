@@ -8,7 +8,7 @@ const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 let clientId;
 // let url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard";
-let LeaderboardUrl = `http://${window.location.hostname}:3000/api/getleaderboard`;
+let LeaderboardUrl = `http://${window.location.hostname}:80/api/getleaderboard`;
 
 const urlParams = new URLSearchParams(window.location.search);
 const code = urlParams.get("code");

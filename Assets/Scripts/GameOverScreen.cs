@@ -18,8 +18,8 @@ public class GameOverScreen : MonoBehaviour
     public static bool isGameOver = false;
     private static string url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard?code=Q8dqx9qcNI8yuXDZOCWP05B8pC7fZED6ymj4S5RHVFMPAzFuOZqv8w==";
 
-    private string localUrl = "http://localhost:3000/api/addleaderboard";
-    private string getUrl = "http://localhost:3000/api/getleaderboard";
+    private string localUrl = "http://localhost:80/api/addleaderboard";
+    private string getUrl = "http://localhost:80/api/getleaderboard";
 
     public bool sendLocal = true;
 

@@ -17,8 +17,8 @@ app.use(express.static(path.join(__dirname, "../docs")));
 app.use(express.json());
 app.use(cors());
 
-const myServer = app.listen(80); //http server
-const port = 3000;
+// const myServer = app.listen(80); //http server
+const port = 80;
 app.listen(port, () => {
   console.log(`Webserver is running at http://localhost:${port}`);
 });
@@ -28,6 +28,10 @@ app.get("/status", (request, response) => {
     status: "running",
   };
   response.send(status);
+});
+
+app.get("/api/getipaddress", function (req, res) {
+  res.send(getIPAddress());
 });
 
 app.get("/api/getleaderboard", function (req, res) {
@@ -128,7 +132,7 @@ function getIPAddress() {
 
 app.get("/generateQR", async (req, res) => {
   try {
-    const url = req.query.url || `http://${getIPAddress()}:3000`;
+    const url = req.query.url || `http://${getIPAddress()}:80`;
     const code = req.query.code || "none";
     const qrCodeImage = await QRCode.toDataURL(`${url}?code=${code}`, {
       color: {
@@ -288,7 +292,7 @@ function getGameCodeFromGameClient(ws) {
   return null;
 }
 
-myServer.on("upgrade", async function upgrade(request, socket, head) {
+app.on("upgrade", async function upgrade(request, socket, head) {
   if (Math.random() > 0.5) {
     return socket.end("HTTP/1.1 401 Unauthorized\r\n", "ascii"); //proper connection close in case of rejection
   }
