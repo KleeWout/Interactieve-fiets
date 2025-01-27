@@ -64,10 +64,12 @@ public class GameOverScreen : MonoBehaviour
         }
         countdownCoroutine = StartCoroutine(CountdownTest());
 
-        if(GameSelect.gameMode == Models.GameModeModel.GameMode.SinglePlayer){
+        if (GameSelect.gameMode == Models.GameModeModel.GameMode.SinglePlayer)
+        {
             gameSelect.LoadSinglePlayer();
         }
-        else if(GameSelect.gameMode == Models.GameModeModel.GameMode.MultiPlayer){
+        else if (GameSelect.gameMode == Models.GameModeModel.GameMode.MultiPlayer)
+        {
             gameSelect.LoadMultiPlayer();
         }
         StartCoroutine(GetLocalScore(getUrl));
@@ -83,15 +85,15 @@ public class GameOverScreen : MonoBehaviour
 
         for (int i = countdownTime; i >= 1; i--)
         {
-            countdown.text = $"Terug naar beginscherm in {i} ...";
+            countdown.text = $"Opnieuw spelen in {i} ...";
             yield return new WaitForSeconds(1);
         }
-        countdown.text = $"Terug naar beginscherm in {0} ...";
+        countdown.text = $"Opnieuw spelen in {0} ...";
 
         gameObject.SetActive(false);
         GameSelect.isGameStarted = true;
         WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { GameOver = "restart", Score = "0" });
-        countdown.text = $"Terug naar beginscherm in 10...";
+        countdown.text = $"Opnieuw spelen in 10...";
 
     }
 

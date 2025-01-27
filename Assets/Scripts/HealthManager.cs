@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class HealthManager : MonoBehaviour
 {
-    public static int health = 1;
+    public static int health = 5;
     public GameObject canoeMultiplayer;
     public GameObject canoeSingleplayer;
 
@@ -22,6 +22,9 @@ public class HealthManager : MonoBehaviour
 
     // public GameOverScreen GameOverScreen;
     
+
+
+
     public void TakeDamage()
     {
         health -= 1;
