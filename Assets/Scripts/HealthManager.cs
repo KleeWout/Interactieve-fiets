@@ -20,23 +20,28 @@ public class HealthManager : MonoBehaviour
 
     public GameObject gameOverScreen; // Add this line to reference the GameOverScreen
 
-    // public GameOverScreen GameOverScreen;
-    
+    // public GameOverScreen GameOverScreen;    
 
 
 
     public void TakeDamage()
     {
-        health -= 1;
-        if (health <= 0)
-        {
+        if(GameSelect.gameMode == Models.GameModeModel.GameMode.SinglePlayer){
             StartCoroutine(WaitAndShowGameOverScreen());
         }
-        else
-            PlayHeartBounceAnimation();
-            UpdateHearts();
+        else{
+            health -= 1;
+            if (health <= 0)
+            {
+                StartCoroutine(WaitAndShowGameOverScreen());
+            }
+            else
+                PlayHeartBounceAnimation();
+                UpdateHearts();
 
-        StartCoroutine(FlashMaterials());
+            StartCoroutine(FlashMaterials());
+        }
+
     }
 
     public IEnumerator WaitAndShowGameOverScreen()
