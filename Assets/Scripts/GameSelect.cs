@@ -167,7 +167,7 @@ public class GameSelect : MonoBehaviour
     }
 
 
-    void LoadSinglePlayer()
+    public void LoadSinglePlayer()
     {
         if (!isGameStarted)
         {
@@ -190,7 +190,7 @@ public class GameSelect : MonoBehaviour
 
     }
 
-    void LoadMultiPlayer()
+    public void LoadMultiPlayer()
     {
         if (!isGameStarted)
         {

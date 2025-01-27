@@ -128,7 +128,7 @@ public class TerrainGen : MonoBehaviour
         obstacles = GetComponent<Obstacles>();
         cts = new CancellationTokenSource(); // Initialize cts here
     }
-    private CancellationTokenSource cts;
+    public CancellationTokenSource cts;
 
     async void Update()
     {
