@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Entertainende FietsGame</title>
-  <link rel="stylesheet" href="style/style.css" />
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
-  <script src="script/app.js"></script>
-  <meta name="theme-color" content="#904849"> <!-- This sets the top bar color to red -->
-</head>
-<body>
-  <button class="c-button c-button__icon c-button__icon--help">
-    <svg class="c-icon c-icon--help" xmlns="http://www.w3.org/2000/svg" width="12" height="20" viewBox="0 0 12 20" fill="none">
-      <path d="M1.66921 5.04C0.869211 4.7 0.529212 3.71 1.00921 2.99C1.97921 1.55 3.59921 0.5 5.73921 0.5C8.08921 0.5 9.69921 1.57 10.5192 2.91C11.2192 4.06 11.6292 6.21 10.5492 7.81C9.34921 9.58 8.19921 10.12 7.57921 11.26C7.42921 11.53 7.33921 11.75 7.27921 12.2C7.18921 12.93 6.58921 13.5 5.84921 13.5C4.97921 13.5 4.26921 12.75 4.36921 11.88C4.42921 11.37 4.54921 10.84 4.82921 10.34C5.59921 8.95 7.07921 8.13 7.93921 6.9C8.84921 5.61 8.33921 3.2 5.75921 3.2C4.58921 3.2 3.82921 3.81 3.35921 4.54C3.00921 5.11 2.27921 5.29 1.66921 5.04ZM7.74921 17.5C7.74921 18.6 6.84921 19.5 5.74921 19.5C4.64921 19.5 3.74921 18.6 3.74921 17.5C3.74921 16.4 4.64921 15.5 5.74921 15.5C6.84921 15.5 7.74921 16.4 7.74921 17.5Z" fill="#FDF9EE" />
-    </svg>
-  </button>
-  <div class="c-entry">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entertainende FietsGame</title>
+    <link rel="stylesheet" href="style/style.css" />
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+    <script src="script/datahandler.js"></script>
+    <script src="script/app.js"></script>
+    <meta name="theme-color" content="#803d3d" />
+    <!-- This sets the top bar color to red -->
+  </head>
+  <body>
+    <button class="c-button c-button__icon c-button__icon--help js-help-btn blurred">
+      <svg class="c-icon c-icon--help" xmlns="http://www.w3.org/2000/svg" width="12" height="20" viewBox="0 0 12 20" fill="none">
+        <path d="M1.66921 5.04C0.869211 4.7 0.529212 3.71 1.00921 2.99C1.97921 1.55 3.59921 0.5 5.73921 0.5C8.08921 0.5 9.69921 1.57 10.5192 2.91C11.2192 4.06 11.6292 6.21 10.5492 7.81C9.34921 9.58 8.19921 10.12 7.57921 11.26C7.42921 11.53 7.33921 11.75 7.27921 12.2C7.18921 12.93 6.58921 13.5 5.84921 13.5C4.97921 13.5 4.26921 12.75 4.36921 11.88C4.42921 11.37 4.54921 10.84 4.82921 10.34C5.59921 8.95 7.07921 8.13 7.93921 6.9C8.84921 5.61 8.33921 3.2 5.75921 3.2C4.58921 3.2 3.82921 3.81 3.35921 4.54C3.00921 5.11 2.27921 5.29 1.66921 5.04ZM7.74921 17.5C7.74921 18.6 6.84921 19.5 5.74921 19.5C4.64921 19.5 3.74921 18.6 3.74921 17.5C3.74921 16.4 4.64921 15.5 5.74921 15.5C6.84921 15.5 7.74921 16.4 7.74921 17.5Z" fill="#FDF9EE" />
+      </svg>
+    </button>
+    <div class="c-entry">
       <div class="c-entry__container">
         <h1 class="c-entry__titel">Spelcode</h1>
         <p class="c-entry__text">Voer de code in die op het scherm wordt weergegeven om een spel te starten</p>
@@ -24,63 +26,193 @@
         <input class="c-code__input" type="number" id="input1" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input2')" onkeydown="moveToPrevious(event, 'input1')" onpaste="return false;" />
         <input class="c-code__input" type="number" id="input2" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input3')" onkeydown="moveToPrevious(event, 'input1')" onpaste="return false;" />
         <input class="c-code__input" type="number" id="input3" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input4')" onkeydown="moveToPrevious(event, 'input2')" onpaste="return false;" />
-        <input class="c-code__input" type="number" id="input4" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input1')" onkeydown="moveToPrevious(event, 'input3')" onpaste="return false;" /> 
+        <input class="c-code__input" type="number" id="input4" maxlength="1" inputmode="numeric" oninput="validateAndMove(this, 'input1')" onkeydown="moveToPrevious(event, 'input3')" onpaste="return false;" />
       </div>
-  </div>
-  <div class="c-home">
-    <div class="c-main blurred">
-      <div class="c-namecontainer">
-        <p class="c-inputname__widthbox">KanoKonijn</p>
-        <input class="c-namecontainer__input js-name" type="text" value="KanoKonijn" maxlength="18"/>
-        <button class="c-button c-button__pencil">
-          <svg class="c-icon c-icon--pencil" xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
-            <path d="M2.99878 21.5013H6.74878L17.8088 10.4413L14.0588 6.69128L2.99878 17.7513V21.5013ZM4.99878 18.5813L14.0588 9.52128L14.9788 10.4413L5.91878 19.5013H4.99878V18.5813Z" fill="#FDF9EE" />
-            <path d="M18.3688 3.79128C17.9788 3.40128 17.3488 3.40128 16.9588 3.79128L15.1288 5.62128L18.8788 9.37128L20.7088 7.54128C21.0988 7.15128 21.0988 6.52128 20.7088 6.13128L18.3688 3.79128Z" fill="#FDF9EE" />
-          </svg>
-        </button>
-      </div>
-      <div class="c-gamemode">
-        <div class="c-gamemode__container">
+      <button class="c-button c-button__icon c-button__icon--trophy c-entry--trophy js-leaderboard-btnentry">
+        <svg class="c-icon c-icon--trophy" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M19 5H17V4C17 3.45 16.55 3 16 3H8C7.45 3 7 3.45 7 4V5H5C3.9 5 3 5.9 3 7V8C3 10.55 4.92 12.63 7.39 12.94C8.02 14.44 9.37 15.57 11 15.9V19H8C7.45 19 7 19.45 7 20C7 20.55 7.45 21 8 21H16C16.55 21 17 20.55 17 20C17 19.45 16.55 19 16 19H13V15.9C14.63 15.57 15.98 14.44 16.61 12.94C19.08 12.63 21 10.55 21 8V7C21 5.9 20.1 5 19 5ZM5 8V7H7V10.82C5.84 10.4 5 9.3 5 8ZM19 8C19 9.3 18.16 10.4 17 10.82V7H19V8Z" fill="#FDF9EE" />
+        </svg>
+      </button>
+      
+    </div>
+    <div class="c-home">
+      <!-- blurred -->
+      <div class="c-main blurred">
+        <div class="c-namecontainer">
+          <p class="c-inputname__widthbox">KanoKonijn</p>
+          <input class="c-namecontainer__input js-name" type="text" value="KanoKonijn " maxlength="18" />
+          <button class="c-button c-button__pencil js-pencil">
+            <svg class="c-icon c-icon--pencil" xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+              <path d="M2.99878 21.5013H6.74878L17.8088 10.4413L14.0588 6.69128L2.99878 17.7513V21.5013ZM4.99878 18.5813L14.0588 9.52128L14.9788 10.4413L5.91878 19.5013H4.99878V18.5813Z" fill="#FDF9EE" />
+              <path d="M18.3688 3.79128C17.9788 3.40128 17.3488 3.40128 16.9588 3.79128L15.1288 5.62128L18.8788 9.37128L20.7088 7.54128C21.0988 7.15128 21.0988 6.52128 20.7088 6.13128L18.3688 3.79128Z" fill="#FDF9EE" />
+            </svg>
+          </button>
+        </div>
+        <div class="c-gamemode">
+          <div class="c-gamemode__container">
             <div class="c-gamemode__item c-gamemode__item__singleplayer">
               <label for="Singleplayer">
                 <p>Singleplayer</p>
-                <img class="c-gamemode__img c-gamemode__img--singleplayer" src="Images/multiplayerimg.png" alt="singleplayer"  width="280" height="280"/>
+                <img class="c-gamemode__img c-gamemode__img--singleplayer" src="Images/singleplayerimg.png" alt="singleplayer" width="280" height="280" />
               </label>
             </div>
             <div class="c-gamemode__item c-gamemode__item__multiplayer">
               <label for="Multiplayer">
                 <p>Multiplayer</p>
-                <img class="c-gamemode__img c-gamemode__img--multiplayer" src="Images/multiplayerimg.png" alt="multiplayer" width="280" height="280"/>
+                <img class="c-gamemode__img c-gamemode__img--multiplayer" src="Images/multiplayerimg.png" alt="multiplayer" width="280" height="280" />
               </label>
             </div>
-        </div> 
-        <div class="c-gamemode__select">
-          <input type="radio" id="Singleplayer" name="gameMode" value="Singleplayer" checked>
-          <label for="Singleplayer">
-          </label>
-          <input type="radio" id="Multiplayer" name="gameMode" value="Multiplayer">
-          <label for="Multiplayer">
-          </label>
+          </div>
+          <div class="c-gamemode__select">
+            <input type="radio" id="Singleplayer" name="gameMode" value="Singleplayer" checked />
+            <label for="Singleplayer"> </label>
+            <input type="radio" id="Multiplayer" name="gameMode" value="Multiplayer" />
+            <label for="Multiplayer"> </label>
+          </div>
+        </div>
+      </div>
+      <!-- blurred -->
+      <div class="c-buttons blurred">
+        <button class="c-button c-button__icon c-button__icon--trophy js-leaderboard-btn">
+          <svg class="c-icon c-icon--trophy" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M19 5H17V4C17 3.45 16.55 3 16 3H8C7.45 3 7 3.45 7 4V5H5C3.9 5 3 5.9 3 7V8C3 10.55 4.92 12.63 7.39 12.94C8.02 14.44 9.37 15.57 11 15.9V19H8C7.45 19 7 19.45 7 20C7 20.55 7.45 21 8 21H16C16.55 21 17 20.55 17 20C17 19.45 16.55 19 16 19H13V15.9C14.63 15.57 15.98 14.44 16.61 12.94C19.08 12.63 21 10.55 21 8V7C21 5.9 20.1 5 19 5ZM5 8V7H7V10.82C5.84 10.4 5 9.3 5 8ZM19 8C19 9.3 18.16 10.4 17 10.82V7H19V8Z" fill="#FDF9EE" />
+          </svg>
+        </button>
+        <button class="c-button c-button__start js-start">Start</button>
+        <button class="c-button c-button__icon c-button__icon--settings js-exit-btn">
+          <svg class="c-icon c-icon--trophy" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M10.79 16.29C11.18 16.68 11.81 16.68 12.2 16.29L15.79 12.7C16.18 12.31 16.18 11.68 15.79 11.29L12.2 7.7C11.81 7.31 11.18 7.31 10.79 7.7C10.4 8.09 10.4 8.72 10.79 9.11L12.67 11H4C3.45 11 3 11.45 3 12C3 12.55 3.45 13 4 13H12.67L10.79 14.88C10.4 15.27 10.41 15.91 10.79 16.29ZM19 3H5C3.89 3 3 3.9 3 5V8C3 8.55 3.45 9 4 9C4.55 9 5 8.55 5 8V6C5 5.45 5.45 5 6 5H18C18.55 5 19 5.45 19 6V18C19 18.55 18.55 19 18 19H6C5.45 19 5 18.55 5 18V16C5 15.45 4.55 15 4 15C3.45 15 3 15.45 3 16V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3Z" fill="#FDF9EE"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="c-boat">
+      <div class="c-boat__frame">
+        <!-- svg -->
+        <img class="c-boat__image" src="Images/Boat.svg" alt="" />
+        <div class="c-boat__score--container">
+          <div class="c-boat__score--container--text">
+            <p class="c-boat__score--title">score</p>
+            <p class="c-boat__score js-score">0m</p>
+          </div>
+          <button class="c-button__start js-stop">Stop</button>
         </div>
       </div>
     </div>
-    <div class="c-buttons blurred">
-      <button class="c-button c-button__icon c-button__icon--trophy">
-        <svg class="c-icon c-icon--trophy" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M19 5H17V4C17 3.45 16.55 3 16 3H8C7.45 3 7 3.45 7 4V5H5C3.9 5 3 5.9 3 7V8C3 10.55 4.92 12.63 7.39 12.94C8.02 14.44 9.37 15.57 11 15.9V19H8C7.45 19 7 19.45 7 20C7 20.55 7.45 21 8 21H16C16.55 21 17 20.55 17 20C17 19.45 16.55 19 16 19H13V15.9C14.63 15.57 15.98 14.44 16.61 12.94C19.08 12.63 21 10.55 21 8V7C21 5.9 20.1 5 19 5ZM5 8V7H7V10.82C5.84 10.4 5 9.3 5 8ZM19 8C19 9.3 18.16 10.4 17 10.82V7H19V8Z" fill="#FDF9EE" />
-        </svg>
-      </button>
-      <button class="c-button c-button__start js-start">Start</button>
-      <button class="c-button c-button__icon c-button__icon--settings">
-        <svg class="c-icon c-icon--trophy" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <!-- Game end screen -->
+    <div class="c-endgame__fixed">
+      <div class="c-endgame__body">
+        <div class="c-endgame">
+          <div class="c-endgame__top">
+            <div class="c-endgame__header">
+              <div class="c-endgame__header--name">
+                <p class="c-endgame__title">Proficiat,</p>
+                <p class="js-endGameName">KanoKonijn</p>
+              </div>
+              <p class="c-endgame__score--title">Je behaalde een score van</p>
+              <p class="c-score c-boat__score js-score">0m</p>
+            </div>
+            <ul class="c-scoreboard__list listreset js-endGameNameList">
+              <li class="c-scoreboard__item">
+                <div class="c-scoreboard__item--name">
+                  <p>08</p>
+                  <p>AquaAvonturier</p>
+                </div>
+                <p class="c-scoreboard__item--score">133m</p>
+              </li>
+              <li class="c-scoreboard__item">
+                <div class="c-scoreboard__item--name">
+                  <p>09</p>
+                  <p>AquaAvonturier</p>
+                </div>
+                <p class="c-scoreboard__item--score">133m</p>
+              </li>
+              <li class="c-scoreboard__item c-active-score">
+                <div class="c-scoreboard__item--name">
+                  <p>10</p>
+                  <p>KanoKonijn</p>
+                </div>
+                <p class="c-scoreboard__item--score">133m</p>
+              </li>
+              <li class="c-scoreboard__item">
+                <div class="c-scoreboard__item--name">
+                  <p>11</p>
+                  <p>AquaAvonturier</p>
+                </div>
+                <p class="c-scoreboard__item--score">133m</p>
+              </li>
+              <li class="c-scoreboard__item">
+                <div class="c-scoreboard__item--name">
+                  <p>12</p>
+                  <p>AquaAvonturier</p>
+                </div>
+                <p class="c-scoreboard__item--score">133m</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="c-endgame__button"><button class="c-button__start js-endscore-menu">Menu</button></div>
+      </div>
+    </div>
+    <div class="c-help__fixed">
+      <div class="c-help">
+        <div class="c-help__header">
+          <button class="button c-help__return js-help-page-return">
+            <svg class="c-arrow-back" xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+              <path d="M17.0519 3.38496C16.5619 2.89496 15.7719 2.89496 15.2819 3.38496L6.87188 11.795C6.48188 12.185 6.48188 12.815 6.87188 13.205L15.2819 21.615C15.7719 22.105 16.5619 22.105 17.0519 21.615C17.5419 21.125 17.5419 20.335 17.0519 19.845L9.71188 12.505L17.0619 5.15496C17.5419 4.66496 17.5419 3.87496 17.0519 3.38496Z" fill="#FDF9EE" />
+            </svg>
+          </button>
+          <p>Help</p>
+        </div>
+
+        <div class="c-help__img--container">
+          <img class="c-gamemode__img c-help__img c-help__img--multiplayer" src="Images/multiplayerimg.png" alt="multiplayer" width="280" height="280" />
+          <img class="c-gamemode__img c-help__img c-help__img--singleplayer" src="Images/singleplayerimg.png" alt="singleplayer" width="280" height="280" />
+        </div>
+        <div><p class="c-help__desc">Werk samen in team om je kano zo ver mogelijk over de rivier te sturen.</p></div>
+
+        <div class="c-help__slider">
+          <div class="c-help__container js-help__container">
+            <label class="c-help__item c-help__item__help1" for="help1">
+              <div><img class="c-help__item--img" src="Images/help1.png" alt="" /></div>
+              <p class="c-help__item--info">Je bestuurd elk een kant van de boot</p>
+            </label>
+            <label class="c-help__item c-help__item__help2" for="help2">
+              <div><img class="c-help__item--img" src="Images/boomstronk.png" alt="" /></div>
+              <p class="c-help__item--info">Probeer de drijvende boomstronken te vermijden zodat je geen schade doet aan je kano!</p>
+            </label>
+            <label class="c-help__item c-help__item__help3" for="help3">
+              <div><img class="c-help__item--img" src="Images/reddingsboei.png" alt="" /></div>
+              <p class="c-help__item--info">Verdien extra levens door het oppakken van reddingsboeien</p>
+            </label>
+            <label class="c-help__item c-help__item__help4" for="help4">
+              <div><img class="c-help__item--img" src="Images/crocko.png" alt="" /></div>
+              <p class="c-help__item--info">Pas op voor corcko, want wanneer hij je pakt is het gameover</p>
+            </label>
+          </div>
+          <div class="c-help__select">
+            <input type="radio" id="help1" name="help" value="help1" checked />
+            <label for="help1"> </label>
+            <input type="radio" id="help2" name="help" value="help2" />
+            <label for="help2"> </label>
+            <input type="radio" id="help3" name="help" value="help3" />
+            <label for="help3"> </label>
+            <input type="radio" id="help4" name="help" value="help4" />
+            <label for="help4"> </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="c-settings">
+      <button class="c-button__icon c-button__settings js-close-settings">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path
-            d="M19.5 12C19.5 11.77 19.49 11.55 19.47 11.32L21.33 9.91C21.73 9.61 21.84 9.05 21.59 8.61L19.72 5.38C19.47 4.94 18.93 4.76 18.47 4.96L16.32 5.87C15.95 5.61 15.56 5.38 15.15 5.19L14.86 2.88C14.8 2.38 14.37 2 13.87 2H10.14C9.63003 2 9.20003 2.38 9.14003 2.88L8.85003 5.19C8.44003 5.38 8.05003 5.61 7.68003 5.87L5.53003 4.96C5.07003 4.76 4.53003 4.94 4.28003 5.38L2.41003 8.62C2.16003 9.06 2.27003 9.61 2.67003 9.92L4.53003 11.33C4.51003 11.55 4.50003 11.77 4.50003 12C4.50003 12.23 4.51003 12.45 4.53003 12.68L2.67003 14.09C2.27003 14.39 2.16003 14.95 2.41003 15.39L4.28003 18.62C4.53003 19.06 5.07003 19.24 5.53003 19.04L7.68003 18.13C8.05003 18.39 8.44003 18.62 8.85003 18.81L9.14003 21.12C9.20003 21.62 9.63003 22 10.13 22H13.86C14.36 22 14.79 21.62 14.85 21.12L15.14 18.81C15.55 18.62 15.94 18.39 16.31 18.13L18.46 19.04C18.92 19.24 19.46 19.06 19.71 18.62L21.58 15.39C21.83 14.95 21.72 14.4 21.32 14.09L19.46 12.68C19.49 12.45 19.5 12.23 19.5 12ZM12.04 15.5C10.11 15.5 8.54003 13.93 8.54003 12C8.54003 10.07 10.11 8.5 12.04 8.5C13.97 8.5 15.54 10.07 15.54 12C15.54 13.93 13.97 15.5 12.04 15.5Z"
-            fill="#FDF9EE"
+            d="M13.41 11.9999L19.71 5.70994C19.8983 5.52164 20.0041 5.26624 20.0041 4.99994C20.0041 4.73364 19.8983 4.47825 19.71 4.28994C19.5217 4.10164 19.2663 3.99585 19 3.99585C18.7337 3.99585 18.4783 4.10164 18.29 4.28994L12 10.5899L5.71 4.28994C5.5217 4.10164 5.2663 3.99585 5 3.99585C4.7337 3.99585 4.4783 4.10164 4.29 4.28994C4.1017 4.47825 3.99591 4.73364 3.99591 4.99994C3.99591 5.26624 4.1017 5.52164 4.29 5.70994L10.59 11.9999L4.29 18.2899C4.19627 18.3829 4.12188 18.4935 4.07111 18.6154C4.02034 18.7372 3.9942 18.8679 3.9942 18.9999C3.9942 19.132 4.02034 19.2627 4.07111 19.3845C4.12188 19.5064 4.19627 19.617 4.29 19.7099C4.38296 19.8037 4.49356 19.8781 4.61542 19.9288C4.73728 19.9796 4.86799 20.0057 5 20.0057C5.13201 20.0057 5.26272 19.9796 5.38458 19.9288C5.50644 19.8781 5.61704 19.8037 5.71 19.7099L12 13.4099L18.29 19.7099C18.383 19.8037 18.4936 19.8781 18.6154 19.9288C18.7373 19.9796 18.868 20.0057 19 20.0057C19.132 20.0057 19.2627 19.9796 19.3846 19.9288C19.5064 19.8781 19.617 19.8037 19.71 19.7099C19.8037 19.617 19.8781 19.5064 19.9289 19.3845C19.9797 19.2627 20.0058 19.132 20.0058 18.9999C20.0058 18.8679 19.9797 18.7372 19.9289 18.6154C19.8781 18.4935 19.8037 18.3829 19.71 18.2899L13.41 11.9999Z"
+            fill="#261516"
           />
         </svg>
       </button>
-  </div>
-  </div>
-  
-</body>
+      <button class="c-button c-button__start c-button--afsluiten js-afsluit">Afsluiten</button>
+    </div>
+  </body>
 </html>

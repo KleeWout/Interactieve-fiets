@@ -12,8 +12,11 @@ const os = require("os");
 var fs = require("fs"); // file system module
 const cors = require("cors");
 
+const staticFilesPath = path.dirname(process.execPath);
+// app.use(express.static(staticFilesPath));
+
 // Serve static files from 'public' directory
-app.use(express.static(path.join(__dirname, "../docs")));
+app.use(express.static(path.join(__dirname, "webpagina")));
 app.use(express.json());
 app.use(cors());
 
@@ -35,7 +38,7 @@ app.get("/api/getipaddress", function (req, res) {
 });
 
 app.get("/api/getleaderboard", function (req, res) {
-  fs.readFile(path.join(__dirname, "../docs/data/leaderboard.json"), "utf8", function (err, data) {
+  fs.readFile(path.join(staticFilesPath, "leaderboard.json"), "utf8", function (err, data) {
     if (err) {
       console.error("Error reading leaderboard file:", err);
       res.status(500).send("Internal Server Error");
@@ -54,7 +57,7 @@ app.post("/api/addleaderboard", (req, res) => {
     return;
   }
 
-  fs.readFile(path.join(__dirname, "../docs/data/leaderboard.json"), "utf8", (err, data) => {
+  fs.readFile(path.join(staticFilesPath, "leaderboard.json"), "utf8", (err, data) => {
     if (err) {
       console.error("Error reading leaderboard file:", err);
       res.status(500).send("Internal Server Error");
@@ -85,7 +88,7 @@ app.post("/api/addleaderboard", (req, res) => {
       player.position = index + 1;
     });
 
-    fs.writeFile(path.join(__dirname, "../docs/data/leaderboard.json"), JSON.stringify(leaderboard, null, 2), "utf8", (err) => {
+    fs.writeFile(path.join(staticFilesPath, "leaderboard.json"), JSON.stringify(leaderboard, null, 2), "utf8", (err) => {
       if (err) {
         console.error("Error writing leaderboard file:", err);
         res.status(500).send("Internal Server Error");

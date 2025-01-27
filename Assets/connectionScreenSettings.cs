@@ -38,7 +38,7 @@ public class connectionScreenSettings : MonoBehaviour
     void Start()
     {
         // Get the path to the directory containing the game executable
-        jsonFilePath = Path.Combine(Application.dataPath, jsonFileName);
+        jsonFilePath = Path.Combine(Application.dataPath, ".." ,jsonFileName);
 
         // Check if the JSON file exists in the same folder as the game executable
         if (File.Exists(jsonFilePath))
