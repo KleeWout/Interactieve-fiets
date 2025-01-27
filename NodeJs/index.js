@@ -17,7 +17,6 @@ app.use(express.static(path.join(__dirname, "../docs")));
 app.use(express.json());
 app.use(cors());
 
-
 const myServer = app.listen(80); //http server
 const port = 3000;
 app.listen(port, () => {
@@ -109,14 +108,22 @@ let gameScore = new Map();
 
 function getIPAddress() {
   const interfaces = os.networkInterfaces();
+  let wifiAddress = null;
+  let ethernetAddress = null;
+
   for (const name of Object.keys(interfaces)) {
     for (const iface of interfaces[name]) {
       if (iface.family === "IPv4" && !iface.internal) {
-        return iface.address;
+        if (name.toLowerCase().includes("wi-fi") || name.toLowerCase().includes("wifi")) {
+          wifiAddress = iface.address;
+        } else if (name.toLowerCase().includes("ethernet")) {
+          ethernetAddress = iface.address;
+        }
       }
     }
   }
-  return "127.0.0.1";
+
+  return wifiAddress || ethernetAddress || "127.0.0.1";
 }
 
 app.get("/generateQR", async (req, res) => {
@@ -153,8 +160,6 @@ wss.on("connection", function (ws) {
         console.error("exiting:");
         ws.send(JSON.stringify({ exit: "true" }));
       }
-
-        
     } catch (e) {
       console.error("Invalid JSON received:", msg.toString());
       return;
@@ -181,8 +186,7 @@ wss.on("connection", function (ws) {
         game2browser.delete(ws);
 
         ws.send(JSON.stringify({ gameCode }));
-      }
-      else if (game2browser.has(ws)) {
+      } else if (game2browser.has(ws)) {
         const strippedMessage = { ...message };
         delete strippedMessage.IsGameClient;
         delete strippedMessage.NewConnection;
@@ -190,10 +194,9 @@ wss.on("connection", function (ws) {
         if (strippedMessage.Score) {
           gameScore.set(ws, strippedMessage.Score);
         }
-        if(strippedMessage.GameOver == 'true'){
+        if (strippedMessage.GameOver == "true") {
           gameStatus.set(ws, "gameover");
-        }
-        else if(strippedMessage.GameOver == 'restart'){
+        } else if (strippedMessage.GameOver == "restart") {
           gameStatus.set(ws, "start");
           game2browser.get(ws).send(JSON.stringify({ gameState: "start", gameMode: strippedMessage.gameMode }));
         }
@@ -229,20 +232,18 @@ wss.on("connection", function (ws) {
           } else {
             game2browser.set(gameClients.get(gameCode), ws);
             browser2game.set(ws, gameClients.get(gameCode));
- 
-            if(gameStatus.get(gameClients.get(gameCode)) == "gameover"){
-              browser2game.get(ws).send(JSON.stringify({ connectionStatus: "reconnected", userName: message.userName}));
-            }
-            else{
+
+            if (gameStatus.get(gameClients.get(gameCode)) == "gameover") {
+              browser2game.get(ws).send(JSON.stringify({ connectionStatus: "reconnected", userName: message.userName }));
+            } else {
               browser2game.get(ws).send(JSON.stringify({ connectionStatus: "connected", userName: message.userName, gameMode: message.gameMode }));
             }
             if (gameStatus.get(gameClients.get(gameCode)) == "start") {
               ws.send(JSON.stringify({ connectionStatus: "reconnect-start", id: message.id, score: gameScore.get(gameClients.get(gameCode)) }));
-            } else if(gameStatus.get(gameClients.get(gameCode)) == "gameover"){
+            } else if (gameStatus.get(gameClients.get(gameCode)) == "gameover") {
               // reconnect-gameover
               ws.send(JSON.stringify({ connectionStatus: "reconnect-gameover", id: message.id, score: gameScore.get(gameClients.get(gameCode)) }));
-            }
-            else {
+            } else {
               ws.send(JSON.stringify({ connectionStatus: "success", id: message.id }));
             }
           }
