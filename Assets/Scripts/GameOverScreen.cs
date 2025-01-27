@@ -18,8 +18,8 @@ public class GameOverScreen : MonoBehaviour
     public static bool isGameOver = false;
     private static string url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard?code=Q8dqx9qcNI8yuXDZOCWP05B8pC7fZED6ymj4S5RHVFMPAzFuOZqv8w==";
 
-    private string localUrl = "http://localhost:3000/api/addleaderboard";
-    private string getUrl = "http://localhost:3000/api/getleaderboard";
+    private string localUrl = "http://localhost:80/api/addleaderboard";
+    private string getUrl = "http://localhost:80/api/getleaderboard";
 
     public bool sendLocal = true;
 
@@ -64,10 +64,12 @@ public class GameOverScreen : MonoBehaviour
         }
         countdownCoroutine = StartCoroutine(CountdownTest());
 
-        if(GameSelect.gameMode == Models.GameModeModel.GameMode.SinglePlayer){
+        if (GameSelect.gameMode == Models.GameModeModel.GameMode.SinglePlayer)
+        {
             gameSelect.LoadSinglePlayer();
         }
-        else if(GameSelect.gameMode == Models.GameModeModel.GameMode.MultiPlayer){
+        else if (GameSelect.gameMode == Models.GameModeModel.GameMode.MultiPlayer)
+        {
             gameSelect.LoadMultiPlayer();
         }
         StartCoroutine(GetLocalScore(getUrl));
@@ -83,15 +85,15 @@ public class GameOverScreen : MonoBehaviour
 
         for (int i = countdownTime; i >= 1; i--)
         {
-            countdown.text = $"Terug naar beginscherm in {i} ...";
+            countdown.text = $"Opnieuw spelen in {i} ...";
             yield return new WaitForSeconds(1);
         }
-        countdown.text = $"Terug naar beginscherm in {0} ...";
+        countdown.text = $"Opnieuw spelen in {0} ...";
 
         gameObject.SetActive(false);
         GameSelect.isGameStarted = true;
         WebSocketClient.Instance.SendMessageToSocket(new WebSocketMessage { GameOver = "restart", Score = "0" });
-        countdown.text = $"Terug naar beginscherm in 10...";
+        countdown.text = $"Opnieuw spelen in 10...";
 
     }
 

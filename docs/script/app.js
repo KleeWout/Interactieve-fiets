@@ -2,13 +2,13 @@
 
 let htmlGameMode, htmlScoreValue, htmlName, htmlNameBox, htmlStartButton, touchArea, touchAreaHelp, htmlHelpScreens;
 let htmlStopButton, htmlEndScoreMenuButton, htmlLeaderboardReturnButton, htmlLeaderboardButton, htmlLeaderBoardPage, htmlLeaderBoardList, htmlEndGameName, htmlEndGameScore, htmlHelpButton, htmlHelpReturnButton;
-let htmlPencilButton, htmlEndGameList, htmlSettingsButton, htmlSettingsCloseButton, htmlAfsluitButton;
+let htmlPencilButton, htmlEndGameList, htmlSettingsButton, htmlSettingsCloseButton, htmlAfsluitButton, htlmExitButton;
 let GameName = "";
 const lanIP = `${window.location.hostname}:8080`;
 const ws = new WebSocket(`ws://${lanIP}`);
 let clientId;
 // let url = "https://entertainendefietsgameleaderboard.azurewebsites.net/api/leaderboard";
-let LeaderboardUrl = `http://${window.location.hostname}:3000/api/getleaderboard`;
+let LeaderboardUrl = `http://${window.location.hostname}:80/api/getleaderboard`;
 
 const urlParams = new URLSearchParams(window.location.search);
 const code = urlParams.get("code");
@@ -130,16 +130,19 @@ const listenToInputs = function () {
     htmlName.select();
   });
 
-  htmlSettingsButton.addEventListener("click", function () {
-    document.querySelector(".c-settings").classList.add("activated");
-  });
+  // htmlSettingsButton.addEventListener("click", function () {
+  //   document.querySelector(".c-settings").classList.add("activated");
+  // });
 
   htmlSettingsCloseButton.addEventListener("click", function () {
     document.querySelector(".c-settings").classList.remove("activated");
   });
 
-  htmlAfsluitButton.addEventListener("click", function () {
-    ws.send('{"exit": "true"}');
+  htlmExitButton.addEventListener("click", function () {
+    const url = new URL(window.location);
+    url.search = "";
+    window.history.pushState({}, "", url);
+    window.location.reload();
   });
 };
 
@@ -426,6 +429,7 @@ const init = function () {
     htmlSettingsButton = document.querySelector(".js-settings-btn");
     htmlSettingsCloseButton = document.querySelector(".js-close-settings");
     htmlAfsluitButton = document.querySelector(".js-afsluit");
+    htlmExitButton = document.querySelector(".js-exit-btn");
 
     touchArea = document.querySelector(".c-gamemode__container");
     touchArea.addEventListener("touchstart", handleTouchStart);
