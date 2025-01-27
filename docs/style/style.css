@@ -97,7 +97,6 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   appearance: textfield;
   -moz-appearance: textfield;
-  
 }
 
 /* Headings */
@@ -392,11 +391,12 @@ button {
   text-transform: uppercase;
   transition: transform 0.2s ease-in-out;
   height: 64px;
+  color: #fdf9ee;
 }
 .c-button__start:hover {
   transform: scale(1.1);
 }
-.c-boat{
+.c-boat {
   width: 100%;
   height: 70%;
   margin-left: auto;
@@ -407,46 +407,44 @@ button {
   bottom: -100%;
   transition: all 500ms;
 }
-.c-boat.activated{
+.c-boat.activated {
   bottom: 0px;
 }
 
-.c-boat__frame{
+.c-boat__frame {
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #FDF9EE;
+  background-color: #fdf9ee;
   box-shadow: 0px -10px 17.4px 0px rgba(0, 0, 0, 0.25);
   color: #261516;
   border-radius: 1rem 1rem 0rem 0rem;
-
-
 }
-.c-boat__score--container--text{
+.c-boat__score--container--text {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-.c-boat__score--title{
+.c-boat__score--title {
   color: #261516;
   font-size: 1.5rem;
   font-weight: 400;
 }
-.c-boat__score{
-  color: #9C544F;
+.c-boat__score {
+  color: #9c544f;
   font-size: 3rem;
   font-weight: 400;
 }
-.c-boat__image{
+.c-boat__image {
   position: relative;
   top: -7rem;
   display: block;
   height: 80%;
 }
-.c-boat__score--container{
+.c-boat__score--container {
   position: relative;
   top: 5%;
   transform: translate(0, -50%);
@@ -541,12 +539,11 @@ button {
   transition: transform 0.4s ease-in-out, visibility 0s linear 0.4s;
 }
 
-.c-endgame__button{
+.c-endgame__button {
   position: fixed;
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-
 }
 
 .c-endgame__body {
@@ -630,7 +627,6 @@ button {
 .c-leaderboard {
   overflow: hidden;
   height: 100%;
-
 }
 
 .c-leaderboard__body {
@@ -645,18 +641,18 @@ button {
   height: 50%; */
 }
 
-.c-leaderboard__container{
-    /* overflow-y: visible !important; */
+.c-leaderboard__container {
+  /* overflow-y: visible !important; */
   position: fixed;
   overflow: scroll;
   height: 85%;
   width: 95%;
   padding: 0 1rem;
-
+  display: flex;
+  justify-content: center;
   left: 50%;
   top: 15%;
   transform: translateX(-50%);
-
 }
 
 .c-leaderboard__header {

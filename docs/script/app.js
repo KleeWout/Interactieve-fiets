@@ -113,6 +113,7 @@ const listenToInputs = function () {
     window.location.reload();
   });
   htmlLeaderboardButton.addEventListener("click", function () {
+    console.log("Leaderboard button clicked");
     window.location.href = "/leaderboard";
   });
 
@@ -438,11 +439,11 @@ const init = function () {
 
     listenToInputs();
 
-    document.addEventListener('visibilitychange', function() {
-      if (document.visibilityState === 'visible') {
-          window.location.reload();
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") {
+        window.location.reload();
       }
-  });
+    });
   }
 };
 
