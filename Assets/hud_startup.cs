@@ -5,7 +5,6 @@ public class hud_startup : MonoBehaviour
 
     public GameObject healthcontainer;
     void OnEnable(){
-        Debug.Log(GameSelect.gameMode);
         if(GameSelect.gameMode == Models.GameModeModel.GameMode.SinglePlayer){
             healthcontainer.SetActive(false);
         }

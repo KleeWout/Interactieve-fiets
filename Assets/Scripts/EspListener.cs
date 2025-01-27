@@ -11,7 +11,6 @@ public class EspListener : MonoBehaviour
     // Invoked when a line of data is received from the serial device.
     void OnMessageArrived(string msg)
     {
-        Debug.Log("Message arrived: " + msg);
         string[] msgSplit = msg.Split(',');
         string message1 = msgSplit[0];
         string message2 = msgSplit[1];
@@ -26,9 +25,5 @@ public class EspListener : MonoBehaviour
     // failure to connect.
     void OnConnectionEvent(bool success)
     {
-        if (success)
-            Debug.Log("Connection established");
-        else
-            Debug.Log("Connection attempt failed or disconnection detected");
     }
 }

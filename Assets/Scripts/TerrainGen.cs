@@ -103,11 +103,9 @@ public class TerrainGen : MonoBehaviour
         }
         catch (OperationCanceledException)
         {
-            Debug.Log("Terrain generation was canceled.");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Debug.LogError($"An error occurred during terrain generation: {ex.Message}");
         }
     }
 
@@ -531,7 +529,6 @@ private void BakeNavMesh()
     {
         if (chaser.transform.position.z < point.z)
         {
-            Debug.Log("setting pos: " + point.z);
             chaseAgent.Warp(new Vector3(point.x, 0, point.z));
         }
     }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.IO;
 using TMPro;
+using System.Diagnostics;
 
 public class connectionScreenSettings : MonoBehaviour
 {
@@ -9,30 +10,9 @@ public class connectionScreenSettings : MonoBehaviour
     {
         public string WifiNetworkName;
     }
-
-
     public TMP_Text network;
 
-
-    // void Start()
-    // {
-    //     // Load the JSON file from the Resources folder
-    //     TextAsset jsonFile = Resources.Load<TextAsset>("settings");
-    //     if (jsonFile != null)
-    //     {
-    //         // Parse the JSON file
-    //         string jsonString = jsonFile.text;
-    //         Settings settings = JsonUtility.FromJson<Settings>(jsonString);
-
-    //         network.text = $"Verbind met het WifiNetwerk \"{settings.WifiNetworkName}\"";
-    //     }
-    //     else
-    //     {
-    //         Debug.LogError("Failed to load JSON file.");
-    //     }
-    // }
-
-    private string jsonFileName = "wifiNetwork.json";
+    private string jsonFileName = "settings.json";
     private string jsonFilePath;
 
     void Start()
@@ -51,10 +31,9 @@ public class connectionScreenSettings : MonoBehaviour
             // Use the JSON data as needed
             // For example, you can parse it into a class or dictionary
         }
-        else
-        {
-            Debug.LogError("JSON file not found in the same folder as the game executable.");
-        }
+
+        string exePath = Path.Combine(Application.dataPath, "..", "webserver.exe");
+        Process.Start(exePath);
     }
 
     // Update is called once per frame

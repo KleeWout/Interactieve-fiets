@@ -12,6 +12,7 @@ using Models.WebSocketMessage;
 using System.Data.Common;
 using TMPro;
 using System.Collections;
+using System.Threading.Tasks;
 
 
 
@@ -47,19 +48,67 @@ public class WebSocketClient : MonoBehaviour
         }
     }
 
-    private async void Start()
+private async void Start()
+{
+    gameSelect = GetComponent<GameSelect>();
+    if (gameSelect == null)
     {
-        gameSelect = GetComponent<GameSelect>();
-        Uri serverUri = new Uri($"ws://{serverAddress}");
+        return;
+    }
 
-        Debug.Log("Connecting to WebSocket server...");
-        await webSocket.ConnectAsync(serverUri, CancellationToken.None);
-        Debug.Log("Connected to WebSocket server!");
+    if (string.IsNullOrEmpty(serverAddress))
+    {
+        return;
+    }
 
+    Uri serverUri;
+    try
+    {
+        serverUri = new Uri($"ws://{serverAddress}");
+    }
+    catch (UriFormatException)
+    {
+        return;
+    }
+
+    bool connected = false;
+    int retryCount = 0;
+    int maxRetries = 50;
+    int delay = 2000; // delay in milliseconds
+
+    while (!connected)
+    {
+        try
+        {
+            if (webSocket != null)
+            {
+                webSocket.Dispose();
+                webSocket = null;
+            }
+
+            webSocket = new ClientWebSocket();
+            await webSocket.ConnectAsync(serverUri, CancellationToken.None);
+            connected = true;
+        }
+        catch (Exception)
+        {
+            retryCount++;
+            await Task.Delay(delay);
+
+            if (retryCount >= maxRetries)
+            {
+                retryCount = 0;
+            }
+        }
+    }
+
+    if (connected)
+    {
         // Start receiving messages
         ReceiveMessages();
         SendMessageToSocket(new WebSocketMessage { NewConnection = true });
     }
+}
 
     private async void ReceiveMessages()
     {
@@ -73,20 +122,17 @@ public class WebSocketClient : MonoBehaviour
 
                 if (result.MessageType == WebSocketMessageType.Close)
                 {
-                    Debug.Log("Server closed connection.");
                     await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
                     break;
                 }
 
                 string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                Debug.Log($"Received: {message}");
                 JObject jsonObject = JObject.Parse(message);
 
 
                 // Switch scenes based on the "gameMode" value in the JSON message
                 if (jsonObject.ContainsKey("exit"))
                 {
-                    Debug.Log("Exiting application...");
                     Application.Quit();
                 }
 
@@ -199,7 +245,6 @@ public class WebSocketClient : MonoBehaviour
         }
         else
         {
-            Debug.LogError("WebSocket is not connected.");
         }
     }
 
@@ -220,7 +265,6 @@ public class WebSocketClient : MonoBehaviour
         {
             await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Unity closing connection", CancellationToken.None);
             webSocket.Dispose();
-            Debug.Log("WebSocket connection closed.");
         }
     }
 }

@@ -48,7 +48,6 @@ public class SerialController : MonoBehaviour
         else
         {
             Invoke("OnEnable", 2);
-            Debug.Log("No device found, trying again...");
         }
     }
 
@@ -62,7 +61,6 @@ public class SerialController : MonoBehaviour
                 yield return StartCoroutine(PerformHandshake(port));
                 if (deviceFound)
                 {
-                    Debug.Log($"Handshake successful with {port}");
                     break;
                 }
             }

@@ -99,7 +99,6 @@ public class GameOverScreen : MonoBehaviour
 
     public IEnumerator UploadScore(string name, int score)
     {
-        Debug.Log("Sending score from post score");
         string body = "{ \"name\": \"" + name + "\", \"score\": " + score + " }";
         using (UnityWebRequest www = UnityWebRequest.Post(url, body, "application/json"))
         {
@@ -131,10 +130,8 @@ public class GameOverScreen : MonoBehaviour
             {
                 case UnityWebRequest.Result.ConnectionError:
                 case UnityWebRequest.Result.DataProcessingError:
-                    Debug.LogError(pages[page] + ": Error: " + webRequest.error);
                     break;
                 case UnityWebRequest.Result.ProtocolError:
-                    Debug.LogError(pages[page] + ": HTTP Error: " + webRequest.error);
                     break;
                 case UnityWebRequest.Result.Success:
                     // Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);

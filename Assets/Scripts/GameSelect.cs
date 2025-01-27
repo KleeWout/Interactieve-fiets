@@ -84,7 +84,6 @@ public class GameSelect : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Failed to download QR code: " + request.error);
         }
     }
     IEnumerator GetWebLink(){
@@ -100,7 +99,6 @@ public class GameSelect : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Failed to get IP: " + request.error);
         }
     }
 
