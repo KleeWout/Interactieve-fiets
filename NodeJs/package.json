@@ -6,9 +6,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Howest",
   "license": "ISC",
-  "description": "",
+  "description": "Interactieve Fietsgame webserver",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",

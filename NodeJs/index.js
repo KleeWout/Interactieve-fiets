@@ -12,15 +12,12 @@ const os = require("os");
 var fs = require("fs"); // file system module
 const cors = require("cors");
 
-const staticFilesPath = path.dirname(process.execPath);
-// app.use(express.static(staticFilesPath));
+const staticFilesPath = path.resolve(path.dirname(process.execPath), '..');
 
-// Serve static files from 'public' directory
 app.use(express.static(path.join(__dirname, "webpagina")));
 app.use(express.json());
 app.use(cors());
 
-// const myServer = app.listen(80); //http server
 const port = 80;
 app.listen(port, () => {
   console.log(`Webserver is running at http://localhost:${port}`);

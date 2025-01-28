@@ -114,13 +114,13 @@ public class GameSelect : MonoBehaviour
         {
             hudCanvas.SetActive(false);
             StartCoroutine(RotateAndSwitch(singleplayerAnimator, canoeMultiplayer, canoeSingleplayer));
-            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(2f, 1.25f, 0.15f), Quaternion.Euler(25, -90, 0)));
+            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(3f, 0.1f, 0.7f), Quaternion.Euler(-20, -90, 0)));
         }
         else if (mode == GameMode.MultiPlayer)
         {
             hudCanvas.SetActive(false);
             StartCoroutine(RotateAndSwitch(multiplayerAnimator, canoeSingleplayer, canoeMultiplayer));
-            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(0f, 1.25f, -2.5f), Quaternion.Euler(25, 0, 0)));
+            cameraTransitionCoroutine = StartCoroutine(AnimateCamera(new Vector3(1.65f, 0.1f, -2.4f), Quaternion.Euler(-20, -20, 0)));
         }
         else if (mode == GameMode.Menu)
         {

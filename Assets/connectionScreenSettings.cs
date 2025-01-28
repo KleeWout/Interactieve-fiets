@@ -32,7 +32,7 @@ public class connectionScreenSettings : MonoBehaviour
             // For example, you can parse it into a class or dictionary
         }
 
-        string exePath = Path.Combine(Application.dataPath, "..", "webserver.exe");
+        string exePath = Path.Combine(Application.dataPath, "webserver.exe");
         Process.Start(exePath);
     }
 
